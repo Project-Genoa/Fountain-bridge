@@ -10,7 +10,6 @@ import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
@@ -247,12 +246,14 @@ public final class PlayerSession
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(0);
 				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(bedrockId));
+				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 
 				updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(1);
 				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(JavaBlockTranslator.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlockPalette.WATER : BedrockBlockPalette.AIR));
+				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}
 		}

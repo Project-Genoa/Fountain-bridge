@@ -4,11 +4,13 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
+import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
@@ -36,8 +38,11 @@ import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 
+import micheal65536.fountain.palette.BedrockBlockPalette;
+import micheal65536.fountain.palette.JavaBlockTranslator;
 import micheal65536.fountain.utils.LevelChunkUtils;
 import micheal65536.fountain.utils.LoginUtils;
 
@@ -209,10 +214,47 @@ public final class PlayerSession
 
 	public void onJavaLevelChunk(@NotNull ClientboundLevelChunkWithLightPacket clientboundLevelChunkWithLightPacket)
 	{
-		if (clientboundLevelChunkWithLightPacket.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getX() <= MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() <= MAX_NONEMPTY_CHUNK_RADIUS)
+		if (clientboundLevelChunkWithLightPacket.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getX() < MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() < MAX_NONEMPTY_CHUNK_RADIUS)
 		{
+			LogManager.getLogger().trace("Sending chunk " + clientboundLevelChunkWithLightPacket.getX() + ", " + clientboundLevelChunkWithLightPacket.getZ());
+
 			LevelChunkPacket levelChunkPacket = LevelChunkUtils.translateLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, (MinecraftCodecHelper) this.java.getCodecHelper());
 			this.sendBedrockPacket(levelChunkPacket);
+		}
+	}
+
+	public void onJavaBlockUpdate(@NotNull BlockChangeEntry blockChangeEntry)
+	{
+		Vector3i position = blockChangeEntry.getPosition();
+		if (position.getY() > 0 && position.getY() < 256)
+		{
+			if (position.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getX() < MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() < MAX_NONEMPTY_CHUNK_RADIUS * 16)
+			{
+				LogManager.getLogger().trace("Sending block update " + position.getX() + ", " + position.getY() + ", " + position.getZ());
+
+				// TODO: flower pots, pistons, cauldrons, lecterns
+
+				// TODO: doors
+
+				int bedrockId = JavaBlockTranslator.getBedrockBlockId(blockChangeEntry.getBlock());
+				if (bedrockId == -1)
+				{
+					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlockTranslator.getUnmappedBlockName(blockChangeEntry.getBlock()));
+					bedrockId = BedrockBlockPalette.AIR;
+				}
+
+				UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+				updateBlockPacket.setBlockPosition(position);
+				updateBlockPacket.setDataLayer(0);
+				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(bedrockId));
+				this.sendBedrockPacket(updateBlockPacket);
+
+				updateBlockPacket = new UpdateBlockPacket();
+				updateBlockPacket.setBlockPosition(position);
+				updateBlockPacket.setDataLayer(1);
+				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(JavaBlockTranslator.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlockPalette.WATER : BedrockBlockPalette.AIR));
+				this.sendBedrockPacket(updateBlockPacket);
+			}
 		}
 	}
 

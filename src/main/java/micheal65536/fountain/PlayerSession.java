@@ -16,6 +16,7 @@ import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
@@ -66,6 +67,16 @@ public final class PlayerSession
 	public void disconnectForced()
 	{
 		// TODO
+
+		try
+		{
+			this.bedrock.disconnect();
+		}
+		catch (IllegalStateException exception)
+		{
+			LogManager.getLogger().debug("Disconnect with Bedrock session already closed (this is usually normal)");
+		}
+		this.java.disconnect("");
 	}
 
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)

@@ -1,5 +1,6 @@
 package micheal65536.fountain;
 
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
@@ -46,6 +47,11 @@ public final class ServerPacketHandler extends SessionAdapter
 			chunkRadiusUpdatedPacket.setRadius(((ClientboundSetChunkCacheRadiusPacket) packet).getViewDistance());
 			this.playerSession.sendBedrockPacket(chunkRadiusUpdatedPacket);
 		}
+		else if (packet instanceof ClientboundDisconnectPacket)
+		{
+			// empty
+		}
+
 		else if (packet instanceof ClientboundLevelChunkWithLightPacket)
 		{
 			this.playerSession.onJavaLevelChunk((ClientboundLevelChunkWithLightPacket) packet);
@@ -54,6 +60,7 @@ public final class ServerPacketHandler extends SessionAdapter
 		{
 			this.playerSession.sendJavaPacket(new ServerboundChunkBatchReceivedPacket(20.0f));
 		}
+
 		else
 		{
 			LogManager.getLogger().debug("Unhandled Java packet " + packet.getClass().getSimpleName());

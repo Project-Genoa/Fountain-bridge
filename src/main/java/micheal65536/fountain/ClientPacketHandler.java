@@ -36,4 +36,10 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 		this.playerSession = new PlayerSession(this.bedrockSession, packet);
 		return PacketSignal.HANDLED;
 	}
+
+	@Override
+	public void onDisconnect(String reason)
+	{
+		this.playerSession.disconnectForced();
+	}
 }

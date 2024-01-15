@@ -20,6 +20,7 @@ import micheal65536.fountain.palette.JavaBlockTranslator;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 
 public class LevelChunkUtils
@@ -30,6 +31,7 @@ public class LevelChunkUtils
 		try
 		{
 			BedrockChunk[] bedrockChunks = new BedrockChunk[16];
+			HashSet<Integer> alreadyNotifiedMissingBlocks = new HashSet<>();
 			ByteBuf byteBuf = Unpooled.wrappedBuffer(clientboundLevelChunkWithLightPacket.getChunkData());
 			for (int chunkY = -4; chunkY < 20; chunkY++) // Java world height goes from -64 to 320
 			{
@@ -58,7 +60,10 @@ public class LevelChunkUtils
 					int bedrockId = JavaBlockTranslator.getBedrockBlockId(javaBlockId);
 					if (bedrockId == -1)
 					{
-						LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlockTranslator.getUnmappedBlockName(javaBlockId));
+						if (alreadyNotifiedMissingBlocks.add(javaBlockId))
+						{
+							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlockTranslator.getUnmappedBlockName(javaBlockId));
+						}
 						bedrockId = BedrockBlockPalette.AIR;
 					}
 					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlockTranslator.isWaterlogged(javaBlockId) ? BedrockBlockPalette.WATER : -1);

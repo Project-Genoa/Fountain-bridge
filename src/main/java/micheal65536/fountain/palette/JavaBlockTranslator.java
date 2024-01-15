@@ -33,6 +33,8 @@ public class JavaBlockTranslator
 				if (jsonObject.has("ignore") && jsonObject.get("ignore").getAsBoolean())
 				{
 					LogManager.getLogger().debug("Ignoring Java block " + javaNameAndState);
+					unmappedBlocksMap.put(javaId, javaNameAndState);
+					javaId++;
 					continue;
 				}
 
@@ -72,7 +74,6 @@ public class JavaBlockTranslator
 					boolean waterlogged = javaNameAndState.contains("waterlogged=true") || bedrockName.equals("minecraft:bubble_column") || bedrockName.equals("minecraft:kelp") || bedrockName.equals("minecraft:seagrass");
 					isWaterloggedMap.put(javaId, waterlogged);
 				}
-
 				javaId++;
 			}
 		}

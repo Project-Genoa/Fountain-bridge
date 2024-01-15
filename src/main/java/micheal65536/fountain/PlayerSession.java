@@ -27,12 +27,14 @@ import org.cloudburstmc.protocol.bedrock.data.GameType;
 import org.cloudburstmc.protocol.bedrock.data.PlayerPermission;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaGameplaySettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.jetbrains.annotations.NotNull;
 
@@ -49,6 +51,7 @@ public final class PlayerSession
 	private static final Vector3i HARDCODED_CHUNK_CENTER = Vector3i.from(0, 128, 0);
 
 	private final BedrockSession bedrock;
+	private boolean bedrockDoDaylightCycle = true;
 
 	private final TcpClientSession java;
 	private int javaPlayerEntityId;
@@ -88,7 +91,7 @@ public final class PlayerSession
 		this.sendBedrockPacket(playStatusPacket);
 
 		StartGamePacket startGamePacket = new StartGamePacket();
-		startGamePacket.getGamerules().add(new GameRuleData<>("dodaylightcycle", false));
+		//startGamePacket.getGamerules().add(new GameRuleData<>("dodaylightcycle", false));
 		startGamePacket.setUniqueEntityId(this.javaPlayerEntityId);
 		startGamePacket.setRuntimeEntityId(this.javaPlayerEntityId);
 		startGamePacket.setPlayerGameType(GameType.valueOf(clientboundLoginPacket.getCommonPlayerSpawnInfo().getGameMode().name()));
@@ -101,7 +104,8 @@ public final class PlayerSession
 		startGamePacket.setDifficulty(1);
 		startGamePacket.setDefaultSpawn(Vector3i.ZERO);
 		startGamePacket.setAchievementsDisabled(true);
-		startGamePacket.setDayCycleStopTime(6000);    // TODO: set according to buildplate day/night mode
+		//startGamePacket.setDayCycleStopTime(6000);    // TODO: set according to buildplate day/night mode
+		startGamePacket.setDayCycleStopTime(0);
 		startGamePacket.setEduEditionOffers(0);
 		startGamePacket.setEduFeaturesEnabled(false);
 		startGamePacket.setRainLevel(0.0f);
@@ -168,6 +172,27 @@ public final class PlayerSession
 		SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
 		setDifficultyPacket.setDifficulty(difficulty.ordinal());
 		this.sendBedrockPacket(setDifficultyPacket);
+	}
+
+	public void updateTime(long javaTime)
+	{
+		LogManager.getLogger().trace("Server set time to " + javaTime);
+
+		int bedrockTime = (int) (Math.abs(javaTime) % (24000 * 8));
+		boolean doDaylightCycle = javaTime >= 0;
+
+		if (doDaylightCycle != this.bedrockDoDaylightCycle)
+		{
+			GameRulesChangedPacket gameRulesChangedPacket = new GameRulesChangedPacket();
+			gameRulesChangedPacket.getGameRules().add(new GameRuleData<>("dodaylightcycle", doDaylightCycle));
+			this.sendBedrockPacket(gameRulesChangedPacket);
+
+			this.bedrockDoDaylightCycle = doDaylightCycle;
+		}
+
+		SetTimePacket setTimePacket = new SetTimePacket();
+		setTimePacket.setTime(bedrockTime);
+		this.sendBedrockPacket(setTimePacket);
 	}
 
 	public void loadJavaBiomes(ListTag biomesListTag)

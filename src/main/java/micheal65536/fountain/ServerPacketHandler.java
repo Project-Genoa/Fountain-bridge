@@ -7,6 +7,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLo
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetChunkCacheRadiusPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundChunkBatchReceivedPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Session;
@@ -50,6 +51,11 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundDisconnectPacket)
 		{
 			// empty
+		}
+
+		else if (packet instanceof ClientboundSetTimePacket)
+		{
+			this.playerSession.updateTime(((ClientboundSetTimePacket) packet).getTime());
 		}
 
 		else if (packet instanceof ClientboundLevelChunkWithLightPacket)

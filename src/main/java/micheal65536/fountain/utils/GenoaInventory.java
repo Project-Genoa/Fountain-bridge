@@ -27,6 +27,12 @@ public final class GenoaInventory
 {
 	private final HashMap<String, Integer> stackableItems = new HashMap<>();
 	private final HashMap<String, HashMap<String, Integer>> nonStackableItems = new HashMap<>();
+	private final Item[] initialHotbar;
+
+	public GenoaInventory()
+	{
+		this.initialHotbar = new Item[7];
+	}
 
 	public void addItem(@NotNull ItemStack itemStack)
 	{
@@ -88,6 +94,40 @@ public final class GenoaInventory
 		}
 
 		return Arrays.stream(newItems).map(item -> item != null ? this.takeItem(item) : null).toArray(String[]::new);
+	}
+
+	public String[] getInitialHotbar()
+	{
+		return Arrays.stream(this.initialHotbar).map(item ->
+		{
+			if (item == null || item.count == 0)
+			{
+				return null;
+			}
+
+			EarthItemCatalog.NameAndAux nameAndAux = EarthItemCatalog.getNameAndAux(item.uuid);
+			if (nameAndAux == null)
+			{
+				LogManager.getLogger().warn("Cannot find item " + item.uuid);
+				return null;
+			}
+			EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
+
+			if (itemInfo.stackable)
+			{
+				return earthToItemString(nameAndAux.name, nameAndAux.aux) + " " + item.count;
+			}
+			else
+			{
+				if (item.instanceId == null)
+				{
+					LogManager.getLogger().warn("Non-stackable item with no instance ID");
+					return null;
+				}
+				String toolData = "{Damage:" + item.wear + ", GenoaInstanceId:\"" + item.instanceId + "\"}";
+				return earthToItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
+			}
+		}).toArray(String[]::new);
 	}
 
 	public String getJSONString(ItemStack[] hotbar)

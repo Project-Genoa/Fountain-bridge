@@ -85,7 +85,7 @@ public final class PlayerSession
 
 	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
 	{
-		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server, sync initial hotbar to Java server at some point
+		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
 
 		this.bedrock = bedrockSession;
 
@@ -193,6 +193,8 @@ public final class PlayerSession
 
 		ServerboundClientInformationPacket serverboundClientInformationPacket = new ServerboundClientInformationPacket("en_GB", HARDCODED_CHUNK_RADIUS, ChatVisibility.FULL, true, Arrays.asList(SkinPart.values()), HandPreference.RIGHT_HAND, false, true);
 		this.sendJavaPacket(serverboundClientInformationPacket);
+
+		this.updateJavaHotbar(this.genoaInventory.getInitialHotbar());
 
 		ServerboundSetCarriedItemPacket serverboundSetCarriedItemPacket = new ServerboundSetCarriedItemPacket(this.bedrockSelectedHotbarSlot);
 		this.sendJavaPacket(serverboundSetCarriedItemPacket);
@@ -314,13 +316,7 @@ public final class PlayerSession
 		String[] newHotbar = this.genoaInventory.updateHotbar(this.javaPlayerHotbar, genoaInventoryDataPacket.json);
 		if (newHotbar != null)
 		{
-			this.sendCommand("clear @s");
-			int index = 0;
-			for (String item : newHotbar)
-			{
-				this.sendCommand("item replace entity @s hotbar." + index + " with " + item);
-				index++;
-			}
+			this.updateJavaHotbar(newHotbar);
 		}
 	}
 
@@ -406,6 +402,22 @@ public final class PlayerSession
 		}
 
 		this.genoaInventory.addItem(itemStack);
+	}
+
+	private void updateJavaHotbar(@NotNull String[] hotbar)
+	{
+		if (hotbar.length != 7)
+		{
+			throw new IllegalArgumentException();
+		}
+
+		this.sendCommand("clear @s");
+		int index = 0;
+		for (String item : hotbar)
+		{
+			this.sendCommand("item replace entity @s hotbar." + index + " with " + item);
+			index++;
+		}
 	}
 
 	public void sendHotbar()

@@ -1,4 +1,4 @@
-package micheal65536.fountain.palette;
+package micheal65536.fountain.registry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -77,7 +77,7 @@ public class JavaBlockTranslator
 				javaId++;
 			}
 		}
-		catch (IOException | JsonParseException | NullPointerException exception)
+		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
 			LogManager.getLogger().fatal("Cannot load Java blocks", exception);
 			System.exit(1);

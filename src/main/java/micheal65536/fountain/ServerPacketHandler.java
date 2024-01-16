@@ -6,6 +6,9 @@ import com.github.steveice10.mc.protocol.packet.configuration.clientbound.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
@@ -82,6 +85,19 @@ public final class ServerPacketHandler extends SessionAdapter
 			{
 				this.playerSession.onJavaBlockUpdate(blockChangeEntry);
 			}
+		}
+
+		else if (packet instanceof ClientboundContainerSetContentPacket)
+		{
+			this.playerSession.onJavaContainerSetContent((ClientboundContainerSetContentPacket) packet);
+		}
+		else if (packet instanceof ClientboundContainerSetSlotPacket)
+		{
+			this.playerSession.onJavaContainerSetSlot((ClientboundContainerSetSlotPacket) packet);
+		}
+		else if (packet instanceof ClientboundSetCarriedItemPacket)
+		{
+			this.playerSession.onJavaSetCarriedItem(((ClientboundSetCarriedItemPacket) packet).getSlot());
 		}
 
 		else

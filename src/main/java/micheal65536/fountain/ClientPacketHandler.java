@@ -4,7 +4,10 @@ import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaOpenInventoryPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
+import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,6 +37,27 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	public PacketSignal handle(LoginPacket packet)
 	{
 		this.playerSession = new PlayerSession(this.bedrockSession, packet);
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(MobEquipmentPacket packet)
+	{
+		this.playerSession.updateSelectedHotbarItem(packet);
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(GenoaOpenInventoryPacket packet)
+	{
+		this.playerSession.sendGenoaInventory();
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(GenoaInventoryDataPacket packet)
+	{
+		this.playerSession.onGenoaInventoryChange(packet);
 		return PacketSignal.HANDLED;
 	}
 

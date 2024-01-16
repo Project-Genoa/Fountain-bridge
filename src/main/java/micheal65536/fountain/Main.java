@@ -16,8 +16,12 @@ import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitiali
 import org.cloudburstmc.protocol.common.Definition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 
-import micheal65536.fountain.palette.BedrockBlockPalette;
-import micheal65536.fountain.palette.JavaBlockTranslator;
+import micheal65536.fountain.registry.BedrockBlockPalette;
+import micheal65536.fountain.registry.BedrockItemPalette;
+import micheal65536.fountain.registry.EarthItemCatalog;
+import micheal65536.fountain.registry.ItemMappings;
+import micheal65536.fountain.registry.JavaBlockTranslator;
+import micheal65536.fountain.registry.JavaItemPalette;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -32,6 +36,10 @@ public class Main
 
 		BedrockBlockPalette.init();
 		JavaBlockTranslator.init();
+		BedrockItemPalette.init();
+		JavaItemPalette.init();
+		ItemMappings.init();
+		EarthItemCatalog.init();
 
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))
@@ -64,7 +72,8 @@ public class Main
 							@Override
 							public String getIdentifier()
 							{
-								return "todo";
+								String name = BedrockItemPalette.getName(runtimeId);
+								return name != null ? name : "unknown";
 							}
 
 							@Override

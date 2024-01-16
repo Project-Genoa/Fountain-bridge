@@ -15,8 +15,8 @@ import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.jetbrains.annotations.NotNull;
 
-import micheal65536.fountain.palette.BedrockBlockPalette;
-import micheal65536.fountain.palette.JavaBlockTranslator;
+import micheal65536.fountain.registry.BedrockBlockPalette;
+import micheal65536.fountain.registry.JavaBlockTranslator;
 
 import java.io.IOException;
 import java.util.HashMap;

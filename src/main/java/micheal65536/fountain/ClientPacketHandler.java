@@ -40,6 +40,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public void onDisconnect(String reason)
 	{
+		LogManager.getLogger().info("Bedrock client has disconnected");
 		this.playerSession.disconnectForced();
 	}
 }

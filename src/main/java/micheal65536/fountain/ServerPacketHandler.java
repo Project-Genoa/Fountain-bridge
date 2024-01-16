@@ -93,6 +93,7 @@ public final class ServerPacketHandler extends SessionAdapter
 	@Override
 	public void disconnected(DisconnectedEvent event)
 	{
+		LogManager.getLogger().info("Java server has disconnected");
 		this.playerSession.disconnectForced();
 	}
 }

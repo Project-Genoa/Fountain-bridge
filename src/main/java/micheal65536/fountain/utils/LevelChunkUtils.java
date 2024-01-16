@@ -15,8 +15,8 @@ import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.jetbrains.annotations.NotNull;
 
-import micheal65536.fountain.registry.BedrockBlockPalette;
-import micheal65536.fountain.registry.JavaBlockTranslator;
+import micheal65536.fountain.registry.BedrockBlocks;
+import micheal65536.fountain.registry.JavaBlocks;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -47,26 +47,26 @@ public class LevelChunkUtils
 				BitStorage javaBlockData = chunkSection.getChunkData().getStorage();
 				for (int yzx = 0; yzx < 4096; yzx++)
 				{
-					int javaBlockId;
+					int javaId;
 					if (javaBlockPalette instanceof SingletonPalette)
 					{
-						javaBlockId = javaBlockPalette.idToState(0);
+						javaId = javaBlockPalette.idToState(0);
 					}
 					else
 					{
-						javaBlockId = javaBlockPalette.idToState(javaBlockData.get(yzx));
+						javaId = javaBlockPalette.idToState(javaBlockData.get(yzx));
 					}
 
-					int bedrockId = JavaBlockTranslator.getBedrockBlockId(javaBlockId);
+					int bedrockId = JavaBlocks.getBedrockId(javaId);
 					if (bedrockId == -1)
 					{
-						if (alreadyNotifiedMissingBlocks.add(javaBlockId))
+						if (alreadyNotifiedMissingBlocks.add(javaId))
 						{
-							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlockTranslator.getUnmappedBlockName(javaBlockId));
+							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlocks.getName(javaId));
 						}
-						bedrockId = BedrockBlockPalette.AIR;
+						bedrockId = BedrockBlocks.AIR;
 					}
-					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlockTranslator.isWaterlogged(javaBlockId) ? BedrockBlockPalette.WATER : -1);
+					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId) ? BedrockBlocks.WATER : -1);
 
 					// TODO: flower pots, pistons, cauldrons, lecterns
 				}
@@ -146,8 +146,8 @@ public class LevelChunkUtils
 
 		public BedrockChunk()
 		{
-			this.palettes[0].put(BedrockBlockPalette.AIR, 0);
-			this.palettes[1].put(BedrockBlockPalette.AIR, 0);
+			this.palettes[0].put(BedrockBlocks.AIR, 0);
+			this.palettes[1].put(BedrockBlocks.AIR, 0);
 		}
 
 		public void set(int xzy, int level0BlockId, int level1BlockId)

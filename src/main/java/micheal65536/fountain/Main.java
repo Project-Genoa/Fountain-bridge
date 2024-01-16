@@ -16,12 +16,11 @@ import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitiali
 import org.cloudburstmc.protocol.common.Definition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 
-import micheal65536.fountain.registry.BedrockBlockPalette;
-import micheal65536.fountain.registry.BedrockItemPalette;
+import micheal65536.fountain.registry.BedrockBlocks;
+import micheal65536.fountain.registry.BedrockItems;
 import micheal65536.fountain.registry.EarthItemCatalog;
-import micheal65536.fountain.registry.ItemMappings;
-import micheal65536.fountain.registry.JavaBlockTranslator;
-import micheal65536.fountain.registry.JavaItemPalette;
+import micheal65536.fountain.registry.JavaBlocks;
+import micheal65536.fountain.registry.JavaItems;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -34,11 +33,10 @@ public class Main
 		Configurator.setRootLevel(Level.DEBUG);
 		InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
 
-		BedrockBlockPalette.init();
-		JavaBlockTranslator.init();
-		BedrockItemPalette.init();
-		JavaItemPalette.init();
-		ItemMappings.init();
+		BedrockBlocks.init();
+		JavaBlocks.init();
+		BedrockItems.init();
+		JavaItems.init();
 		EarthItemCatalog.init();
 
 		new ServerBootstrap()
@@ -72,7 +70,7 @@ public class Main
 							@Override
 							public String getIdentifier()
 							{
-								String name = BedrockItemPalette.getName(runtimeId);
+								String name = BedrockItems.getName(runtimeId);
 								return name != null ? name : "unknown";
 							}
 

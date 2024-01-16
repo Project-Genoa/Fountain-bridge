@@ -50,8 +50,8 @@ import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import micheal65536.fountain.registry.BedrockBlockPalette;
-import micheal65536.fountain.registry.JavaBlockTranslator;
+import micheal65536.fountain.registry.BedrockBlocks;
+import micheal65536.fountain.registry.JavaBlocks;
 import micheal65536.fountain.utils.GenoaInventory;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.LevelChunkUtils;
@@ -262,11 +262,11 @@ public final class PlayerSession
 
 				// TODO: doors
 
-				int bedrockId = JavaBlockTranslator.getBedrockBlockId(blockChangeEntry.getBlock());
+				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock());
 				if (bedrockId == -1)
 				{
-					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlockTranslator.getUnmappedBlockName(blockChangeEntry.getBlock()));
-					bedrockId = BedrockBlockPalette.AIR;
+					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlocks.getName(blockChangeEntry.getBlock()));
+					bedrockId = BedrockBlocks.AIR;
 				}
 
 				UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
@@ -279,7 +279,7 @@ public final class PlayerSession
 				updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(1);
-				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(JavaBlockTranslator.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlockPalette.WATER : BedrockBlockPalette.AIR));
+				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}

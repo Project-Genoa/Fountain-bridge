@@ -15,6 +15,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.Cli
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
@@ -74,6 +75,10 @@ public final class PlayerSession
 
 	private final BedrockSession bedrock;
 	private boolean bedrockDoDaylightCycle = true;
+	private Vector3f bedrockPlayerPosition = Vector3f.from(0.0f, 0.0f, 0.0f);
+	private float bedrockPlayerYaw = 0.0f;
+	private float bedrockPlayerPitch = 0.0f;
+	private boolean bedrockPlayerIsOnGround = false;
 	private int bedrockSelectedHotbarSlot = 0;
 
 	private final TcpClientSession java;
@@ -285,6 +290,23 @@ public final class PlayerSession
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}
+		}
+	}
+
+	public void movePlayer(@NotNull Vector3f position, float yaw, float pitch, boolean isOnGround)
+	{
+		this.bedrockPlayerPosition = position;
+		this.bedrockPlayerYaw = yaw;
+		this.bedrockPlayerPitch = pitch;
+		this.bedrockPlayerIsOnGround = isOnGround;
+		this.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(this.bedrockPlayerIsOnGround, this.bedrockPlayerPosition.getX(), this.bedrockPlayerPosition.getY(), this.bedrockPlayerPosition.getZ(), this.bedrockPlayerYaw, this.bedrockPlayerPitch));
+	}
+
+	public void teleportJavaPlayer(float javaPlayerX, float javaPlayerY, float javaPlayerZ)
+	{
+		if (Math.abs(javaPlayerX - this.bedrockPlayerPosition.getX()) > 0.1f || Math.abs(javaPlayerY - this.bedrockPlayerPosition.getY()) > 0.1f || Math.abs(javaPlayerZ - this.bedrockPlayerPosition.getZ()) > 0.1f)
+		{
+			this.sendCommand("tp @s " + this.bedrockPlayerPosition.getX() + " " + this.bedrockPlayerPosition.getY() + " " + this.bedrockPlayerPosition.getZ());
 		}
 	}
 

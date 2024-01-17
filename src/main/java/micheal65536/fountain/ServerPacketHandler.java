@@ -6,15 +6,19 @@ import com.github.steveice10.mc.protocol.packet.configuration.clientbound.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetCarriedItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundForgetLevelChunkPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLightUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSectionBlocksUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundChunkBatchReceivedPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.packetlib.Session;
@@ -85,6 +89,20 @@ public final class ServerPacketHandler extends SessionAdapter
 			{
 				this.playerSession.onJavaBlockUpdate(blockChangeEntry);
 			}
+		}
+		else if (packet instanceof ClientboundLightUpdatePacket)
+		{
+			// empty
+		}
+		else if (packet instanceof ClientboundForgetLevelChunkPacket)
+		{
+			// empty
+		}
+
+		else if (packet instanceof ClientboundPlayerPositionPacket)
+		{
+			this.playerSession.sendJavaPacket(new ServerboundAcceptTeleportationPacket(((ClientboundPlayerPositionPacket) packet).getTeleportId()));
+			this.playerSession.teleportJavaPlayer((float) ((ClientboundPlayerPositionPacket) packet).getX(), (float) ((ClientboundPlayerPositionPacket) packet).getY(), (float) ((ClientboundPlayerPositionPacket) packet).getZ());
 		}
 
 		else if (packet instanceof ClientboundContainerSetContentPacket)

@@ -5,9 +5,11 @@ import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaNetworkTransformPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaOpenInventoryPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
+import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket;
 import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 
@@ -37,6 +39,20 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	public PacketSignal handle(LoginPacket packet)
 	{
 		this.playerSession = new PlayerSession(this.bedrockSession, packet);
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(MovePlayerPacket packet)
+	{
+		this.playerSession.movePlayer(packet.getPosition(), packet.getRotation().getY(), packet.getRotation().getX(), packet.isOnGround());
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(GenoaNetworkTransformPacket packet)
+	{
+		// TODO: what does this do?
 		return PacketSignal.HANDLED;
 	}
 

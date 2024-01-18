@@ -104,7 +104,6 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundPlayerPositionPacket)
 		{
 			this.playerSession.sendJavaPacket(new ServerboundAcceptTeleportationPacket(((ClientboundPlayerPositionPacket) packet).getTeleportId()));
-			this.playerSession.teleportJavaPlayer((float) ((ClientboundPlayerPositionPacket) packet).getX(), (float) ((ClientboundPlayerPositionPacket) packet).getY(), (float) ((ClientboundPlayerPositionPacket) packet).getZ());
 		}
 
 		else if (packet instanceof ClientboundContainerSetContentPacket)

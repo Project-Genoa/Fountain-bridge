@@ -1,5 +1,6 @@
 package micheal65536.fountain;
 
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
@@ -45,7 +46,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public PacketSignal handle(MovePlayerPacket packet)
 	{
-		this.playerSession.movePlayer(packet.getPosition(), packet.getRotation().getY(), packet.getRotation().getX(), packet.isOnGround());
+		this.playerSession.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(packet.isOnGround(), packet.getPosition().getX(), packet.getPosition().getY(), packet.getPosition().getZ(), packet.getRotation().getY(), packet.getRotation().getX()));
 		return PacketSignal.HANDLED;
 	}
 

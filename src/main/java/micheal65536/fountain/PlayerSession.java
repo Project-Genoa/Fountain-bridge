@@ -4,7 +4,10 @@ import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
+import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
@@ -15,7 +18,10 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.Cli
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.ListTag;
@@ -38,6 +44,7 @@ import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaGameplaySettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
@@ -262,7 +269,7 @@ public final class PlayerSession
 
 				// TODO: flower pots, pistons, cauldrons, lecterns
 
-				// TODO: doors
+				// TODO: Geyser said we need to special-case doors here, but they seem to work fine?
 
 				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock());
 				if (bedrockId == -1)
@@ -288,6 +295,25 @@ public final class PlayerSession
 		}
 	}
 
+	public void playerInteraction(@NotNull InventoryTransactionPacket packet)
+	{
+		if (packet.getActionType() == 0) // place/use item on block
+		{
+			ServerboundUseItemOnPacket serverboundUseItemOnPacket = new ServerboundUseItemOnPacket(packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], Hand.MAIN_HAND, packet.getClickPosition().getX(), packet.getClickPosition().getY(), packet.getClickPosition().getZ(), false, 0);
+			this.sendJavaPacket(serverboundUseItemOnPacket);
+		}
+		else if (packet.getActionType() == 1) // use item
+		{
+			ServerboundUseItemPacket serverboundUseItemPacket = new ServerboundUseItemPacket(Hand.MAIN_HAND, 0);
+			this.sendJavaPacket(serverboundUseItemPacket);
+		}
+		else if (packet.getActionType() == 2) // dig
+		{
+			ServerboundPlayerActionPacket serverboundPlayerActionPacket = new ServerboundPlayerActionPacket(PlayerAction.START_DIGGING, packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], 0);
+			this.sendJavaPacket(serverboundPlayerActionPacket);
+		}
+	}
+
 	public void updateSelectedHotbarItem(@NotNull MobEquipmentPacket mobEquipmentPacket)
 	{
 		if (mobEquipmentPacket.getRuntimeEntityId() != this.javaPlayerEntityId || !(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
@@ -307,7 +333,21 @@ public final class PlayerSession
 		}
 		else if (mobEquipmentPacket.getContainerId() == 125)
 		{
-			// TODO: pickup/interact mode
+			// switch between interact and break/pickup mode
+			// we use the last two hotbar slots to represent these on the Java server, as they should usually be empty
+
+			int itemId = mobEquipmentPacket.getItem().getDefinition().getRuntimeId();
+			if (itemId == 2258 || itemId == 2261) // pickup/punch
+			{
+				this.bedrockSelectedHotbarSlot = 7;
+			}
+			else if (itemId == 2259) // interact
+			{
+				this.bedrockSelectedHotbarSlot = 8;
+			}
+
+			ServerboundSetCarriedItemPacket serverboundSetCarriedItemPacket = new ServerboundSetCarriedItemPacket(this.bedrockSelectedHotbarSlot);
+			this.sendJavaPacket(serverboundSetCarriedItemPacket);
 		}
 	}
 

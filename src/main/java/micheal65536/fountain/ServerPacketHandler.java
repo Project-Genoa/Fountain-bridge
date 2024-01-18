@@ -8,6 +8,7 @@ import com.github.steveice10.mc.protocol.packet.configuration.clientbound.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetCarriedItemPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
@@ -105,7 +106,10 @@ public final class ServerPacketHandler extends SessionAdapter
 		{
 			this.playerSession.sendJavaPacket(new ServerboundAcceptTeleportationPacket(((ClientboundPlayerPositionPacket) packet).getTeleportId()));
 		}
-
+		else if (packet instanceof ClientboundBlockChangedAckPacket)
+		{
+			// empty
+		}
 		else if (packet instanceof ClientboundContainerSetContentPacket)
 		{
 			this.playerSession.onJavaContainerSetContent((ClientboundContainerSetContentPacket) packet);

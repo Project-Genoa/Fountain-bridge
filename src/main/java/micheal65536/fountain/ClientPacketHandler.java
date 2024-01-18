@@ -3,11 +3,13 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
+import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaNetworkTransformPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaOpenInventoryPacket;
+import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket;
@@ -55,6 +57,20 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	{
 		// TODO: what does this do?
 		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(InventoryTransactionPacket packet)
+	{
+		if (packet.getTransactionType() == InventoryTransactionType.ITEM_USE)
+		{
+			this.playerSession.playerInteraction(packet);
+			return PacketSignal.HANDLED;
+		}
+		else
+		{
+			return PacketSignal.UNHANDLED;
+		}
 	}
 
 	@Override

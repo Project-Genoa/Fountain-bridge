@@ -27,7 +27,7 @@ public class EarthItemCatalog
 			{
 				String uuid = element.getAsJsonObject().get("id").getAsString();
 				JsonObject item = element.getAsJsonObject().get("item").getAsJsonObject();
-				String name = item.get("name").getAsString();
+				String name = "minecraft:" + item.get("name").getAsString();
 				int aux = item.get("aux").getAsInt();
 				boolean stackable = element.getAsJsonObject().get("stacks").getAsBoolean();
 				int maxWear = item.has("health") && !item.get("health").isJsonNull() ? item.get("health").getAsInt() : 0;

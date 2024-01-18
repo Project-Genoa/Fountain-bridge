@@ -7,7 +7,6 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import org.apache.logging.log4j.LogManager;
-import org.cloudburstmc.nbt.NbtMap;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -115,7 +114,7 @@ public final class GenoaInventory
 
 			if (itemInfo.stackable)
 			{
-				return earthToItemString(nameAndAux.name, nameAndAux.aux) + " " + item.count;
+				return toItemString(nameAndAux.name, nameAndAux.aux) + " " + item.count;
 			}
 			else
 			{
@@ -125,7 +124,7 @@ public final class GenoaInventory
 					return null;
 				}
 				String toolData = "{Damage:" + item.wear + ", GenoaInstanceId:\"" + item.instanceId + "\"}";
-				return earthToItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
+				return toItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
 			}
 		}).toArray(String[]::new);
 	}
@@ -268,7 +267,7 @@ public final class GenoaInventory
 
 			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) - takeCount);
 
-			return earthToItemString(nameAndAux.name, nameAndAux.aux) + " " + takeCount;
+			return toItemString(nameAndAux.name, nameAndAux.aux) + " " + takeCount;
 		}
 		else
 		{
@@ -292,7 +291,7 @@ public final class GenoaInventory
 
 			String toolData = "{Damage:" + wear + ", GenoaInstanceId:\"" + item.instanceId + "\"}";
 
-			return earthToItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
+			return toItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
 		}
 	}
 
@@ -305,20 +304,17 @@ public final class GenoaInventory
 		}
 
 		int javaId = itemStack.getId();
-		int bedrockId = JavaItems.getBedrockId(javaId);
-		if (bedrockId == 0)
+		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
+		if (bedrockMapping == null)
 		{
 			LogManager.getLogger().warn("Attempt to translate item with no mapping " + JavaItems.getName(javaId));
 			return null;
 		}
-		String bedrockName = BedrockItems.getName(bedrockId);
-		// TODO: Bedrock to Earth mapping should probably be in Earth items data file
-		String earthName = bedrockName.split(":", 2)[1];
-		int aux = getAux(bedrockName, JavaItems.getBedrockNBT(javaId));
-		String uuid = EarthItemCatalog.getUUID(earthName, aux);
+		String bedrockName = BedrockItems.getName(bedrockMapping.id);
+		String uuid = EarthItemCatalog.getUUID(bedrockName, bedrockMapping.aux);
 		if (uuid == null)
 		{
-			LogManager.getLogger().warn("Cannot find item UUID for " + earthName + " " + aux);
+			LogManager.getLogger().warn("Cannot find item UUID for " + bedrockName + " " + bedrockMapping.aux);
 			return null;
 		}
 		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
@@ -336,36 +332,20 @@ public final class GenoaInventory
 		}
 	}
 
-	private static int getAux(@NotNull String bedrockName, @Nullable NbtMap bedrockNBT)
-	{
-		if (bedrockNBT == null)
-		{
-			return 0;
-		}
-
-		// TODO
-		return 0;
-	}
-
 	@Nullable
-	private static String earthToItemString(@NotNull String earthName, int aux)
+	private static String toItemString(@NotNull String name, int aux)
 	{
-		// TODO: Earth to Bedrock mapping should probably be in Earth items data file
-		String bedrockName = "minecraft:" + earthName;
-		int bedrockId = BedrockItems.getId(bedrockName);
+		int bedrockId = BedrockItems.getId(name);
 		if (bedrockId == 0)
 		{
-			LogManager.getLogger().warn("Cannot find Bedrock item for " + earthName);
+			LogManager.getLogger().warn("Cannot find Bedrock item for " + name);
 			return null;
 		}
 
-		// TODO
-		NbtMap bedrockNBT = null;
-
-		int javaId = JavaItems.getJavaId(bedrockName, bedrockNBT);
+		int javaId = JavaItems.getJavaId(name, aux);
 		if (javaId == -1)
 		{
-			LogManager.getLogger().warn("Cannot find Java item for " + earthName + " " + aux);
+			LogManager.getLogger().warn("Cannot find Java item for " + name + " " + aux);
 			return null;
 		}
 		return JavaItems.getName(javaId);

@@ -178,7 +178,8 @@
     "name": "minecraft:andesite",
     "id": 6,
     "bedrock": {
-      "name": "minecraft:andesite"
+      "name": "minecraft:stone",
+      "aux": 5
     }
   },
   {
@@ -941,7 +942,8 @@
     "name": "minecraft:bow",
     "id": 797,
     "bedrock": {
-      "name": "minecraft:bow"
+      "name": "minecraft:bow",
+      "wear": true
     }
   },
   {
@@ -1172,7 +1174,8 @@
     "name": "minecraft:bucket",
     "id": 905,
     "bedrock": {
-      "name": "minecraft:bucket"
+      "name": "minecraft:bucket",
+      "aux": 0
     }
   },
   {
@@ -1543,14 +1546,16 @@
     "name": "minecraft:chiseled_red_sandstone",
     "id": 510,
     "bedrock": {
-      "name": "minecraft:chiseled_red_sandstone"
+      "name": "minecraft:red_sandstone",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:chiseled_sandstone",
     "id": 191,
     "bedrock": {
-      "name": "minecraft:chiseled_sandstone"
+      "name": "minecraft:sandstone",
+      "aux": 1
     }
   },
   {
@@ -1732,7 +1737,8 @@
     "name": "minecraft:cod_bucket",
     "id": 914,
     "bedrock": {
-      "name": "minecraft:cod_bucket"
+      "name": "minecraft:bucket",
+      "aux": 2
     }
   },
   {
@@ -2124,7 +2130,8 @@
     "name": "minecraft:cut_red_sandstone",
     "id": 511,
     "bedrock": {
-      "name": "minecraft:cut_red_sandstone"
+      "name": "minecraft:red_sandstone",
+      "aux": 2
     }
   },
   {
@@ -2138,7 +2145,8 @@
     "name": "minecraft:cut_sandstone",
     "id": 192,
     "bedrock": {
-      "name": "minecraft:cut_sandstone"
+      "name": "minecraft:sandstone",
+      "aux": 2
     }
   },
   {
@@ -2670,7 +2678,8 @@
     "name": "minecraft:diamond_axe",
     "id": 837,
     "bedrock": {
-      "name": "minecraft:diamond_axe"
+      "name": "minecraft:diamond_axe",
+      "wear": true
     }
   },
   {
@@ -2705,7 +2714,8 @@
     "name": "minecraft:diamond_hoe",
     "id": 838,
     "bedrock": {
-      "name": "minecraft:diamond_hoe"
+      "name": "minecraft:diamond_hoe",
+      "wear": true
     }
   },
   {
@@ -2733,28 +2743,32 @@
     "name": "minecraft:diamond_pickaxe",
     "id": 836,
     "bedrock": {
-      "name": "minecraft:diamond_pickaxe"
+      "name": "minecraft:diamond_pickaxe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:diamond_shovel",
     "id": 835,
     "bedrock": {
-      "name": "minecraft:diamond_shovel"
+      "name": "minecraft:diamond_shovel",
+      "wear": true
     }
   },
   {
     "name": "minecraft:diamond_sword",
     "id": 834,
     "bedrock": {
-      "name": "minecraft:diamond_sword"
+      "name": "minecraft:diamond_sword",
+      "wear": true
     }
   },
   {
     "name": "minecraft:diorite",
     "id": 4,
     "bedrock": {
-      "name": "minecraft:diorite"
+      "name": "minecraft:stone",
+      "aux": 3
     }
   },
   {
@@ -3244,7 +3258,8 @@
     "name": "minecraft:flint_and_steel",
     "id": 795,
     "bedrock": {
-      "name": "minecraft:flint_and_steel"
+      "name": "minecraft:flint_and_steel",
+      "wear": true
     }
   },
   {
@@ -3475,7 +3490,8 @@
     "name": "minecraft:golden_axe",
     "id": 827,
     "bedrock": {
-      "name": "minecraft:golden_axe"
+      "name": "minecraft:golden_axe",
+      "wear": true
     }
   },
   {
@@ -3510,7 +3526,8 @@
     "name": "minecraft:golden_hoe",
     "id": 828,
     "bedrock": {
-      "name": "minecraft:golden_hoe"
+      "name": "minecraft:golden_hoe",
+      "wear": true
     }
   },
   {
@@ -3531,28 +3548,32 @@
     "name": "minecraft:golden_pickaxe",
     "id": 826,
     "bedrock": {
-      "name": "minecraft:golden_pickaxe"
+      "name": "minecraft:golden_pickaxe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:golden_shovel",
     "id": 825,
     "bedrock": {
-      "name": "minecraft:golden_shovel"
+      "name": "minecraft:golden_shovel",
+      "wear": true
     }
   },
   {
     "name": "minecraft:golden_sword",
     "id": 824,
     "bedrock": {
-      "name": "minecraft:golden_sword"
+      "name": "minecraft:golden_sword",
+      "wear": true
     }
   },
   {
     "name": "minecraft:granite",
     "id": 2,
     "bedrock": {
-      "name": "minecraft:granite"
+      "name": "minecraft:stone",
+      "aux": 1
     }
   },
   {
@@ -4000,7 +4021,8 @@
     "name": "minecraft:iron_axe",
     "id": 832,
     "bedrock": {
-      "name": "minecraft:iron_axe"
+      "name": "minecraft:iron_axe",
+      "wear": true
     }
   },
   {
@@ -4056,7 +4078,8 @@
     "name": "minecraft:iron_hoe",
     "id": 833,
     "bedrock": {
-      "name": "minecraft:iron_hoe"
+      "name": "minecraft:iron_hoe",
+      "wear": true
     }
   },
   {
@@ -4098,21 +4121,24 @@
     "name": "minecraft:iron_pickaxe",
     "id": 831,
     "bedrock": {
-      "name": "minecraft:iron_pickaxe"
+      "name": "minecraft:iron_pickaxe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:iron_shovel",
     "id": 830,
     "bedrock": {
-      "name": "minecraft:iron_shovel"
+      "name": "minecraft:iron_shovel",
+      "wear": true
     }
   },
   {
     "name": "minecraft:iron_sword",
     "id": 829,
     "bedrock": {
-      "name": "minecraft:iron_sword"
+      "name": "minecraft:iron_sword",
+      "wear": true
     }
   },
   {
@@ -4336,7 +4362,8 @@
     "name": "minecraft:lava_bucket",
     "id": 907,
     "bedrock": {
-      "name": "minecraft:lava_bucket"
+      "name": "minecraft:bucket",
+      "aux": 10
     }
   },
   {
@@ -5022,7 +5049,8 @@
     "name": "minecraft:milk_bucket",
     "id": 911,
     "bedrock": {
-      "name": "minecraft:milk_bucket"
+      "name": "minecraft:bucket",
+      "aux": 1
     }
   },
   {
@@ -5421,7 +5449,7 @@
     "name": "minecraft:netherite_axe",
     "id": 842,
     "bedrock": {
-      "name": "minecraft:netherite_axe"
+      "ignore": true
     }
   },
   {
@@ -5456,7 +5484,7 @@
     "name": "minecraft:netherite_hoe",
     "id": 843,
     "bedrock": {
-      "name": "minecraft:netherite_hoe"
+      "ignore": true
     }
   },
   {
@@ -5477,7 +5505,7 @@
     "name": "minecraft:netherite_pickaxe",
     "id": 841,
     "bedrock": {
-      "name": "minecraft:netherite_pickaxe"
+      "ignore": true
     }
   },
   {
@@ -5491,14 +5519,14 @@
     "name": "minecraft:netherite_shovel",
     "id": 840,
     "bedrock": {
-      "name": "minecraft:netherite_shovel"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:netherite_sword",
     "id": 839,
     "bedrock": {
-      "name": "minecraft:netherite_sword"
+      "ignore": true
     }
   },
   {
@@ -6128,7 +6156,8 @@
     "name": "minecraft:polished_andesite",
     "id": 7,
     "bedrock": {
-      "name": "minecraft:polished_andesite"
+      "name": "minecraft:stone",
+      "aux": 6
     }
   },
   {
@@ -6254,7 +6283,8 @@
     "name": "minecraft:polished_diorite",
     "id": 5,
     "bedrock": {
-      "name": "minecraft:polished_diorite"
+      "name": "minecraft:stone",
+      "aux": 4
     }
   },
   {
@@ -6275,7 +6305,8 @@
     "name": "minecraft:polished_granite",
     "id": 3,
     "bedrock": {
-      "name": "minecraft:polished_granite"
+      "name": "minecraft:stone",
+      "aux": 2
     }
   },
   {
@@ -6849,14 +6880,16 @@
     "name": "minecraft:red_sand",
     "id": 60,
     "bedrock": {
-      "name": "minecraft:red_sand"
+      "name": "minecraft:sand",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:red_sandstone",
     "id": 509,
     "bedrock": {
-      "name": "minecraft:red_sandstone"
+      "name": "minecraft:red_sandstone",
+      "aux": 0
     }
   },
   {
@@ -7031,7 +7064,8 @@
     "name": "minecraft:salmon_bucket",
     "id": 913,
     "bedrock": {
-      "name": "minecraft:salmon_bucket"
+      "name": "minecraft:bucket",
+      "aux": 3
     }
   },
   {
@@ -7045,14 +7079,16 @@
     "name": "minecraft:sand",
     "id": 57,
     "bedrock": {
-      "name": "minecraft:sand"
+      "name": "minecraft:sand",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:sandstone",
     "id": 190,
     "bedrock": {
-      "name": "minecraft:sandstone"
+      "name": "minecraft:sandstone",
+      "aux": 0
     }
   },
   {
@@ -7171,7 +7207,8 @@
     "name": "minecraft:shears",
     "id": 980,
     "bedrock": {
-      "name": "minecraft:shears"
+      "name": "minecraft:shears",
+      "wear": true
     }
   },
   {
@@ -7360,7 +7397,8 @@
     "name": "minecraft:smooth_red_sandstone",
     "id": 281,
     "bedrock": {
-      "name": "minecraft:smooth_red_sandstone"
+      "name": "minecraft:red_sandstone",
+      "aux": 3
     }
   },
   {
@@ -7381,7 +7419,8 @@
     "name": "minecraft:smooth_sandstone",
     "id": 282,
     "bedrock": {
-      "name": "minecraft:smooth_sandstone"
+      "name": "minecraft:sandstone",
+      "aux": 3
     }
   },
   {
@@ -7710,14 +7749,16 @@
     "name": "minecraft:stone",
     "id": 1,
     "bedrock": {
-      "name": "minecraft:stone"
+      "name": "minecraft:stone",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:stone_axe",
     "id": 822,
     "bedrock": {
-      "name": "minecraft:stone_axe"
+      "name": "minecraft:stone_axe",
+      "wear": true
     }
   },
   {
@@ -7759,14 +7800,16 @@
     "name": "minecraft:stone_hoe",
     "id": 823,
     "bedrock": {
-      "name": "minecraft:stone_hoe"
+      "name": "minecraft:stone_hoe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:stone_pickaxe",
     "id": 821,
     "bedrock": {
-      "name": "minecraft:stone_pickaxe"
+      "name": "minecraft:stone_pickaxe",
+      "wear": true
     }
   },
   {
@@ -7780,7 +7823,8 @@
     "name": "minecraft:stone_shovel",
     "id": 820,
     "bedrock": {
-      "name": "minecraft:stone_shovel"
+      "name": "minecraft:stone_shovel",
+      "wear": true
     }
   },
   {
@@ -7801,7 +7845,8 @@
     "name": "minecraft:stone_sword",
     "id": 819,
     "bedrock": {
-      "name": "minecraft:stone_sword"
+      "name": "minecraft:stone_sword",
+      "wear": true
     }
   },
   {
@@ -8193,7 +8238,8 @@
     "name": "minecraft:tropical_fish_bucket",
     "id": 915,
     "bedrock": {
-      "name": "minecraft:tropical_fish_bucket"
+      "name": "minecraft:bucket",
+      "aux": 4
     }
   },
   {
@@ -8501,7 +8547,8 @@
     "name": "minecraft:water_bucket",
     "id": 906,
     "bedrock": {
-      "name": "minecraft:water_bucket"
+      "name": "minecraft:bucket",
+      "aux": 8
     }
   },
   {
@@ -9005,35 +9052,40 @@
     "name": "minecraft:wooden_axe",
     "id": 817,
     "bedrock": {
-      "name": "minecraft:wooden_axe"
+      "name": "minecraft:wooden_axe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:wooden_hoe",
     "id": 818,
     "bedrock": {
-      "name": "minecraft:wooden_hoe"
+      "name": "minecraft:wooden_hoe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:wooden_pickaxe",
     "id": 816,
     "bedrock": {
-      "name": "minecraft:wooden_pickaxe"
+      "name": "minecraft:wooden_pickaxe",
+      "wear": true
     }
   },
   {
     "name": "minecraft:wooden_shovel",
     "id": 815,
     "bedrock": {
-      "name": "minecraft:wooden_shovel"
+      "name": "minecraft:wooden_shovel",
+      "wear": true
     }
   },
   {
     "name": "minecraft:wooden_sword",
     "id": 814,
     "bedrock": {
-      "name": "minecraft:wooden_sword"
+      "name": "minecraft:wooden_sword",
+      "wear": true
     }
   },
   {

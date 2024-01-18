@@ -5,23 +5,19 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
-import org.cloudburstmc.nbt.NbtMap;
-import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.Map;
 
 public class JavaItems
 {
 	private static final HashMap<Integer, String> map = new HashMap<>();
 
-	private static final HashMap<Integer, Integer> bedrockIdMap = new HashMap<>();
-	private static final HashMap<Integer, NbtMap> bedrockNBTMap = new HashMap<>();
-	private static final HashMap<ItemNameAndNBT, Integer> javaIdMap = new HashMap<>();
+	private static final HashMap<Integer, BedrockMapping> bedrockMappingMap = new HashMap<>();
+	private static final HashMap<ItemNameAndAux, Integer> javaIdMap = new HashMap<>();
 
 	static
 	{
@@ -44,34 +40,8 @@ public class JavaItems
 					continue;
 				}
 				String bedrockName = bedrockMapping.get("name").getAsString();
-				NbtMap bedrockNBT;
-				if (bedrockMapping.has("nbt"))
-				{
-					NbtMapBuilder builder = NbtMap.builder();
-					JsonObject nbtObject = bedrockMapping.get("nbt").getAsJsonObject();
-					for (Map.Entry<String, JsonElement> entry : nbtObject.entrySet())
-					{
-						JsonElement stateElement = entry.getValue();
-						if (stateElement.getAsJsonPrimitive().isString())
-						{
-							builder.putString(entry.getKey(), stateElement.getAsString());
-						}
-						else if (stateElement.getAsJsonPrimitive().isBoolean())
-						{
-							builder.putBoolean(entry.getKey(), stateElement.getAsBoolean());
-						}
-						else
-						{
-							// TODO: NBT requires type information
-							//builder.putInt(entry.getKey(), stateElement.getAsInt());
-						}
-					}
-					bedrockNBT = builder.build();
-				}
-				else
-				{
-					bedrockNBT = null;
-				}
+				int bedrockAux = bedrockMapping.has("aux") ? bedrockMapping.get("aux").getAsInt() : 0;
+				boolean bedrockToolWear = bedrockMapping.has("wear") ? bedrockMapping.get("wear").getAsBoolean() : false;
 				int bedrockId = BedrockItems.getId(bedrockName);
 				if (bedrockId == 0)
 				{
@@ -79,11 +49,10 @@ public class JavaItems
 				}
 				else
 				{
-					bedrockIdMap.put(id, bedrockId);
-					bedrockNBTMap.put(id, bedrockNBT);
-					if (javaIdMap.put(new ItemNameAndNBT(bedrockName, bedrockNBT), id) != null)
+					bedrockMappingMap.put(id, new BedrockMapping(bedrockId, bedrockAux, bedrockToolWear));
+					if (javaIdMap.put(new ItemNameAndAux(bedrockName, bedrockAux), id) != null)
 					{
-						LogManager.getLogger().warn("Duplicate Bedrock item mapping " + bedrockName);
+						LogManager.getLogger().warn("Duplicate Bedrock item mapping " + bedrockName + " " + bedrockAux);
 					}
 				}
 			}
@@ -106,41 +75,35 @@ public class JavaItems
 		return map.getOrDefault(id, null);
 	}
 
-	public static int getBedrockId(int javaId)
-	{
-		return bedrockIdMap.getOrDefault(javaId, 0);
-	}
-
 	@Nullable
-	public static NbtMap getBedrockNBT(int javaId)
+	public static BedrockMapping getBedrockMapping(int javaId)
 	{
-		return bedrockNBTMap.getOrDefault(javaId, null);
+		return bedrockMappingMap.getOrDefault(javaId, null);
 	}
 
-	public static int getJavaId(@NotNull String bedrockName, @Nullable NbtMap bedrockNBT)
+	public static int getJavaId(@NotNull String bedrockName, int bedrockAux)
 	{
-		return javaIdMap.getOrDefault(new ItemNameAndNBT(bedrockName, bedrockNBT), -1);
+		return javaIdMap.getOrDefault(new ItemNameAndAux(bedrockName, bedrockAux), -1);
 	}
 
-	private static final class ItemNameAndNBT
+	private static final class ItemNameAndAux
 	{
 		@NotNull
 		public final String name;
-		@Nullable
-		public final NbtMap nbt;
+		public final int aux;
 
-		public ItemNameAndNBT(@NotNull String name, @Nullable NbtMap nbt)
+		public ItemNameAndAux(@NotNull String name, int aux)
 		{
 			this.name = name;
-			this.nbt = nbt;
+			this.aux = aux;
 		}
 
 		@Override
 		public boolean equals(Object obj)
 		{
-			if (obj instanceof ItemNameAndNBT)
+			if (obj instanceof ItemNameAndAux)
 			{
-				return this.name.equals(((ItemNameAndNBT) obj).name) && ((this.nbt == null && ((ItemNameAndNBT) obj).nbt == null) || (this.nbt != null && ((ItemNameAndNBT) obj).nbt != null && this.nbt.equals(((ItemNameAndNBT) obj).nbt)));
+				return this.name.equals(((ItemNameAndAux) obj).name) && this.aux == ((ItemNameAndAux) obj).aux;
 			}
 			else
 			{
@@ -151,7 +114,21 @@ public class JavaItems
 		@Override
 		public int hashCode()
 		{
-			return this.name.hashCode() ^ (this.nbt != null ? this.nbt.hashCode() : 0);
+			return this.name.hashCode() ^ this.aux;
+		}
+	}
+
+	public static final class BedrockMapping
+	{
+		public final int id;
+		public final int aux;
+		public final boolean toolWear;
+
+		public BedrockMapping(int id, int aux, boolean toolWear)
+		{
+			this.id = id;
+			this.aux = aux;
+			this.toolWear = toolWear;
 		}
 	}
 }

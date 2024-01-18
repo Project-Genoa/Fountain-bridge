@@ -2,6 +2,8 @@ package micheal65536.fountain;
 
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
 import com.github.steveice10.mc.protocol.packet.configuration.clientbound.ClientboundRegistryDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
@@ -116,6 +118,11 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundSetCarriedItemPacket)
 		{
 			this.playerSession.onJavaSetCarriedItem(((ClientboundSetCarriedItemPacket) packet).getSlot());
+		}
+
+		else if (packet instanceof ClientboundPingPacket)
+		{
+			this.playerSession.sendJavaPacket(new ServerboundPongPacket(((ClientboundPingPacket) packet).getId()));
 		}
 
 		else

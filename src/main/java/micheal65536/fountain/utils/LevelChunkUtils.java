@@ -15,13 +15,16 @@ import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.jetbrains.annotations.NotNull;
 
+import micheal65536.fountain.registry.BedrockBiomes;
 import micheal65536.fountain.registry.BedrockBlocks;
 import micheal65536.fountain.registry.JavaBlocks;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.Map;
 
 public class LevelChunkUtils
 {
@@ -32,7 +35,17 @@ public class LevelChunkUtils
 		{
 			BedrockChunk[] bedrockChunks = new BedrockChunk[16];
 			HashSet<Integer> alreadyNotifiedMissingBlocks = new HashSet<>();
+			HashSet<String> alreadyNotifiedMissingBiomes = new HashSet<>();
 			ByteBuf byteBuf = Unpooled.wrappedBuffer(clientboundLevelChunkWithLightPacket.getChunkData());
+			int[][] heightmap = new int[16][16];
+			int[][][] biomes = new int[4][4][64];
+			for (int[][] x : biomes)
+			{
+				for (int[] z : x)
+				{
+					Arrays.fill(z, -1);
+				}
+			}
 			for (int chunkY = -4; chunkY < 20; chunkY++) // Java world height goes from -64 to 320
 			{
 				ChunkSection chunkSection = minecraftCodecHelper.readChunkSection(byteBuf, 32);
@@ -68,6 +81,18 @@ public class LevelChunkUtils
 					}
 					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId) ? BedrockBlocks.WATER : -1);
 
+					if (bedrockId != BedrockBlocks.AIR)
+					{
+						int x = yzx & 0x00F;
+						int z = (yzx & 0x0F0) >> 4;
+						int y = (yzx & 0xF00) >> 8;
+						y = y + chunkY * 16;
+						if (y > heightmap[x][z])
+						{
+							heightmap[x][z] = y;
+						}
+					}
+
 					// TODO: flower pots, pistons, cauldrons, lecterns
 				}
 
@@ -76,7 +101,45 @@ public class LevelChunkUtils
 					// TODO: block entities
 				}
 
-				// TODO: biomes
+				Palette javaBiomePalette = chunkSection.getBiomeData().getPalette();
+				BitStorage javaBiomeData = chunkSection.getBiomeData().getStorage();
+				for (int yzx = 0; yzx < 64; yzx++)
+				{
+					int javaId;
+					if (javaBiomePalette instanceof SingletonPalette)
+					{
+						javaId = javaBiomePalette.idToState(0);
+					}
+					else
+					{
+						javaId = javaBiomePalette.idToState(javaBiomeData.get(yzx));
+					}
+
+					int bedrockId;
+					String biomeName = javaBiomesMap.getOrDefault(javaId, null);
+					if (biomeName == null)
+					{
+						LogManager.getLogger().warn("Java server sent bad biome data");
+						bedrockId = -1;
+					}
+					else
+					{
+						bedrockId = BedrockBiomes.getId(biomeName);
+						if (bedrockId == -1)
+						{
+							if (alreadyNotifiedMissingBiomes.add(biomeName))
+							{
+								LogManager.getLogger().warn("Chunk contained biome with no mapping " + biomeName);
+							}
+						}
+					}
+
+					int x = yzx & 0b000011;
+					int z = (yzx & 0b001100) >> 2;
+					int y = (yzx & 0b110000) >> 4;
+					y = y + chunkY * 4;
+					biomes[x][z][y] = bedrockId;
+				}
 
 				bedrockChunks[chunkY] = bedrockChunk;
 			}
@@ -91,13 +154,48 @@ public class LevelChunkUtils
 					chunk.write(byteBuf);
 				}
 
-				// TODO: biomes
-				for (int i = 0; i < 256; i++)
+				for (int x = 0; x < 16; x++)
 				{
-					byteBuf.writeByte(4);
+					for (int z = 0; z < 16; z++)
+					{
+						byteBuf.writeShortLE(heightmap[x][z]);
+					}
 				}
 
-				byteBuf.writeByte(0);
+				HashMap<Integer, Integer> biomeCounts = new HashMap<>();
+				for (int x = 0; x < 16; x++)
+				{
+					for (int z = 0; z < 16; z++)
+					{
+						biomeCounts.clear();
+						for (int y = 0; y < 256; y++)
+						{
+							int biomeId = biomes[x / 4][z / 4][y / 4];
+							if (biomeId != -1)
+							{
+								biomeCounts.put(biomeId, biomeCounts.getOrDefault(biomeId, 0) + 1);
+							}
+						}
+
+						int mostCommonBiomeId = -1;
+						int mostCommonBiomeCount = 0;
+						for (Map.Entry<Integer, Integer> entry : biomeCounts.entrySet())
+						{
+							if (entry.getValue() > mostCommonBiomeCount)
+							{
+								mostCommonBiomeId = entry.getKey();
+							}
+						}
+
+						if (mostCommonBiomeId == -1)
+						{
+							LogManager.getLogger().warn("Could not determine biome for " + x + ", " + z + " (" + biomeCounts.size() + " candidates)");
+							mostCommonBiomeId = 4;
+						}
+
+						byteBuf.writeByte(mostCommonBiomeId);
+					}
+				}
 
 				VarInts.writeUnsignedInt(byteBuf, 0);
 

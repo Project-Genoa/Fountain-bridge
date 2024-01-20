@@ -1,0 +1,42 @@
+[
+  {
+    "name": "minecraft:desert",
+    "id": 2
+  },
+  {
+    "name": "minecraft:extreme_hills",
+    "id": 3
+  },
+  {
+    "name": "minecraft:forest",
+    "id": 4
+  },
+  {
+    "name": "minecraft:hell",
+    "id": 8
+  },
+  {
+    "name": "minecraft:ocean",
+    "id": 0
+  },
+  {
+    "name": "minecraft:plains",
+    "id": 1
+  },
+  {
+    "name": "minecraft:river",
+    "id": 7
+  },
+  {
+    "name": "minecraft:swamp",
+    "id": 6
+  },
+  {
+    "name": "minecraft:taiga",
+    "id": 5
+  },
+  {
+    "name": "minecraft:the_end",
+    "id": 9
+  }
+]

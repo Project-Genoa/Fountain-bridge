@@ -42,11 +42,16 @@ public class BedrockBlocks
 						state.put(entry.getKey(), stateElement.getAsInt());
 					}
 				}
+				BlockNameAndState blockNameAndState = new BlockNameAndState(name, state);
+				if (map.containsKey(blockNameAndState))
+				{
+					LogManager.getLogger().warn("Duplicate Bedrock block name/state " + name);
+				}
 				if (map.containsValue(id))
 				{
 					LogManager.getLogger().warn("Duplicate Bedrock block ID " + id);
 				}
-				map.put(new BlockNameAndState(name, state), id);
+				map.put(blockNameAndState, id);
 			}
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)

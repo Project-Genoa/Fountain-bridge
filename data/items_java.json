@@ -3,7 +3,7 @@
     "name": "minecraft:acacia_boat",
     "id": 781,
     "bedrock": {
-      "name": "minecraft:acacia_boat"
+      "ignore": true
     }
   },
   {
@@ -17,7 +17,7 @@
     "name": "minecraft:acacia_chest_boat",
     "id": 782,
     "bedrock": {
-      "name": "minecraft:acacia_chest_boat"
+      "ignore": true
     }
   },
   {
@@ -31,7 +31,8 @@
     "name": "minecraft:acacia_fence",
     "id": 314,
     "bedrock": {
-      "name": "minecraft:acacia_fence"
+      "name": "minecraft:fence",
+      "aux": 4
     }
   },
   {
@@ -45,28 +46,31 @@
     "name": "minecraft:acacia_hanging_sign",
     "id": 898,
     "bedrock": {
-      "name": "minecraft:acacia_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:acacia_leaves",
     "id": 179,
     "bedrock": {
-      "name": "minecraft:acacia_leaves"
+      "name": "minecraft:leaves2",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:acacia_log",
     "id": 135,
     "bedrock": {
-      "name": "minecraft:acacia_log"
+      "name": "minecraft:log2",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:acacia_planks",
     "id": 40,
     "bedrock": {
-      "name": "minecraft:acacia_planks"
+      "name": "minecraft:planks",
+      "aux": 4
     }
   },
   {
@@ -80,21 +84,23 @@
     "name": "minecraft:acacia_sapling",
     "id": 52,
     "bedrock": {
-      "name": "minecraft:acacia_sapling"
+      "name": "minecraft:sapling",
+      "aux": 4
     }
   },
   {
     "name": "minecraft:acacia_sign",
     "id": 887,
     "bedrock": {
-      "name": "minecraft:acacia_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:acacia_slab",
     "id": 255,
     "bedrock": {
-      "name": "minecraft:acacia_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 4
     }
   },
   {
@@ -115,7 +121,7 @@
     "name": "minecraft:acacia_wood",
     "id": 169,
     "bedrock": {
-      "name": "minecraft:acacia_wood"
+      "ignore": true
     }
   },
   {
@@ -150,21 +156,21 @@
     "name": "minecraft:amethyst_block",
     "id": 85,
     "bedrock": {
-      "name": "minecraft:amethyst_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:amethyst_cluster",
     "id": 1249,
     "bedrock": {
-      "name": "minecraft:amethyst_cluster"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:amethyst_shard",
     "id": 805,
     "bedrock": {
-      "name": "minecraft:amethyst_shard"
+      "ignore": true
     }
   },
   {
@@ -270,14 +276,14 @@
     "name": "minecraft:azalea",
     "id": 196,
     "bedrock": {
-      "name": "minecraft:azalea"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:azalea_leaves",
     "id": 183,
     "bedrock": {
-      "name": "minecraft:azalea_leaves"
+      "ignore": true
     }
   },
   {
@@ -305,119 +311,119 @@
     "name": "minecraft:bamboo_block",
     "id": 143,
     "bedrock": {
-      "name": "minecraft:bamboo_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_button",
     "id": 691,
     "bedrock": {
-      "name": "minecraft:bamboo_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_chest_raft",
     "id": 790,
     "bedrock": {
-      "name": "minecraft:bamboo_chest_raft"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_door",
     "id": 718,
     "bedrock": {
-      "name": "minecraft:bamboo_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_fence",
     "id": 318,
     "bedrock": {
-      "name": "minecraft:bamboo_fence"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_fence_gate",
     "id": 757,
     "bedrock": {
-      "name": "minecraft:bamboo_fence_gate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_hanging_sign",
     "id": 902,
     "bedrock": {
-      "name": "minecraft:bamboo_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_mosaic",
     "id": 47,
     "bedrock": {
-      "name": "minecraft:bamboo_mosaic"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_mosaic_slab",
     "id": 260,
     "bedrock": {
-      "name": "minecraft:bamboo_mosaic_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_mosaic_stairs",
     "id": 391,
     "bedrock": {
-      "name": "minecraft:bamboo_mosaic_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_planks",
     "id": 44,
     "bedrock": {
-      "name": "minecraft:bamboo_planks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_pressure_plate",
     "id": 706,
     "bedrock": {
-      "name": "minecraft:bamboo_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_raft",
     "id": 789,
     "bedrock": {
-      "name": "minecraft:bamboo_raft"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_sign",
     "id": 891,
     "bedrock": {
-      "name": "minecraft:bamboo_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_slab",
     "id": 259,
     "bedrock": {
-      "name": "minecraft:bamboo_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_stairs",
     "id": 390,
     "bedrock": {
-      "name": "minecraft:bamboo_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:bamboo_trapdoor",
     "id": 738,
     "bedrock": {
-      "name": "minecraft:bamboo_trapdoor"
+      "ignore": true
     }
   },
   {
@@ -466,7 +472,7 @@
     "name": "minecraft:bee_nest",
     "id": 1210,
     "bedrock": {
-      "name": "minecraft:bee_nest"
+      "ignore": true
     }
   },
   {
@@ -487,7 +493,7 @@
     "name": "minecraft:beehive",
     "id": 1211,
     "bedrock": {
-      "name": "minecraft:beehive"
+      "ignore": true
     }
   },
   {
@@ -529,7 +535,7 @@
     "name": "minecraft:birch_boat",
     "id": 777,
     "bedrock": {
-      "name": "minecraft:birch_boat"
+      "ignore": true
     }
   },
   {
@@ -543,7 +549,7 @@
     "name": "minecraft:birch_chest_boat",
     "id": 778,
     "bedrock": {
-      "name": "minecraft:birch_chest_boat"
+      "ignore": true
     }
   },
   {
@@ -557,7 +563,8 @@
     "name": "minecraft:birch_fence",
     "id": 312,
     "bedrock": {
-      "name": "minecraft:birch_fence"
+      "name": "minecraft:fence",
+      "aux": 2
     }
   },
   {
@@ -571,28 +578,31 @@
     "name": "minecraft:birch_hanging_sign",
     "id": 896,
     "bedrock": {
-      "name": "minecraft:birch_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:birch_leaves",
     "id": 177,
     "bedrock": {
-      "name": "minecraft:birch_leaves"
+      "name": "minecraft:leaves",
+      "aux": 2
     }
   },
   {
     "name": "minecraft:birch_log",
     "id": 133,
     "bedrock": {
-      "name": "minecraft:birch_log"
+      "name": "minecraft:log",
+      "aux": 2
     }
   },
   {
     "name": "minecraft:birch_planks",
     "id": 38,
     "bedrock": {
-      "name": "minecraft:birch_planks"
+      "name": "minecraft:planks",
+      "aux": 2
     }
   },
   {
@@ -606,21 +616,23 @@
     "name": "minecraft:birch_sapling",
     "id": 50,
     "bedrock": {
-      "name": "minecraft:birch_sapling"
+      "name": "minecraft:sapling",
+      "aux": 2
     }
   },
   {
     "name": "minecraft:birch_sign",
     "id": 885,
     "bedrock": {
-      "name": "minecraft:birch_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:birch_slab",
     "id": 253,
     "bedrock": {
-      "name": "minecraft:birch_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 2
     }
   },
   {
@@ -641,7 +653,7 @@
     "name": "minecraft:birch_wood",
     "id": 167,
     "bedrock": {
-      "name": "minecraft:birch_wood"
+      "ignore": true
     }
   },
   {
@@ -1350,119 +1362,119 @@
     "name": "minecraft:cherry_boat",
     "id": 783,
     "bedrock": {
-      "name": "minecraft:cherry_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_button",
     "id": 688,
     "bedrock": {
-      "name": "minecraft:cherry_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_chest_boat",
     "id": 784,
     "bedrock": {
-      "name": "minecraft:cherry_chest_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_door",
     "id": 715,
     "bedrock": {
-      "name": "minecraft:cherry_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_fence",
     "id": 315,
     "bedrock": {
-      "name": "minecraft:cherry_fence"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_fence_gate",
     "id": 754,
     "bedrock": {
-      "name": "minecraft:cherry_fence_gate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_hanging_sign",
     "id": 899,
     "bedrock": {
-      "name": "minecraft:cherry_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_leaves",
     "id": 180,
     "bedrock": {
-      "name": "minecraft:cherry_leaves"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_log",
     "id": 136,
     "bedrock": {
-      "name": "minecraft:cherry_log"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_planks",
     "id": 41,
     "bedrock": {
-      "name": "minecraft:cherry_planks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_pressure_plate",
     "id": 703,
     "bedrock": {
-      "name": "minecraft:cherry_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_sapling",
     "id": 53,
     "bedrock": {
-      "name": "minecraft:cherry_sapling"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_sign",
     "id": 888,
     "bedrock": {
-      "name": "minecraft:cherry_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_slab",
     "id": 256,
     "bedrock": {
-      "name": "minecraft:cherry_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_stairs",
     "id": 387,
     "bedrock": {
-      "name": "minecraft:cherry_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_trapdoor",
     "id": 735,
     "bedrock": {
-      "name": "minecraft:cherry_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cherry_wood",
     "id": 170,
     "bedrock": {
-      "name": "minecraft:cherry_wood"
+      "ignore": true
     }
   },
   {
@@ -1983,112 +1995,112 @@
     "name": "minecraft:crimson_button",
     "id": 692,
     "bedrock": {
-      "name": "minecraft:crimson_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_door",
     "id": 719,
     "bedrock": {
-      "name": "minecraft:crimson_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_fence",
     "id": 319,
     "bedrock": {
-      "name": "minecraft:crimson_fence"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_fence_gate",
     "id": 758,
     "bedrock": {
-      "name": "minecraft:crimson_fence_gate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_fungus",
     "id": 235,
     "bedrock": {
-      "name": "minecraft:crimson_fungus"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_hanging_sign",
     "id": 903,
     "bedrock": {
-      "name": "minecraft:crimson_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_hyphae",
     "id": 173,
     "bedrock": {
-      "name": "minecraft:crimson_hyphae"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_nylium",
     "id": 33,
     "bedrock": {
-      "name": "minecraft:crimson_nylium"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_planks",
     "id": 45,
     "bedrock": {
-      "name": "minecraft:crimson_planks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_pressure_plate",
     "id": 707,
     "bedrock": {
-      "name": "minecraft:crimson_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_roots",
     "id": 237,
     "bedrock": {
-      "name": "minecraft:crimson_roots"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_sign",
     "id": 892,
     "bedrock": {
-      "name": "minecraft:crimson_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_slab",
     "id": 261,
     "bedrock": {
-      "name": "minecraft:crimson_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_stairs",
     "id": 392,
     "bedrock": {
-      "name": "minecraft:crimson_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_stem",
     "id": 141,
     "bedrock": {
-      "name": "minecraft:crimson_stem"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:crimson_trapdoor",
     "id": 739,
     "bedrock": {
-      "name": "minecraft:crimson_trapdoor"
+      "ignore": true
     }
   },
   {
@@ -2272,7 +2284,7 @@
     "name": "minecraft:dark_oak_boat",
     "id": 785,
     "bedrock": {
-      "name": "minecraft:dark_oak_boat"
+      "ignore": true
     }
   },
   {
@@ -2286,7 +2298,7 @@
     "name": "minecraft:dark_oak_chest_boat",
     "id": 786,
     "bedrock": {
-      "name": "minecraft:dark_oak_chest_boat"
+      "ignore": true
     }
   },
   {
@@ -2300,7 +2312,8 @@
     "name": "minecraft:dark_oak_fence",
     "id": 316,
     "bedrock": {
-      "name": "minecraft:dark_oak_fence"
+      "name": "minecraft:fence",
+      "aux": 5
     }
   },
   {
@@ -2314,28 +2327,31 @@
     "name": "minecraft:dark_oak_hanging_sign",
     "id": 900,
     "bedrock": {
-      "name": "minecraft:dark_oak_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:dark_oak_leaves",
     "id": 181,
     "bedrock": {
-      "name": "minecraft:dark_oak_leaves"
+      "name": "minecraft:leaves2",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:dark_oak_log",
     "id": 137,
     "bedrock": {
-      "name": "minecraft:dark_oak_log"
+      "name": "minecraft:log2",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:dark_oak_planks",
     "id": 42,
     "bedrock": {
-      "name": "minecraft:dark_oak_planks"
+      "name": "minecraft:planks",
+      "aux": 5
     }
   },
   {
@@ -2349,21 +2365,23 @@
     "name": "minecraft:dark_oak_sapling",
     "id": 54,
     "bedrock": {
-      "name": "minecraft:dark_oak_sapling"
+      "name": "minecraft:sapling",
+      "aux": 5
     }
   },
   {
     "name": "minecraft:dark_oak_sign",
     "id": 889,
     "bedrock": {
-      "name": "minecraft:dark_oak_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:dark_oak_slab",
     "id": 257,
     "bedrock": {
-      "name": "minecraft:dark_oak_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 5
     }
   },
   {
@@ -2384,7 +2402,7 @@
     "name": "minecraft:dark_oak_wood",
     "id": 171,
     "bedrock": {
-      "name": "minecraft:dark_oak_wood"
+      "ignore": true
     }
   },
   {
@@ -3280,14 +3298,14 @@
     "name": "minecraft:flowering_azalea",
     "id": 197,
     "bedrock": {
-      "name": "minecraft:flowering_azalea"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:flowering_azalea_leaves",
     "id": 184,
     "bedrock": {
-      "name": "minecraft:flowering_azalea_leaves"
+      "ignore": true
     }
   },
   {
@@ -4180,7 +4198,7 @@
     "name": "minecraft:jungle_boat",
     "id": 779,
     "bedrock": {
-      "name": "minecraft:jungle_boat"
+      "ignore": true
     }
   },
   {
@@ -4194,7 +4212,7 @@
     "name": "minecraft:jungle_chest_boat",
     "id": 780,
     "bedrock": {
-      "name": "minecraft:jungle_chest_boat"
+      "ignore": true
     }
   },
   {
@@ -4208,7 +4226,8 @@
     "name": "minecraft:jungle_fence",
     "id": 313,
     "bedrock": {
-      "name": "minecraft:jungle_fence"
+      "name": "minecraft:fence",
+      "aux": 3
     }
   },
   {
@@ -4222,28 +4241,31 @@
     "name": "minecraft:jungle_hanging_sign",
     "id": 897,
     "bedrock": {
-      "name": "minecraft:jungle_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:jungle_leaves",
     "id": 178,
     "bedrock": {
-      "name": "minecraft:jungle_leaves"
+      "name": "minecraft:leaves",
+      "aux": 3
     }
   },
   {
     "name": "minecraft:jungle_log",
     "id": 134,
     "bedrock": {
-      "name": "minecraft:jungle_log"
+      "name": "minecraft:log",
+      "aux": 3
     }
   },
   {
     "name": "minecraft:jungle_planks",
     "id": 39,
     "bedrock": {
-      "name": "minecraft:jungle_planks"
+      "name": "minecraft:planks",
+      "aux": 3
     }
   },
   {
@@ -4257,21 +4279,23 @@
     "name": "minecraft:jungle_sapling",
     "id": 51,
     "bedrock": {
-      "name": "minecraft:jungle_sapling"
+      "name": "minecraft:sapling",
+      "aux": 3
     }
   },
   {
     "name": "minecraft:jungle_sign",
     "id": 886,
     "bedrock": {
-      "name": "minecraft:jungle_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:jungle_slab",
     "id": 254,
     "bedrock": {
-      "name": "minecraft:jungle_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 3
     }
   },
   {
@@ -4292,7 +4316,7 @@
     "name": "minecraft:jungle_wood",
     "id": 168,
     "bedrock": {
-      "name": "minecraft:jungle_wood"
+      "ignore": true
     }
   },
   {
@@ -4888,126 +4912,126 @@
     "name": "minecraft:mangrove_boat",
     "id": 787,
     "bedrock": {
-      "name": "minecraft:mangrove_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_button",
     "id": 690,
     "bedrock": {
-      "name": "minecraft:mangrove_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_chest_boat",
     "id": 788,
     "bedrock": {
-      "name": "minecraft:mangrove_chest_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_door",
     "id": 717,
     "bedrock": {
-      "name": "minecraft:mangrove_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_fence",
     "id": 317,
     "bedrock": {
-      "name": "minecraft:mangrove_fence"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_fence_gate",
     "id": 756,
     "bedrock": {
-      "name": "minecraft:mangrove_fence_gate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_hanging_sign",
     "id": 901,
     "bedrock": {
-      "name": "minecraft:mangrove_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_leaves",
     "id": 182,
     "bedrock": {
-      "name": "minecraft:mangrove_leaves"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_log",
     "id": 138,
     "bedrock": {
-      "name": "minecraft:mangrove_log"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_planks",
     "id": 43,
     "bedrock": {
-      "name": "minecraft:mangrove_planks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_pressure_plate",
     "id": 705,
     "bedrock": {
-      "name": "minecraft:mangrove_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_propagule",
     "id": 55,
     "bedrock": {
-      "name": "minecraft:mangrove_propagule"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_roots",
     "id": 139,
     "bedrock": {
-      "name": "minecraft:mangrove_roots"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_sign",
     "id": 890,
     "bedrock": {
-      "name": "minecraft:mangrove_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_slab",
     "id": 258,
     "bedrock": {
-      "name": "minecraft:mangrove_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_stairs",
     "id": 389,
     "bedrock": {
-      "name": "minecraft:mangrove_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_trapdoor",
     "id": 737,
     "bedrock": {
-      "name": "minecraft:mangrove_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mangrove_wood",
     "id": 172,
     "bedrock": {
-      "name": "minecraft:mangrove_wood"
+      "ignore": true
     }
   },
   {
@@ -5197,7 +5221,7 @@
     "name": "minecraft:muddy_mangrove_roots",
     "id": 140,
     "bedrock": {
-      "name": "minecraft:muddy_mangrove_roots"
+      "ignore": true
     }
   },
   {
@@ -5554,98 +5578,105 @@
     "name": "minecraft:oak_boat",
     "id": 773,
     "bedrock": {
-      "name": "minecraft:oak_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oak_button",
     "id": 683,
     "bedrock": {
-      "name": "minecraft:oak_button"
+      "name": "minecraft:wooden_button"
     }
   },
   {
     "name": "minecraft:oak_chest_boat",
     "id": 774,
     "bedrock": {
-      "name": "minecraft:oak_chest_boat"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oak_door",
     "id": 710,
     "bedrock": {
-      "name": "minecraft:oak_door"
+      "name": "minecraft:wooden_door"
     }
   },
   {
     "name": "minecraft:oak_fence",
     "id": 310,
     "bedrock": {
-      "name": "minecraft:oak_fence"
+      "name": "minecraft:fence",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_fence_gate",
     "id": 749,
     "bedrock": {
-      "name": "minecraft:oak_fence_gate"
+      "name": "minecraft:fence_gate",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_hanging_sign",
     "id": 894,
     "bedrock": {
-      "name": "minecraft:oak_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oak_leaves",
     "id": 175,
     "bedrock": {
-      "name": "minecraft:oak_leaves"
+      "name": "minecraft:leaves",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_log",
     "id": 131,
     "bedrock": {
-      "name": "minecraft:oak_log"
+      "name": "minecraft:log",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_planks",
     "id": 36,
     "bedrock": {
-      "name": "minecraft:oak_planks"
+      "name": "minecraft:planks",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_pressure_plate",
     "id": 698,
     "bedrock": {
-      "name": "minecraft:oak_pressure_plate"
+      "name": "minecraft:wooden_pressure_plate"
     }
   },
   {
     "name": "minecraft:oak_sapling",
     "id": 48,
     "bedrock": {
-      "name": "minecraft:oak_sapling"
+      "name": "minecraft:sapling",
+      "aux": 0
     }
   },
   {
     "name": "minecraft:oak_sign",
     "id": 883,
     "bedrock": {
-      "name": "minecraft:oak_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oak_slab",
     "id": 251,
     "bedrock": {
-      "name": "minecraft:oak_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 0
     }
   },
   {
@@ -5659,14 +5690,14 @@
     "name": "minecraft:oak_trapdoor",
     "id": 730,
     "bedrock": {
-      "name": "minecraft:oak_trapdoor"
+      "name": "minecraft:trapdoor"
     }
   },
   {
     "name": "minecraft:oak_wood",
     "id": 165,
     "bedrock": {
-      "name": "minecraft:oak_wood"
+      "ignore": true
     }
   },
   {
@@ -5925,7 +5956,8 @@
     "name": "minecraft:petrified_oak_slab",
     "id": 267,
     "bedrock": {
-      "name": "minecraft:petrified_oak_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 0
     }
   },
   {
@@ -7602,7 +7634,7 @@
     "name": "minecraft:spruce_boat",
     "id": 775,
     "bedrock": {
-      "name": "minecraft:spruce_boat"
+      "ignore": true
     }
   },
   {
@@ -7616,7 +7648,7 @@
     "name": "minecraft:spruce_chest_boat",
     "id": 776,
     "bedrock": {
-      "name": "minecraft:spruce_chest_boat"
+      "ignore": true
     }
   },
   {
@@ -7630,7 +7662,8 @@
     "name": "minecraft:spruce_fence",
     "id": 311,
     "bedrock": {
-      "name": "minecraft:spruce_fence"
+      "name": "minecraft:fence",
+      "aux": 1
     }
   },
   {
@@ -7644,28 +7677,31 @@
     "name": "minecraft:spruce_hanging_sign",
     "id": 895,
     "bedrock": {
-      "name": "minecraft:spruce_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:spruce_leaves",
     "id": 176,
     "bedrock": {
-      "name": "minecraft:spruce_leaves"
+      "name": "minecraft:leaves",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:spruce_log",
     "id": 132,
     "bedrock": {
-      "name": "minecraft:spruce_log"
+      "name": "minecraft:log",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:spruce_planks",
     "id": 37,
     "bedrock": {
-      "name": "minecraft:spruce_planks"
+      "name": "minecraft:planks",
+      "aux": 1
     }
   },
   {
@@ -7679,21 +7715,23 @@
     "name": "minecraft:spruce_sapling",
     "id": 49,
     "bedrock": {
-      "name": "minecraft:spruce_sapling"
+      "name": "minecraft:sapling",
+      "aux": 1
     }
   },
   {
     "name": "minecraft:spruce_sign",
     "id": 884,
     "bedrock": {
-      "name": "minecraft:spruce_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:spruce_slab",
     "id": 252,
     "bedrock": {
-      "name": "minecraft:spruce_slab"
+      "name": "minecraft:wooden_slab",
+      "aux": 1
     }
   },
   {
@@ -7714,7 +7752,7 @@
     "name": "minecraft:spruce_wood",
     "id": 166,
     "bedrock": {
-      "name": "minecraft:spruce_wood"
+      "ignore": true
     }
   },
   {
@@ -7888,14 +7926,14 @@
     "name": "minecraft:stripped_acacia_wood",
     "id": 158,
     "bedrock": {
-      "name": "minecraft:stripped_acacia_wood"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_bamboo_block",
     "id": 164,
     "bedrock": {
-      "name": "minecraft:stripped_bamboo_block"
+      "ignore": true
     }
   },
   {
@@ -7909,35 +7947,35 @@
     "name": "minecraft:stripped_birch_wood",
     "id": 156,
     "bedrock": {
-      "name": "minecraft:stripped_birch_wood"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_cherry_log",
     "id": 149,
     "bedrock": {
-      "name": "minecraft:stripped_cherry_log"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_cherry_wood",
     "id": 159,
     "bedrock": {
-      "name": "minecraft:stripped_cherry_wood"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_crimson_hyphae",
     "id": 162,
     "bedrock": {
-      "name": "minecraft:stripped_crimson_hyphae"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_crimson_stem",
     "id": 152,
     "bedrock": {
-      "name": "minecraft:stripped_crimson_stem"
+      "ignore": true
     }
   },
   {
@@ -7951,7 +7989,7 @@
     "name": "minecraft:stripped_dark_oak_wood",
     "id": 160,
     "bedrock": {
-      "name": "minecraft:stripped_dark_oak_wood"
+      "ignore": true
     }
   },
   {
@@ -7965,21 +8003,21 @@
     "name": "minecraft:stripped_jungle_wood",
     "id": 157,
     "bedrock": {
-      "name": "minecraft:stripped_jungle_wood"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_mangrove_log",
     "id": 151,
     "bedrock": {
-      "name": "minecraft:stripped_mangrove_log"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_mangrove_wood",
     "id": 161,
     "bedrock": {
-      "name": "minecraft:stripped_mangrove_wood"
+      "ignore": true
     }
   },
   {
@@ -7993,7 +8031,7 @@
     "name": "minecraft:stripped_oak_wood",
     "id": 154,
     "bedrock": {
-      "name": "minecraft:stripped_oak_wood"
+      "ignore": true
     }
   },
   {
@@ -8007,21 +8045,21 @@
     "name": "minecraft:stripped_spruce_wood",
     "id": 155,
     "bedrock": {
-      "name": "minecraft:stripped_spruce_wood"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_warped_hyphae",
     "id": 163,
     "bedrock": {
-      "name": "minecraft:stripped_warped_hyphae"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:stripped_warped_stem",
     "id": 153,
     "bedrock": {
-      "name": "minecraft:stripped_warped_stem"
+      "ignore": true
     }
   },
   {
@@ -8421,126 +8459,126 @@
     "name": "minecraft:warped_button",
     "id": 693,
     "bedrock": {
-      "name": "minecraft:warped_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_door",
     "id": 720,
     "bedrock": {
-      "name": "minecraft:warped_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_fence",
     "id": 320,
     "bedrock": {
-      "name": "minecraft:warped_fence"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_fence_gate",
     "id": 759,
     "bedrock": {
-      "name": "minecraft:warped_fence_gate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_fungus",
     "id": 236,
     "bedrock": {
-      "name": "minecraft:warped_fungus"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_fungus_on_a_stick",
     "id": 771,
     "bedrock": {
-      "name": "minecraft:warped_fungus_on_a_stick"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_hanging_sign",
     "id": 904,
     "bedrock": {
-      "name": "minecraft:warped_hanging_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_hyphae",
     "id": 174,
     "bedrock": {
-      "name": "minecraft:warped_hyphae"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_nylium",
     "id": 34,
     "bedrock": {
-      "name": "minecraft:warped_nylium"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_planks",
     "id": 46,
     "bedrock": {
-      "name": "minecraft:warped_planks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_pressure_plate",
     "id": 708,
     "bedrock": {
-      "name": "minecraft:warped_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_roots",
     "id": 238,
     "bedrock": {
-      "name": "minecraft:warped_roots"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_sign",
     "id": 893,
     "bedrock": {
-      "name": "minecraft:warped_sign"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_slab",
     "id": 262,
     "bedrock": {
-      "name": "minecraft:warped_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_stairs",
     "id": 393,
     "bedrock": {
-      "name": "minecraft:warped_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_stem",
     "id": 142,
     "bedrock": {
-      "name": "minecraft:warped_stem"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_trapdoor",
     "id": 740,
     "bedrock": {
-      "name": "minecraft:warped_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:warped_wart_block",
     "id": 517,
     "bedrock": {
-      "name": "minecraft:warped_wart_block"
+      "ignore": true
     }
   },
   {

@@ -1,6 +1,8 @@
 package micheal65536.fountain;
 
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
+import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
@@ -31,6 +33,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.Clientb
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundForgetLevelChunkPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLightUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSectionBlocksUpdatePacket;
@@ -63,10 +66,6 @@ public final class ServerPacketHandler extends SessionAdapter
 		{
 			this.playerSession.onJavaLogin((ClientboundLoginPacket) packet);
 		}
-		else if (packet instanceof ClientboundChangeDifficultyPacket)
-		{
-			this.playerSession.onJavaDifficultyChanged(((ClientboundChangeDifficultyPacket) packet).getDifficulty());
-		}
 		else if (packet instanceof ClientboundRegistryDataPacket)
 		{
 			this.playerSession.loadJavaBiomes(((CompoundTag) ((ClientboundRegistryDataPacket) packet).getRegistry().get("minecraft:worldgen/biome")).get("value"));
@@ -84,6 +83,14 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundSetTimePacket)
 		{
 			this.playerSession.updateTime(((ClientboundSetTimePacket) packet).getTime());
+		}
+		else if (packet instanceof ClientboundChangeDifficultyPacket)
+		{
+			this.playerSession.onJavaDifficultyChanged(((ClientboundChangeDifficultyPacket) packet).getDifficulty());
+		}
+		else if (packet instanceof ClientboundGameEventPacket && ((ClientboundGameEventPacket) packet).getNotification() == GameEvent.CHANGE_GAMEMODE)
+		{
+			this.playerSession.onJavaGameModeChanged((GameMode) ((ClientboundGameEventPacket) packet).getValue());
 		}
 
 		else if (packet instanceof ClientboundLevelChunkWithLightPacket)

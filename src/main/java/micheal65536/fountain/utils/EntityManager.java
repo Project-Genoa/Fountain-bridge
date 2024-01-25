@@ -75,6 +75,19 @@ public class EntityManager
 		entityInstance.onAdded();
 	}
 
+	public long registerLocalPlayerEntity(int javaEntityInstanceId)
+	{
+		if (this.javaEntities.containsKey(javaEntityInstanceId))
+		{
+			LogManager.getLogger().warn("Duplicate Java entity instance ID " + javaEntityInstanceId);
+		}
+
+		long bedrockEntityInstanceId = this.getNewBedrockEntityId();
+		this.javaEntities.put(javaEntityInstanceId, null);
+		this.bedrockEntities.put(bedrockEntityInstanceId, null);
+		return bedrockEntityInstanceId;
+	}
+
 	public void addBedrockEntity(@NotNull String identifier, @NotNull BedrockEntityInstance entityInstance)
 	{
 		if (entityInstance.entityManager != null)
@@ -132,18 +145,6 @@ public class EntityManager
 		this.playerSession.sendBedrockPacket(addItemEntityPacket);
 		LogManager.getLogger().trace("Added Bedrock item entity with ID " + entityInstance.instanceId);
 
-		entityInstance.entityManager = this;
-		this.bedrockEntities.put(entityInstance.instanceId, entityInstance);
-	}
-
-	public void addLocalPlayerBedrockEntity(@NotNull BedrockEntityInstance entityInstance)
-	{
-		if (entityInstance.entityManager != null)
-		{
-			throw new IllegalArgumentException("Bedrock entity instance has already been added");
-		}
-
-		entityInstance.instanceId = this.getNewBedrockEntityId();
 		entityInstance.entityManager = this;
 		this.bedrockEntities.put(entityInstance.instanceId, entityInstance);
 	}

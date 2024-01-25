@@ -3,13 +3,16 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.ClientCommand;
 import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
 import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
+import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
@@ -24,8 +27,10 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.Cli
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSwingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -39,12 +44,14 @@ import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
+import org.cloudburstmc.protocol.bedrock.data.AttributeData;
 import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting;
 import org.cloudburstmc.protocol.bedrock.data.GameRuleData;
 import org.cloudburstmc.protocol.bedrock.data.GameType;
 import org.cloudburstmc.protocol.bedrock.data.PlayerPermission;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
+import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
@@ -58,8 +65,10 @@ import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket;
+import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
+import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -86,8 +95,9 @@ public final class PlayerSession
 	private static final Vector3i HARDCODED_CHUNK_CENTER = Vector3i.from(0, 128, 0);
 
 	private static final int JAVA_MAIN_INVENTORY_OFFSET = 9;
-	private static final int JAVA_MAIN_INVENTORY_EXTRA_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 7;
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
+
+	private final EntityManager entityManager;
 
 	private final BedrockSession bedrock;
 	private long bedrockPlayerEntityId;
@@ -98,8 +108,8 @@ public final class PlayerSession
 	private int javaPlayerEntityId;
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
 	private final ItemStack[] javaPlayerHotbar = new ItemStack[7];
+	private float javaPlayerHealth = 20.0f;
 
-	private final EntityManager entityManager;
 	private final GenoaInventory genoaInventory;
 
 	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
@@ -134,9 +144,7 @@ public final class PlayerSession
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)
 	{
 		this.javaPlayerEntityId = clientboundLoginPacket.getEntityId();
-		EntityManager.BedrockEntityInstance bedrockEntityInstance = new EntityManager.BedrockEntityInstance();
-		this.entityManager.addLocalPlayerBedrockEntity(bedrockEntityInstance);
-		this.bedrockPlayerEntityId = bedrockEntityInstance.getInstanceId();
+		this.bedrockPlayerEntityId = this.entityManager.registerLocalPlayerEntity(this.javaPlayerEntityId);
 
 		PlayStatusPacket playStatusPacket = new PlayStatusPacket();
 		playStatusPacket.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
@@ -224,13 +232,6 @@ public final class PlayerSession
 		this.sendJavaPacket(serverboundSetCarriedItemPacket);
 	}
 
-	public void onJavaDifficultyChanged(@NotNull Difficulty difficulty)
-	{
-		SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
-		setDifficultyPacket.setDifficulty(difficulty.ordinal());
-		this.sendBedrockPacket(setDifficultyPacket);
-	}
-
 	public void updateTime(long javaTime)
 	{
 		LogManager.getLogger().trace("Server set time to " + javaTime);
@@ -250,6 +251,20 @@ public final class PlayerSession
 		SetTimePacket setTimePacket = new SetTimePacket();
 		setTimePacket.setTime(bedrockTime);
 		this.sendBedrockPacket(setTimePacket);
+	}
+
+	public void onJavaDifficultyChanged(@NotNull Difficulty difficulty)
+	{
+		SetDifficultyPacket setDifficultyPacket = new SetDifficultyPacket();
+		setDifficultyPacket.setDifficulty(difficulty.ordinal());
+		this.sendBedrockPacket(setDifficultyPacket);
+	}
+
+	public void onJavaGameModeChanged(@NotNull GameMode gameMode)
+	{
+		SetPlayerGameTypePacket setPlayerGameTypePacket = new SetPlayerGameTypePacket();
+		setPlayerGameTypePacket.setGamemode(GameType.valueOf(gameMode.name()).ordinal());
+		this.sendBedrockPacket(setPlayerGameTypePacket);
 	}
 
 	public void loadJavaBiomes(ListTag biomesListTag)
@@ -335,7 +350,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity remove for player entity");
+			LogManager.getLogger().debug("Ignoring entity remove for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -349,7 +364,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity move for player entity");
+			LogManager.getLogger().debug("Ignoring entity move for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -386,7 +401,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity set velocity for player entity");
+			LogManager.getLogger().debug("Ignoring entity set velocity for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -400,7 +415,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity rotate head for player entity");
+			LogManager.getLogger().debug("Ignoring entity rotate head for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -414,7 +429,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity set equipment for player entity");
+			LogManager.getLogger().debug("Ignoring entity set equipment for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -447,13 +462,33 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity update data for player entity");
-			return;
+			Arrays.stream(entityMetadata).filter(metadata -> metadata.getId() == 9).findAny().ifPresent(metadata ->
+			{
+				if (metadata.getType() != MetadataType.FLOAT)
+				{
+					LogManager.getLogger().warn("Java server sent bad player entity metadata");
+					return;
+				}
+				this.javaPlayerHealth = (float) metadata.getValue();
+
+				UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
+				updateAttributesPacket.setRuntimeEntityId(this.bedrockPlayerEntityId);
+				updateAttributesPacket.getAttributes().add(new AttributeData("minecraft:health", 0.0f, 20.0f, this.javaPlayerHealth > 0.0f && this.javaPlayerHealth < 1.0f ? 1.0f : this.javaPlayerHealth));
+				this.sendBedrockPacket(updateAttributesPacket);
+
+				if (this.javaPlayerHealth == 0.0f)
+				{
+					this.handlePlayerDead();
+				}
+			});
 		}
-		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
-		if (entityInstance != null)
+		else
 		{
-			entityInstance.metadataChanged(Arrays.copyOf(entityMetadata, entityMetadata.length));
+			EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+			if (entityInstance != null)
+			{
+				entityInstance.metadataChanged(Arrays.copyOf(entityMetadata, entityMetadata.length));
+			}
 		}
 	}
 
@@ -461,7 +496,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity update attributes for player entity");
+			LogManager.getLogger().debug("Ignoring entity update attributes for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -475,7 +510,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity hurt for player entity");
+			LogManager.getLogger().debug("Ignoring entity hurt for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -489,7 +524,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity event for player entity");
+			LogManager.getLogger().debug("Ignoring entity event for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -506,7 +541,7 @@ public final class PlayerSession
 	{
 		if (javaEntityInstanceId == this.javaPlayerEntityId)
 		{
-			LogManager.getLogger().debug("Ignoring entity animation for player entity");
+			LogManager.getLogger().debug("Ignoring entity animation for local player entity");
 			return;
 		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
@@ -517,6 +552,34 @@ public final class PlayerSession
 				LogManager.getLogger().warn("Entity animation with type " + animation.name() + " ignored by entity ID " + javaEntityInstanceId);
 			}
 		}
+	}
+
+	public void clientPlayerAnimation(@NotNull AnimatePacket animatePacket)
+	{
+		if (animatePacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
+		{
+			LogManager.getLogger().warn("Unrecognised AnimatePacket (incorrect entity ID)");
+			return;
+		}
+
+		if (animatePacket.getAction() == AnimatePacket.Action.SWING_ARM)
+		{
+			this.sendJavaPacket(new ServerboundSwingPacket(Hand.MAIN_HAND));
+		}
+		else
+		{
+			LogManager.getLogger().warn("Ignoring AnimatePacket with action " + animatePacket.getAction().name());
+		}
+	}
+
+	private void handlePlayerDead()
+	{
+		// TODO: end session or respawn player as appropriate according to the Earth game settings (e.g. if in adventure or buildplate)
+
+		ServerboundClientCommandPacket serverboundClientCommandPacket = new ServerboundClientCommandPacket(ClientCommand.RESPAWN);
+		this.sendJavaPacket(serverboundClientCommandPacket);
+
+		// TODO: immediately move the player back to the last client-sent position rather than waiting for the client to send the next position update
 	}
 
 	public void playerInteraction(@NotNull InventoryTransactionPacket packet)
@@ -560,9 +623,14 @@ public final class PlayerSession
 
 	public void updateSelectedHotbarItem(@NotNull MobEquipmentPacket mobEquipmentPacket)
 	{
-		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId || !(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
+		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
 		{
-			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (" + mobEquipmentPacket.getRuntimeEntityId() + ", " + mobEquipmentPacket.getContainerId() + ")");
+			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (incorrect entity ID)");
+			return;
+		}
+		else if (!(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
+		{
+			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (container ID " + mobEquipmentPacket.getContainerId() + ")");
 			return;
 		}
 

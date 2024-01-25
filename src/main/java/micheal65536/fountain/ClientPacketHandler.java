@@ -4,6 +4,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.Server
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
+import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
@@ -48,7 +49,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public PacketSignal handle(MovePlayerPacket packet)
 	{
-		this.playerSession.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(packet.isOnGround(), packet.getPosition().getX(), packet.getPosition().getY(), packet.getPosition().getZ(), packet.getRotation().getY(), packet.getRotation().getX()));
+		this.playerSession.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(packet.isOnGround(), packet.getPosition().getX(), packet.getPosition().getY() - 1.62f, packet.getPosition().getZ(), packet.getRotation().getY(), packet.getRotation().getX()));
 		return PacketSignal.HANDLED;
 	}
 
@@ -91,6 +92,13 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	public PacketSignal handle(GenoaInventoryDataPacket packet)
 	{
 		this.playerSession.onGenoaInventoryChange(packet);
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(AnimatePacket packet)
+	{
+		this.playerSession.clientPlayerAnimation(packet);
 		return PacketSignal.HANDLED;
 	}
 

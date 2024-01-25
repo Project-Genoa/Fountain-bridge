@@ -120,7 +120,16 @@ public final class PlayerSession
 
 		this.bedrock = bedrockSession;
 
-		MinecraftProtocol javaProtocol = new MinecraftProtocol(LoginUtils.getUsername(loginPacket));
+		String username = LoginUtils.getUsername(loginPacket);
+		if (username == null)
+		{
+			LogManager.getLogger().warn("Could not get username from login packet");
+			this.java = null;
+			this.disconnectForced();
+			return;
+		}
+
+		MinecraftProtocol javaProtocol = new MinecraftProtocol(username);
 		this.java = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
 		this.java.addListener(new ServerPacketHandler(this));
 		this.java.connect(true);

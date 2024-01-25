@@ -79,7 +79,7 @@ public class LevelChunkUtils
 						}
 						bedrockId = BedrockBlocks.AIR;
 					}
-					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId) ? BedrockBlocks.WATER : -1);
+					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId) ? BedrockBlocks.WATER : BedrockBlocks.AIR);
 
 					if (bedrockId != BedrockBlocks.AIR)
 					{
@@ -242,12 +242,6 @@ public class LevelChunkUtils
 		public final LinkedHashMap<Integer, Integer>[] palettes = new LinkedHashMap[]{new LinkedHashMap<>(), new LinkedHashMap<>()};
 		public final int[][] blocks = new int[2][4096];
 
-		public BedrockChunk()
-		{
-			this.palettes[0].put(BedrockBlocks.AIR, 0);
-			this.palettes[1].put(BedrockBlocks.AIR, 0);
-		}
-
 		public void set(int xzy, int level0BlockId, int level1BlockId)
 		{
 			int index = this.palettes[0].getOrDefault(level0BlockId, -1);
@@ -258,23 +252,20 @@ public class LevelChunkUtils
 			}
 			this.blocks[0][xzy] = index;
 
-			if (level1BlockId != -1)
+			index = this.palettes[1].getOrDefault(level1BlockId, -1);
+			if (index == -1)
 			{
-				index = this.palettes[1].getOrDefault(level1BlockId, -1);
-				if (index == -1)
-				{
-					index = this.palettes[1].size();
-					this.palettes[1].put(level1BlockId, index);
-				}
-				this.blocks[1][xzy] = index;
+				index = this.palettes[1].size();
+				this.palettes[1].put(level1BlockId, index);
 			}
+			this.blocks[1][xzy] = index;
 		}
 
 		public void write(@NotNull ByteBuf byteBuf)
 		{
 			byteBuf.writeByte(8);
 
-			int maxLayer = this.palettes[1].size() > 1 ? 2 : 1;
+			int maxLayer = !(this.palettes[1].size() == 1 && this.palettes[1].containsKey(BedrockBlocks.AIR)) ? 2 : 1;
 			byteBuf.writeByte(maxLayer);
 			for (int layer = 0; layer < maxLayer; layer++)
 			{

@@ -29,6 +29,38 @@ import java.util.function.IntFunction;
 
 public class Main
 {
+	public static final DefinitionRegistry<BlockDefinition> BLOCK_DEFINITION_REGISTRY = new CachingDefinitionRegistry<>(runtimeId -> new BlockDefinition()
+	{
+		@Override
+		public int getRuntimeId()
+		{
+			return runtimeId;
+		}
+	});
+	public static final DefinitionRegistry<ItemDefinition> ITEM_DEFINITION_REGISTRY = new CachingDefinitionRegistry<>(runtimeId -> new ItemDefinition()
+	{
+		// TODO
+
+		@Override
+		public boolean isComponentBased()
+		{
+			return false;
+		}
+
+		@Override
+		public String getIdentifier()
+		{
+			String name = BedrockItems.getName(runtimeId);
+			return name != null ? name : "unknown";
+		}
+
+		@Override
+		public int getRuntimeId()
+		{
+			return runtimeId;
+		}
+	});
+
 	public static void main(String[] args)
 	{
 		Configurator.setRootLevel(Level.DEBUG);
@@ -51,37 +83,8 @@ public class Main
 					{
 						session.setCodec(Bedrock_v425_Genoa.CODEC);
 						session.setPacketHandler(new ClientPacketHandler(session));
-						session.getPeer().getCodecHelper().setBlockDefinitions(new CachingDefinitionRegistry<>(runtimeId -> new BlockDefinition()
-						{
-							@Override
-							public int getRuntimeId()
-							{
-								return runtimeId;
-							}
-						}));
-						session.getPeer().getCodecHelper().setItemDefinitions(new CachingDefinitionRegistry<>(runtimeId -> new ItemDefinition()
-						{
-							// TODO
-
-							@Override
-							public boolean isComponentBased()
-							{
-								return false;
-							}
-
-							@Override
-							public String getIdentifier()
-							{
-								String name = BedrockItems.getName(runtimeId);
-								return name != null ? name : "unknown";
-							}
-
-							@Override
-							public int getRuntimeId()
-							{
-								return runtimeId;
-							}
-						}));
+						session.getPeer().getCodecHelper().setBlockDefinitions(BLOCK_DEFINITION_REGISTRY);
+						session.getPeer().getCodecHelper().setItemDefinitions(ITEM_DEFINITION_REGISTRY);
 					}
 				})
 				.bind(new InetSocketAddress("0.0.0.0", 19132))

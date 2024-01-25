@@ -3,17 +3,17 @@ package micheal65536.fountain.utils;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import org.apache.logging.log4j.LogManager;
-import org.cloudburstmc.protocol.bedrock.codec.BedrockCodecHelper;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.Main;
 import micheal65536.fountain.registry.JavaItems;
 
 public final class ItemTranslator
 {
 	@NotNull
-	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack, @NotNull BedrockCodecHelper bedrockCodecHelper)
+	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack)
 	{
 		ItemData.Builder builder = ItemData.builder();
 
@@ -29,7 +29,7 @@ public final class ItemTranslator
 			LogManager.getLogger().warn("Attempt to translate item with no mapping " + JavaItems.getName(javaId));
 			return builder.build();
 		}
-		builder.definition(bedrockCodecHelper.getItemDefinitions().getDefinition(bedrockMapping.id));
+		builder.definition(Main.ITEM_DEFINITION_REGISTRY.getDefinition(bedrockMapping.id));
 
 		if (bedrockMapping.toolWear)
 		{

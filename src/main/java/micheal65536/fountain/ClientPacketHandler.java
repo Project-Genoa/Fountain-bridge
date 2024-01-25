@@ -62,7 +62,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public PacketSignal handle(InventoryTransactionPacket packet)
 	{
-		if (packet.getTransactionType() == InventoryTransactionType.ITEM_USE)
+		if (packet.getTransactionType() == InventoryTransactionType.ITEM_USE || packet.getTransactionType() == InventoryTransactionType.ITEM_USE_ON_ENTITY)
 		{
 			this.playerSession.playerInteraction(packet);
 			return PacketSignal.HANDLED;

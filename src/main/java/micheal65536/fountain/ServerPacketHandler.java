@@ -8,9 +8,23 @@ import com.github.steveice10.mc.protocol.packet.configuration.clientbound.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundChangeDifficultyPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundDelimiterPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundAnimatePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundDamageEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundEntityEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityPosRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundMoveEntityRotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRemoveEntitiesPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRotateHeadPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityMotionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundPlayerPositionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundSetCarriedItemPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
@@ -29,6 +43,8 @@ import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
 import org.apache.logging.log4j.LogManager;
+import org.cloudburstmc.math.vector.Vector2f;
+import org.cloudburstmc.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
 public final class ServerPacketHandler extends SessionAdapter
@@ -121,6 +137,91 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundSetCarriedItemPacket)
 		{
 			this.playerSession.onJavaSetCarriedItem(((ClientboundSetCarriedItemPacket) packet).getSlot());
+		}
+
+		else if (packet instanceof ClientboundAddEntityPacket)
+		{
+			this.playerSession.onJavaEntityAdd((ClientboundAddEntityPacket) packet);
+		}
+		else if (packet instanceof ClientboundRemoveEntitiesPacket)
+		{
+			for (int entityInstanceId : ((ClientboundRemoveEntitiesPacket) packet).getEntityIds())
+			{
+				this.playerSession.onJavaEntityRemove(entityInstanceId);
+			}
+		}
+		else if (packet instanceof ClientboundMoveEntityPosPacket || packet instanceof ClientboundMoveEntityRotPacket || packet instanceof ClientboundMoveEntityPosRotPacket || packet instanceof ClientboundTeleportEntityPacket)
+		{
+			int entityId;
+			Vector3f pos;
+			Vector2f rot;
+			boolean onGround;
+			if (packet instanceof ClientboundMoveEntityPosPacket)
+			{
+				entityId = ((ClientboundMoveEntityPosPacket) packet).getEntityId();
+				pos = Vector3f.from(((ClientboundMoveEntityPosPacket) packet).getMoveX(), ((ClientboundMoveEntityPosPacket) packet).getMoveY(), ((ClientboundMoveEntityPosPacket) packet).getMoveZ());
+				rot = null;
+				onGround = ((ClientboundMoveEntityPosPacket) packet).isOnGround();
+			}
+			else if (packet instanceof ClientboundMoveEntityRotPacket)
+			{
+				entityId = ((ClientboundMoveEntityRotPacket) packet).getEntityId();
+				pos = null;
+				rot = Vector2f.from(((ClientboundMoveEntityRotPacket) packet).getPitch(), ((ClientboundMoveEntityRotPacket) packet).getYaw());
+				onGround = ((ClientboundMoveEntityRotPacket) packet).isOnGround();
+			}
+			else if (packet instanceof ClientboundMoveEntityPosRotPacket)
+			{
+				entityId = ((ClientboundMoveEntityPosRotPacket) packet).getEntityId();
+				pos = Vector3f.from(((ClientboundMoveEntityPosRotPacket) packet).getMoveX(), ((ClientboundMoveEntityPosRotPacket) packet).getMoveY(), ((ClientboundMoveEntityPosRotPacket) packet).getMoveZ());
+				rot = Vector2f.from(((ClientboundMoveEntityPosRotPacket) packet).getPitch(), ((ClientboundMoveEntityPosRotPacket) packet).getYaw());
+				onGround = ((ClientboundMoveEntityPosRotPacket) packet).isOnGround();
+			}
+			else if (packet instanceof ClientboundTeleportEntityPacket)
+			{
+				entityId = ((ClientboundTeleportEntityPacket) packet).getEntityId();
+				pos = Vector3f.from(((ClientboundTeleportEntityPacket) packet).getX(), ((ClientboundTeleportEntityPacket) packet).getY(), ((ClientboundTeleportEntityPacket) packet).getZ());
+				rot = Vector2f.from(((ClientboundTeleportEntityPacket) packet).getPitch(), ((ClientboundTeleportEntityPacket) packet).getYaw());
+				onGround = ((ClientboundTeleportEntityPacket) packet).isOnGround();
+			}
+			else
+			{
+				assert false;
+				return;
+			}
+			this.playerSession.onJavaEntityMove(entityId, pos, rot, onGround, !(packet instanceof ClientboundTeleportEntityPacket));
+		}
+		else if (packet instanceof ClientboundSetEntityMotionPacket)
+		{
+			this.playerSession.onJavaEntitySetVelocity(((ClientboundSetEntityMotionPacket) packet).getEntityId(), Vector3f.from(((ClientboundSetEntityMotionPacket) packet).getMotionX(), ((ClientboundSetEntityMotionPacket) packet).getMotionY(), ((ClientboundSetEntityMotionPacket) packet).getMotionZ()));
+		}
+		else if (packet instanceof ClientboundRotateHeadPacket)
+		{
+			this.playerSession.onJavaEntityRotateHead(((ClientboundRotateHeadPacket) packet).getEntityId(), ((ClientboundRotateHeadPacket) packet).getHeadYaw());
+		}
+		else if (packet instanceof ClientboundSetEntityDataPacket)
+		{
+			this.playerSession.onJavaEntityUpdateData(((ClientboundSetEntityDataPacket) packet).getEntityId(), ((ClientboundSetEntityDataPacket) packet).getMetadata());
+		}
+		else if (packet instanceof ClientboundUpdateAttributesPacket)
+		{
+			this.playerSession.onJavaEntityUpdateAttributes(((ClientboundUpdateAttributesPacket) packet).getEntityId(), ((ClientboundUpdateAttributesPacket) packet).getAttributes());
+		}
+		else if (packet instanceof ClientboundSetEquipmentPacket)
+		{
+			this.playerSession.onJavaEntitySetEquipment(((ClientboundSetEquipmentPacket) packet).getEntityId(), ((ClientboundSetEquipmentPacket) packet).getEquipment());
+		}
+		else if (packet instanceof ClientboundEntityEventPacket)
+		{
+			this.playerSession.onJavaEntityEvent(((ClientboundEntityEventPacket) packet).getEntityId(), ((ClientboundEntityEventPacket) packet).getEvent());
+		}
+		else if (packet instanceof ClientboundAnimatePacket)
+		{
+			this.playerSession.onJavaEntityAnimation(((ClientboundAnimatePacket) packet).getEntityId(), ((ClientboundAnimatePacket) packet).getAnimation());
+		}
+		else if (packet instanceof ClientboundDamageEventPacket)
+		{
+			this.playerSession.onJavaEntityHurt(((ClientboundDamageEventPacket) packet).getEntityId());
 		}
 
 		else if (packet instanceof ClientboundPingPacket)

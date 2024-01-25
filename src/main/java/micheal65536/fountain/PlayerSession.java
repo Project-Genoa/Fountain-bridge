@@ -3,8 +3,13 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
+import com.github.steveice10.mc.protocol.data.game.entity.EntityEvent;
+import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
+import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
+import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
@@ -14,6 +19,7 @@ import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
@@ -38,6 +44,7 @@ import org.cloudburstmc.protocol.bedrock.data.GameRuleData;
 import org.cloudburstmc.protocol.bedrock.data.GameType;
 import org.cloudburstmc.protocol.bedrock.data.PlayerPermission;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
+import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
@@ -59,6 +66,8 @@ import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.registry.BedrockBlocks;
 import micheal65536.fountain.registry.JavaBlocks;
+import micheal65536.fountain.utils.EntityManager;
+import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.GenoaInventory;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.LevelChunkUtils;
@@ -68,6 +77,7 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 
 public final class PlayerSession
 {
@@ -80,6 +90,7 @@ public final class PlayerSession
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
 
 	private final BedrockSession bedrock;
+	private long bedrockPlayerEntityId;
 	private boolean bedrockDoDaylightCycle = true;
 	private int bedrockSelectedHotbarSlot = 0;
 
@@ -88,11 +99,14 @@ public final class PlayerSession
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
 	private final ItemStack[] javaPlayerHotbar = new ItemStack[7];
 
+	private final EntityManager entityManager;
 	private final GenoaInventory genoaInventory;
 
 	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
 	{
 		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
+
+		this.entityManager = new EntityManager(this);
 
 		this.bedrock = bedrockSession;
 
@@ -120,6 +134,9 @@ public final class PlayerSession
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)
 	{
 		this.javaPlayerEntityId = clientboundLoginPacket.getEntityId();
+		EntityManager.BedrockEntityInstance bedrockEntityInstance = new EntityManager.BedrockEntityInstance();
+		this.entityManager.addLocalPlayerBedrockEntity(bedrockEntityInstance);
+		this.bedrockPlayerEntityId = bedrockEntityInstance.getInstanceId();
 
 		PlayStatusPacket playStatusPacket = new PlayStatusPacket();
 		playStatusPacket.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
@@ -127,8 +144,8 @@ public final class PlayerSession
 
 		StartGamePacket startGamePacket = new StartGamePacket();
 		//startGamePacket.getGamerules().add(new GameRuleData<>("dodaylightcycle", false));
-		startGamePacket.setUniqueEntityId(this.javaPlayerEntityId);
-		startGamePacket.setRuntimeEntityId(this.javaPlayerEntityId);
+		startGamePacket.setUniqueEntityId(this.bedrockPlayerEntityId);
+		startGamePacket.setRuntimeEntityId(this.bedrockPlayerEntityId);
 		startGamePacket.setPlayerGameType(GameType.valueOf(clientboundLoginPacket.getCommonPlayerSpawnInfo().getGameMode().name()));
 		startGamePacket.setPlayerPosition(Vector3f.from(0.0f, 69.0f, 0.0f));
 		startGamePacket.setRotation(Vector2f.from(1.0f, 1.0f));
@@ -174,7 +191,7 @@ public final class PlayerSession
 
 		GenoaGameplaySettingsPacket genoaGameplaySettingsPacket = new GenoaGameplaySettingsPacket();
 		genoaGameplaySettingsPacket.setMultiplePlayersOnline(false);
-		genoaGameplaySettingsPacket.setOwnerRuntimeId(this.javaPlayerEntityId);
+		genoaGameplaySettingsPacket.setOwnerRuntimeId(this.bedrockPlayerEntityId);
 		this.sendBedrockPacket(genoaGameplaySettingsPacket);
 
 		playStatusPacket = new PlayStatusPacket();
@@ -281,42 +298,269 @@ public final class PlayerSession
 				UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(0);
-				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(bedrockId));
+				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockId));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 
 				updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(1);
-				updateBlockPacket.setDefinition(this.bedrock.getPeer().getCodecHelper().getBlockDefinitions().getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
+				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}
 		}
 	}
 
+	public void onJavaEntityAdd(@NotNull ClientboundAddEntityPacket clientboundAddEntityPacket)
+	{
+		EntityManager.JavaEntityInstance entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData());
+		if (entityInstance == null)
+		{
+			LogManager.getLogger().warn("Ignoring Java entity with type " + clientboundAddEntityPacket.getType().name());
+			return;
+		}
+		entityInstance.setInitialPosition(
+				Vector3f.from(clientboundAddEntityPacket.getX(), clientboundAddEntityPacket.getY(), clientboundAddEntityPacket.getZ()),
+				Vector3f.from(clientboundAddEntityPacket.getMotionX(), clientboundAddEntityPacket.getMotionY(), clientboundAddEntityPacket.getMotionZ()),
+				true,
+				clientboundAddEntityPacket.getYaw(),
+				clientboundAddEntityPacket.getPitch(),
+				clientboundAddEntityPacket.getHeadYaw()
+		);
+		this.entityManager.registerJavaEntity(clientboundAddEntityPacket.getEntityId(), entityInstance);
+	}
+
+	public void onJavaEntityRemove(int javaEntityInstanceId)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity remove for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.remove();
+		}
+	}
+
+	public void onJavaEntityMove(int javaEntityInstanceId, @Nullable Vector3f pos, @Nullable Vector2f rot, boolean onGround, boolean relative)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity move for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			Vector3f newPos;
+			if (pos != null)
+			{
+				newPos = relative ? entityInstance.getPos().add(pos) : pos;
+			}
+			else
+			{
+				newPos = entityInstance.getPos();
+			}
+
+			float newYaw;
+			float newPitch;
+			if (rot != null)
+			{
+				newYaw = rot.getY();
+				newPitch = rot.getX();
+			}
+			else
+			{
+				newYaw = entityInstance.getYaw();
+				newPitch = entityInstance.getPitch();
+			}
+
+			entityInstance.setPosition(newPos, onGround, newYaw, newPitch);
+		}
+	}
+
+	public void onJavaEntitySetVelocity(int javaEntityInstanceId, @NotNull Vector3f velocity)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity set velocity for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.setVelocity(velocity);
+		}
+	}
+
+	public void onJavaEntityRotateHead(int javaEntityInstanceId, float headYaw)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity rotate head for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.setHeadYaw(headYaw);
+		}
+	}
+
+	public void onJavaEntitySetEquipment(int javaEntityInstanceId, Equipment[] equipments)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity set equipment for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			ItemData handMain = entityInstance.getHandMain();
+			ItemData handSecondary = entityInstance.getHandSecondary();
+			ItemData armorHead = entityInstance.getArmorHead();
+			ItemData armorChest = entityInstance.getArmorChest();
+			ItemData armorLegs = entityInstance.getArmorLegs();
+			ItemData armorFeet = entityInstance.getArmorFeet();
+			for (Equipment equipment : equipments)
+			{
+				ItemData itemData = ItemTranslator.translateJavaToBedrock(equipment.getItem());
+				switch (equipment.getSlot())
+				{
+					case MAIN_HAND -> handMain = itemData;
+					case OFF_HAND -> handSecondary = itemData;
+					case HELMET -> armorHead = itemData;
+					case CHESTPLATE -> armorChest = itemData;
+					case LEGGINGS -> armorLegs = itemData;
+					case BOOTS -> armorFeet = itemData;
+				}
+			}
+			entityInstance.setEquipment(handMain, handSecondary, armorHead, armorChest, armorLegs, armorFeet);
+		}
+	}
+
+	public void onJavaEntityUpdateData(int javaEntityInstanceId, @NotNull EntityMetadata<?, ?>[] entityMetadata)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity update data for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.metadataChanged(Arrays.copyOf(entityMetadata, entityMetadata.length));
+		}
+	}
+
+	public void onJavaEntityUpdateAttributes(int javaEntityInstanceId, @NotNull List<Attribute> attributes)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity update attributes for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.attributesChanged(attributes.toArray(new Attribute[0]));
+		}
+	}
+
+	public void onJavaEntityHurt(int javaEntityInstanceId)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity hurt for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.hurt();
+		}
+	}
+
+	public void onJavaEntityEvent(int javaEntityInstanceId, @NotNull EntityEvent entityEvent)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity event for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			if (!entityInstance.handleEvent(entityEvent))
+			{
+				LogManager.getLogger().warn("Entity event with type " + entityEvent.name() + " ignored by entity ID " + javaEntityInstanceId);
+			}
+		}
+	}
+
+	public void onJavaEntityAnimation(int javaEntityInstanceId, @NotNull Animation animation)
+	{
+		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity animation for player entity");
+			return;
+		}
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			if (!entityInstance.handleAnimation(animation))
+			{
+				LogManager.getLogger().warn("Entity animation with type " + animation.name() + " ignored by entity ID " + javaEntityInstanceId);
+			}
+		}
+	}
+
 	public void playerInteraction(@NotNull InventoryTransactionPacket packet)
 	{
-		if (packet.getActionType() == 0) // place/use item on block
+		if (packet.getTransactionType() == InventoryTransactionType.ITEM_USE)
 		{
-			ServerboundUseItemOnPacket serverboundUseItemOnPacket = new ServerboundUseItemOnPacket(packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], Hand.MAIN_HAND, packet.getClickPosition().getX(), packet.getClickPosition().getY(), packet.getClickPosition().getZ(), false, 0);
-			this.sendJavaPacket(serverboundUseItemOnPacket);
+			if (packet.getActionType() == 0) // place/use item on block
+			{
+				ServerboundUseItemOnPacket serverboundUseItemOnPacket = new ServerboundUseItemOnPacket(packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], Hand.MAIN_HAND, packet.getClickPosition().getX(), packet.getClickPosition().getY(), packet.getClickPosition().getZ(), false, 0);
+				this.sendJavaPacket(serverboundUseItemOnPacket);
+			}
+			else if (packet.getActionType() == 1) // use item
+			{
+				ServerboundUseItemPacket serverboundUseItemPacket = new ServerboundUseItemPacket(Hand.MAIN_HAND, 0);
+				this.sendJavaPacket(serverboundUseItemPacket);
+			}
+			else if (packet.getActionType() == 2) // dig
+			{
+				ServerboundPlayerActionPacket serverboundPlayerActionPacket = new ServerboundPlayerActionPacket(PlayerAction.START_DIGGING, packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], 0);
+				this.sendJavaPacket(serverboundPlayerActionPacket);
+			}
 		}
-		else if (packet.getActionType() == 1) // use item
+		else if (packet.getTransactionType() == InventoryTransactionType.ITEM_USE_ON_ENTITY)
 		{
-			ServerboundUseItemPacket serverboundUseItemPacket = new ServerboundUseItemPacket(Hand.MAIN_HAND, 0);
-			this.sendJavaPacket(serverboundUseItemPacket);
-		}
-		else if (packet.getActionType() == 2) // dig
-		{
-			ServerboundPlayerActionPacket serverboundPlayerActionPacket = new ServerboundPlayerActionPacket(PlayerAction.START_DIGGING, packet.getBlockPosition(), Direction.VALUES[packet.getBlockFace()], 0);
-			this.sendJavaPacket(serverboundPlayerActionPacket);
+			EntityManager.BedrockEntityInstance entityInstance = this.entityManager.getBedrockEntity(packet.getRuntimeEntityId());
+			if (entityInstance == null)
+			{
+				LogManager.getLogger().warn("Client tried to interact with entity ID " + packet.getRuntimeEntityId() + " that does not exist");
+				return;
+			}
+			if (packet.getActionType() == 0) // use item
+			{
+				entityInstance.onInteract();
+			}
+			else if (packet.getActionType() == 1) // attack
+			{
+				entityInstance.onAttack();
+			}
 		}
 	}
 
 	public void updateSelectedHotbarItem(@NotNull MobEquipmentPacket mobEquipmentPacket)
 	{
-		if (mobEquipmentPacket.getRuntimeEntityId() != this.javaPlayerEntityId || !(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
+		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId || !(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
 		{
 			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (" + mobEquipmentPacket.getRuntimeEntityId() + ", " + mobEquipmentPacket.getContainerId() + ")");
 			return;
@@ -472,7 +716,7 @@ public final class PlayerSession
 			}
 			else
 			{
-				return ItemTranslator.translateJavaToBedrock(itemStack, this.bedrock.getPeer().getCodecHelper());
+				return ItemTranslator.translateJavaToBedrock(itemStack);
 			}
 		}).toList());
 		this.sendBedrockPacket(inventoryContentPacket);

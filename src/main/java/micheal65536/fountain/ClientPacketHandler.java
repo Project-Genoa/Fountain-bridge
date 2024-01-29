@@ -2,6 +2,7 @@ package micheal65536.fountain;
 
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import org.apache.logging.log4j.LogManager;
+import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.data.PlayerActionType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
@@ -52,7 +53,21 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public PacketSignal handle(MovePlayerPacket packet)
 	{
-		this.playerSession.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(packet.isOnGround(), packet.getPosition().getX(), packet.getPosition().getY() - 1.62f, packet.getPosition().getZ(), packet.getRotation().getY(), packet.getRotation().getX()));
+		Vector3f position = packet.getPosition();
+		Vector3f rotation = packet.getRotation();
+		float x = position.getX();
+		float y = position.getY();
+		float z = position.getZ();
+		float yaw = rotation.getY();
+		float pitch = rotation.getX();
+		if (Float.isNaN(x) || !Float.isFinite(x) || Float.isNaN(y) || !Float.isFinite(y) || Float.isNaN(z) || !Float.isFinite(z) || Float.isNaN(yaw) || !Float.isFinite(yaw) || Float.isNaN(pitch) || !Float.isFinite(pitch))    // client seems to sometimes send invalid values at the beginning of the AR session
+		{
+			LogManager.getLogger().warn("Ignoring client MovePlayerPacket with one or more NaN/Inf elements");
+		}
+		else
+		{
+			this.playerSession.sendJavaPacket(new ServerboundMovePlayerPosRotPacket(packet.isOnGround(), x, y - 1.62f, z, yaw, pitch));
+		}
 		return PacketSignal.HANDLED;
 	}
 

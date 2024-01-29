@@ -22,6 +22,7 @@ import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
@@ -39,8 +40,11 @@ import com.github.steveice10.opennbt.tag.builtin.ListTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector2f;
+import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
@@ -57,6 +61,7 @@ import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaGameplaySettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaItemParticlePacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
@@ -75,13 +80,16 @@ import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.registry.BedrockBlocks;
 import micheal65536.fountain.registry.JavaBlocks;
+import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.GenoaInventory;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.LevelChunkUtils;
 import micheal65536.fountain.utils.LoginUtils;
+import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Collections;
@@ -563,6 +571,35 @@ public final class PlayerSession
 		}
 	}
 
+	public void onJavaEntityTaken(@NotNull ClientboundTakeItemEntityPacket clientboundTakeItemEntityPacket)
+	{
+		int collectorJavaEntityId = clientboundTakeItemEntityPacket.getCollectorEntityId();
+		int collectedJavaEntityId = clientboundTakeItemEntityPacket.getCollectedEntityId();
+		EntityManager.JavaEntityInstance collectedJavaEntityInstance = this.entityManager.getJavaEntity(collectedJavaEntityId);
+		if (collectedJavaEntityInstance == null)
+		{
+			LogManager.getLogger().warn("Server sent entity taken for entity that does not exist");
+			return;
+		}
+		if (!(collectedJavaEntityInstance instanceof ItemJavaEntityInstance))
+		{
+			LogManager.getLogger().debug("Ignoring entity taken for non-item entity");
+			return;
+		}
+		if (collectorJavaEntityId == this.javaPlayerEntityId)    // TODO: handle items taken by other players
+		{
+			ItemData item = ((ItemJavaEntityInstance) collectedJavaEntityInstance).getItem();
+			if (item != null)
+			{
+				this.sendItemParticle(item.getDefinition().getRuntimeId(), item.getDamage(), collectedJavaEntityInstance.getPos(), this.bedrockPlayerEntityId);
+			}
+		}
+		else
+		{
+			LogManager.getLogger().debug("Ignoring entity taken by non-player entity");
+		}
+	}
+
 	public void clientPlayerAnimation(@NotNull AnimatePacket animatePacket)
 	{
 		if (animatePacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
@@ -630,6 +667,24 @@ public final class PlayerSession
 		}
 	}
 
+	public void playerBreakBlock(@NotNull Vector3i position, int face)
+	{
+		ServerboundPlayerActionPacket serverboundPlayerActionPacket = new ServerboundPlayerActionPacket(PlayerAction.START_DIGGING, position, Direction.VALUES[face], 0);
+		this.sendJavaPacket(serverboundPlayerActionPacket);
+	}
+
+	public void playerItemPickup(long itemEntityId)
+	{
+		EntityManager.BedrockEntityInstance bedrockEntityInstance = this.entityManager.getBedrockEntity(itemEntityId);
+		if (bedrockEntityInstance == null || !(bedrockEntityInstance instanceof ItemJavaEntityInstance.ItemBedrockEntityInstance))
+		{
+			LogManager.getLogger().warn("Client sent item pickup with entity ID " + itemEntityId + " that does not exist or is not an item entity");
+			return;
+		}
+		ItemJavaEntityInstance javaEntityInstance = ((ItemJavaEntityInstance.ItemBedrockEntityInstance) bedrockEntityInstance).getJavaEntityInstance();
+		javaEntityInstance.sendPickup();
+	}
+
 	public void updateSelectedHotbarItem(@NotNull MobEquipmentPacket mobEquipmentPacket)
 	{
 		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
@@ -678,6 +733,31 @@ public final class PlayerSession
 		if (newHotbar != null)
 		{
 			this.updateJavaHotbar(newHotbar);
+		}
+	}
+
+	public void onJavaItemPickupParticle(byte[] data)
+	{
+		try
+		{
+			ByteBuf buf = Unpooled.wrappedBuffer(data);
+			MinecraftCodecHelper minecraftCodecHelper = (MinecraftCodecHelper) this.java.getCodecHelper();
+			ItemStack itemStack = minecraftCodecHelper.readItemStack(buf);
+			Vector3d pos = Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble());
+
+			int javaId = itemStack.getId();
+			JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
+			if (bedrockMapping == null)
+			{
+				LogManager.getLogger().warn("Item pickup particle for item with no mapping " + JavaItems.getName(javaId));
+				return;
+			}
+
+			this.sendItemParticle(bedrockMapping.id, bedrockMapping.aux, pos.toFloat(), this.bedrockPlayerEntityId);
+		}
+		catch (IOException | NullPointerException exception)
+		{
+			LogManager.getLogger().debug(exception);
 		}
 	}
 
@@ -804,6 +884,16 @@ public final class PlayerSession
 		GenoaInventoryDataPacket genoaInventoryDataPacket = new GenoaInventoryDataPacket();
 		genoaInventoryDataPacket.setJson(this.genoaInventory.getJSONString(this.javaPlayerHotbar));
 		this.sendBedrockPacket(genoaInventoryDataPacket);
+	}
+
+	public void sendItemParticle(int bedrockItemId, int bedrockItemDataValue, @NotNull Vector3f fromPosition, long pickedUpByRuntimeEntityId)
+	{
+		GenoaItemParticlePacket genoaItemParticlePacket = new GenoaItemParticlePacket();
+		genoaItemParticlePacket.setRuntimeEntityId(pickedUpByRuntimeEntityId);
+		genoaItemParticlePacket.setItemId(bedrockItemId);
+		genoaItemParticlePacket.setItemDataValue(bedrockItemDataValue);
+		genoaItemParticlePacket.setPosition(fromPosition);
+		this.sendBedrockPacket(genoaItemParticlePacket);
 	}
 
 	public void sendBedrockPacket(@NotNull BedrockPacket packet)

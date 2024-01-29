@@ -5,6 +5,7 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import org.cloudburstmc.protocol.bedrock.data.entity.EntityEventType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.ItemTranslator;
@@ -16,7 +17,18 @@ public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstan
 
 	private ItemData item = null;
 
-	private BaseBedrockEntityInstance bedrockEntityInstance = null;
+	private ItemBedrockEntityInstance bedrockEntityInstance = null;
+
+	@Nullable
+	public ItemData getItem()
+	{
+		return this.item != null ? this.item.toBuilder().build() : null;
+	}
+
+	public void sendPickup()
+	{
+		this.sendInteract();
+	}
 
 	@Override
 	protected void onRemoved()
@@ -86,7 +98,7 @@ public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstan
 					this.bedrockEntityInstance.remove();
 				}
 
-				this.bedrockEntityInstance = new BaseBedrockEntityInstance();
+				this.bedrockEntityInstance = new ItemBedrockEntityInstance(this);
 				this.bedrockEntityInstance.setPos(this.getPos());
 				this.bedrockEntityInstance.setVelocity(this.getVelocity());
 				this.bedrockEntityInstance.burning = this.burning;
@@ -98,5 +110,21 @@ public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstan
 				this.bedrockEntityInstance.sendEvent(EntityEventType.UPDATE_ITEM_STACK_SIZE, this.item.getCount());
 			}
 		});
+	}
+
+	public static final class ItemBedrockEntityInstance extends BaseBedrockEntityInstance
+	{
+		private final ItemJavaEntityInstance javaEntityInstance;
+
+		private ItemBedrockEntityInstance(ItemJavaEntityInstance javaEntityInstance)
+		{
+			this.javaEntityInstance = javaEntityInstance;
+		}
+
+		@NotNull
+		public ItemJavaEntityInstance getJavaEntityInstance()
+		{
+			return this.javaEntityInstance;
+		}
 	}
 }

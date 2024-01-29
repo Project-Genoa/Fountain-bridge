@@ -3,17 +3,20 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
+import org.cloudburstmc.protocol.bedrock.data.PlayerActionType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaItemPickupPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaNetworkTransformPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaOpenInventoryPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket;
+import org.cloudburstmc.protocol.bedrock.packet.PlayerActionPacket;
 import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 
@@ -72,6 +75,28 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 		{
 			return PacketSignal.UNHANDLED;
 		}
+	}
+
+	@Override
+	public PacketSignal handle(PlayerActionPacket packet)
+	{
+		if (packet.getAction() == PlayerActionType.START_BREAK)
+		{
+			// used for breaking blocks in some modes, other modes use InventoryTransactionPacket
+			this.playerSession.playerBreakBlock(packet.getBlockPosition(), packet.getFace());
+			return PacketSignal.HANDLED;
+		}
+		else
+		{
+			return PacketSignal.UNHANDLED;
+		}
+	}
+
+	@Override
+	public PacketSignal handle(GenoaItemPickupPacket packet)
+	{
+		this.playerSession.playerItemPickup(packet.getItemId());
+		return PacketSignal.HANDLED;
 	}
 
 	@Override

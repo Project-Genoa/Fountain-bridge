@@ -3,6 +3,7 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.level.notify.GameEvent;
+import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundCustomPayloadPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundDisconnectPacket;
 import com.github.steveice10.mc.protocol.packet.common.clientbound.ClientboundPingPacket;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundPongPacket;
@@ -21,6 +22,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityMotionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player.ClientboundBlockChangedAckPacket;
@@ -29,6 +31,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.player
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockDestructionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
@@ -125,6 +128,11 @@ public final class ServerPacketHandler extends SessionAdapter
 			// empty
 		}
 
+		else if (packet instanceof ClientboundBlockDestructionPacket)
+		{
+			// TODO: figure out block damage stuff for GenoaUpdateBlockPacket
+		}
+
 		else if (packet instanceof ClientboundPlayerPositionPacket)
 		{
 			this.playerSession.sendJavaPacket(new ServerboundAcceptTeleportationPacket(((ClientboundPlayerPositionPacket) packet).getTeleportId()));
@@ -144,6 +152,10 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundSetCarriedItemPacket)
 		{
 			this.playerSession.onJavaSetCarriedItem(((ClientboundSetCarriedItemPacket) packet).getSlot());
+		}
+		else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("fountain:item_particle"))
+		{
+			this.playerSession.onJavaItemPickupParticle(((ClientboundCustomPayloadPacket) packet).getData());
 		}
 
 		else if (packet instanceof ClientboundAddEntityPacket)
@@ -229,6 +241,10 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundDamageEventPacket)
 		{
 			this.playerSession.onJavaEntityHurt(((ClientboundDamageEventPacket) packet).getEntityId());
+		}
+		else if (packet instanceof ClientboundTakeItemEntityPacket)
+		{
+			this.playerSession.onJavaEntityTaken((ClientboundTakeItemEntityPacket) packet);
 		}
 
 		else if (packet instanceof ClientboundPingPacket)

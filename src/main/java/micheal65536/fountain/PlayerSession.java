@@ -21,6 +21,7 @@ import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundClientInformationPacket;
+import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
@@ -41,6 +42,7 @@ import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.github.steveice10.opennbt.tag.builtin.Tag;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector2f;
@@ -242,6 +244,13 @@ public final class PlayerSession
 
 		ServerboundClientInformationPacket serverboundClientInformationPacket = new ServerboundClientInformationPacket("en_GB", HARDCODED_CHUNK_RADIUS, ChatVisibility.FULL, true, Arrays.asList(SkinPart.values()), HandPreference.RIGHT_HAND, false, true);
 		this.sendJavaPacket(serverboundClientInformationPacket);
+
+		ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
+		byteBuf.writeBoolean(true);
+		byte[] data = new byte[byteBuf.readableBytes()];
+		byteBuf.readBytes(data);
+		ServerboundCustomPayloadPacket serverboundCustomPayloadPacket = new ServerboundCustomPayloadPacket("fountain:earth_mode", data);
+		this.sendJavaPacket(serverboundCustomPayloadPacket);
 
 		this.updateJavaHotbar(this.genoaInventory.getInitialHotbar());
 

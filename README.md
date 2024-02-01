@@ -30,4 +30,4 @@ Disable natural mob spawning with `/gamerule doMobSpawning false` in the server 
 
 Each time you join the server you will have an empty inventory and hotbar (inventory is not synchronised with the Minecraft Earth API server). Use `/give` in the server console to give yourself items/blocks.
 
-Minecraft sea level is at Y 63. In order to have the surface level of your buildplate appear at ground level in AR, set the Y offset in your API server buildplate response to 64.
+Minecraft sea level is at Y 63. In order to have the surface level of your buildplate appear at ground level in AR, set the Y offset in your API server buildplate response to 63.

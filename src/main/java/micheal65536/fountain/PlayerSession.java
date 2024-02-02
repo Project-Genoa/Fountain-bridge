@@ -85,6 +85,7 @@ import micheal65536.fountain.registry.JavaBlocks;
 import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.EntityTranslator;
+import micheal65536.fountain.utils.FabricRegistryManager;
 import micheal65536.fountain.utils.GenoaInventory;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.LevelChunkUtils;
@@ -108,6 +109,7 @@ public final class PlayerSession
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
 
 	private final EntityManager entityManager;
+	private final FabricRegistryManager fabricRegistryManager;
 
 	private final BedrockSession bedrock;
 	private long bedrockPlayerEntityId;
@@ -135,6 +137,7 @@ public final class PlayerSession
 		{
 			LogManager.getLogger().warn("Could not get username from login packet");
 			this.java = null;
+			this.fabricRegistryManager = null;
 			this.disconnectForced();
 			return;
 		}
@@ -143,6 +146,8 @@ public final class PlayerSession
 		this.java = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
 		this.java.addListener(new ServerPacketHandler(this));
 		this.java.connect(true);
+
+		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
 	}
 
 	public void disconnectForced()
@@ -258,6 +263,14 @@ public final class PlayerSession
 		this.sendJavaPacket(serverboundSetCarriedItemPacket);
 	}
 
+	public void onJavaChannelRegister(@NotNull String channel)
+	{
+		if (channel.equals("fabric:registry/sync/complete"))
+		{
+			this.fabricRegistryManager.enableRegistrySyncChannel();
+		}
+	}
+
 	public void updateTime(long javaTime)
 	{
 		LogManager.getLogger().trace("Server set time to " + javaTime);
@@ -305,13 +318,18 @@ public final class PlayerSession
 		}
 	}
 
+	public void handleFabricRegistrySyncData(byte[] data)
+	{
+		this.fabricRegistryManager.handleRegistrySyncData(data);
+	}
+
 	public void onJavaLevelChunk(@NotNull ClientboundLevelChunkWithLightPacket clientboundLevelChunkWithLightPacket)
 	{
 		if (clientboundLevelChunkWithLightPacket.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getX() < MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() < MAX_NONEMPTY_CHUNK_RADIUS)
 		{
 			LogManager.getLogger().trace("Sending chunk " + clientboundLevelChunkWithLightPacket.getX() + ", " + clientboundLevelChunkWithLightPacket.getZ());
 
-			LevelChunkPacket levelChunkPacket = LevelChunkUtils.translateLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, (MinecraftCodecHelper) this.java.getCodecHelper());
+			LevelChunkPacket levelChunkPacket = LevelChunkUtils.translateLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper());
 			this.sendBedrockPacket(levelChunkPacket);
 		}
 	}
@@ -329,10 +347,10 @@ public final class PlayerSession
 
 				// TODO: Geyser said we need to special-case doors here, but they seem to work fine?
 
-				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock());
+				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock(), this.fabricRegistryManager);
 				if (bedrockId == -1)
 				{
-					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlocks.getName(blockChangeEntry.getBlock()));
+					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
 					bedrockId = BedrockBlocks.AIR;
 				}
 
@@ -346,7 +364,7 @@ public final class PlayerSession
 				updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(1);
-				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock()) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
+				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock(), this.fabricRegistryManager) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}

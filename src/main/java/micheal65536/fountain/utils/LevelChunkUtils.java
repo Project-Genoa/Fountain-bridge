@@ -14,6 +14,7 @@ import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.registry.BedrockBiomes;
 import micheal65536.fountain.registry.BedrockBlocks;
@@ -29,7 +30,7 @@ import java.util.Map;
 public class LevelChunkUtils
 {
 	@NotNull
-	public static LevelChunkPacket translateLevelChunk(@NotNull ClientboundLevelChunkWithLightPacket clientboundLevelChunkWithLightPacket, @NotNull HashMap<Integer, String> javaBiomesMap, @NotNull MinecraftCodecHelper minecraftCodecHelper)
+	public static LevelChunkPacket translateLevelChunk(@NotNull ClientboundLevelChunkWithLightPacket clientboundLevelChunkWithLightPacket, @NotNull HashMap<Integer, String> javaBiomesMap, @Nullable FabricRegistryManager fabricRegistryManager, @NotNull MinecraftCodecHelper minecraftCodecHelper)
 	{
 		try
 		{
@@ -70,16 +71,16 @@ public class LevelChunkUtils
 						javaId = javaBlockPalette.idToState(javaBlockData.get(yzx));
 					}
 
-					int bedrockId = JavaBlocks.getBedrockId(javaId);
+					int bedrockId = JavaBlocks.getBedrockId(javaId, fabricRegistryManager);
 					if (bedrockId == -1)
 					{
 						if (alreadyNotifiedMissingBlocks.add(javaId))
 						{
-							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlocks.getName(javaId));
+							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlocks.getName(javaId, fabricRegistryManager));
 						}
 						bedrockId = BedrockBlocks.AIR;
 					}
-					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId) ? BedrockBlocks.WATER : BedrockBlocks.AIR);
+					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId, fabricRegistryManager) ? BedrockBlocks.WATER : BedrockBlocks.AIR);
 
 					if (bedrockId != BedrockBlocks.AIR)
 					{

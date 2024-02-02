@@ -53,6 +53,8 @@ import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.jetbrains.annotations.NotNull;
 
+import java.nio.charset.StandardCharsets;
+
 public final class ServerPacketHandler extends SessionAdapter
 {
 	private final PlayerSession playerSession;
@@ -69,9 +71,20 @@ public final class ServerPacketHandler extends SessionAdapter
 		{
 			this.playerSession.onJavaLogin((ClientboundLoginPacket) packet);
 		}
+		else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("minecraft:register"))
+		{
+			for (String channel : new String(((ClientboundCustomPayloadPacket) packet).getData(), StandardCharsets.US_ASCII).split("\0"))
+			{
+				this.playerSession.onJavaChannelRegister(channel);
+			}
+		}
 		else if (packet instanceof ClientboundRegistryDataPacket)
 		{
 			this.playerSession.loadJavaBiomes(((CompoundTag) ((ClientboundRegistryDataPacket) packet).getRegistry().get("minecraft:worldgen/biome")).get("value"));
+		}
+		else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("fabric:registry/sync/direct"))
+		{
+			this.playerSession.handleFabricRegistrySyncData(((ClientboundCustomPayloadPacket) packet).getData());
 		}
 		else if (packet instanceof ClientboundDisconnectPacket)
 		{

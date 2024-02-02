@@ -1,0 +1,57 @@
+[
+  {
+    "name": "fountain:invisible_constraint",
+    "states": [
+      {
+        "name": "",
+        "bedrock": {
+          "name": "minecraft:invisible_constraint"
+        }
+      }
+    ]
+  },
+  {
+    "name": "fountain:blend_constraint",
+    "states": [
+      {
+        "name": "",
+        "bedrock": {
+          "name": "minecraft:blend_constraint"
+        }
+      }
+    ]
+  },
+  {
+    "name": "fountain:border_constraint",
+    "states": [
+      {
+        "name": "",
+        "bedrock": {
+          "name": "minecraft:border_constraint"
+        }
+      }
+    ]
+  },
+  {
+    "name": "fountain:solid_air",
+    "states": [
+      {
+        "name": "",
+        "bedrock": {
+          "name": "minecraft:air"
+        }
+      }
+    ]
+  },
+  {
+    "name": "fountain:non_replaceable_air",
+    "states": [
+      {
+        "name": "",
+        "bedrock": {
+          "name": "minecraft:air"
+        }
+      }
+    ]
+  }
+]

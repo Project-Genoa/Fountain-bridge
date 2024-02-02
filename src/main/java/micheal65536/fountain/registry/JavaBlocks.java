@@ -40,13 +40,13 @@ public class JavaBlocks
 					String name = element.getAsJsonObject().get("name").getAsString();
 					if (map.put(id, name) != null)
 					{
-						LogManager.getLogger().warn("Duplicate Java block ID " + id);
+						LogManager.getLogger().warn("Duplicate Java block ID {}", id);
 					}
 
 					JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
 					if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
 					{
-						LogManager.getLogger().debug("Ignoring Java block " + name);
+						LogManager.getLogger().debug("Ignoring Java block {}", name);
 						continue;
 					}
 					String bedrockName = bedrockMapping.get("name").getAsString();
@@ -74,7 +74,7 @@ public class JavaBlocks
 					int bedrockId = BedrockBlocks.getId(bedrockName, bedrockState);
 					if (bedrockId == -1)
 					{
-						LogManager.getLogger().warn("Cannot find Bedrock block for Java block " + name);
+						LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
 					}
 					else
 					{
@@ -105,7 +105,7 @@ public class JavaBlocks
 						JsonObject bedrockMapping = stateElement.getAsJsonObject().get("bedrock").getAsJsonObject();
 						if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
 						{
-							LogManager.getLogger().debug("Ignoring Java block " + name);
+							LogManager.getLogger().debug("Ignoring Java block {}", name);
 							continue;
 						}
 						String bedrockName = bedrockMapping.get("name").getAsString();
@@ -133,7 +133,7 @@ public class JavaBlocks
 						int bedrockId = BedrockBlocks.getId(bedrockName, bedrockState);
 						if (bedrockId == -1)
 						{
-							LogManager.getLogger().warn("Cannot find Bedrock block for Java block " + name);
+							LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
 						}
 						else
 						{
@@ -146,14 +146,14 @@ public class JavaBlocks
 
 					if (nonVanillaStatesList.put(baseName, stateNames) != null)
 					{
-						LogManager.getLogger().warn("Duplicate Java non-vanilla block name " + baseName);
+						LogManager.getLogger().warn("Duplicate Java non-vanilla block name {}", baseName);
 					}
 				}
 			}
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot load Java blocks", exception);
+			LogManager.getLogger().fatal("Cannot load Java blocks data", exception);
 			System.exit(1);
 		}
 	}

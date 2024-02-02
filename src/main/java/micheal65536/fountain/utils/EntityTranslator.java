@@ -80,7 +80,7 @@ public class EntityTranslator
 				int bedrockBlockId = JavaBlocks.getBedrockId(javaBlockId);
 				if (bedrockBlockId == -1)
 				{
-					LogManager.getLogger().warn("Falling block entity for block with no mapping " + JavaBlocks.getName(javaBlockId));
+					LogManager.getLogger().warn("Falling block entity for block with no mapping {}", JavaBlocks.getName(javaBlockId));
 					yield null;
 				}
 				yield new BaseJavaEntityInstanceWithSingleBedrockEntityInstance<>("minecraft:falling_block", new FallingBlockBedrockEntityInstance(bedrockBlockId));

@@ -27,17 +27,17 @@ public class BedrockItems
 				String name = element.getAsJsonObject().get("name").getAsString();
 				if (nameMap.put(id, name) != null)
 				{
-					LogManager.getLogger().warn("Duplicate Bedrock item ID " + id);
+					LogManager.getLogger().warn("Duplicate Bedrock item ID {}", id);
 				}
 				if (idMap.put(name, id) != null)
 				{
-					LogManager.getLogger().warn("Duplicate Bedrock item name " + name);
+					LogManager.getLogger().warn("Duplicate Bedrock item name {}", name);
 				}
 			}
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot load Bedrock items", exception);
+			LogManager.getLogger().fatal("Cannot load Bedrock items data", exception);
 			System.exit(1);
 		}
 	}

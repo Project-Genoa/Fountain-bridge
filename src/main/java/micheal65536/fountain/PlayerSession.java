@@ -273,8 +273,6 @@ public final class PlayerSession
 
 	public void updateTime(long javaTime)
 	{
-		LogManager.getLogger().trace("Server set time to " + javaTime);
-
 		int bedrockTime = (int) (Math.abs(javaTime) % (24000 * 8));
 		boolean doDaylightCycle = javaTime >= 0;
 
@@ -327,8 +325,6 @@ public final class PlayerSession
 	{
 		if (clientboundLevelChunkWithLightPacket.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getX() < MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() < MAX_NONEMPTY_CHUNK_RADIUS)
 		{
-			LogManager.getLogger().trace("Sending chunk " + clientboundLevelChunkWithLightPacket.getX() + ", " + clientboundLevelChunkWithLightPacket.getZ());
-
 			LevelChunkPacket levelChunkPacket = LevelChunkUtils.translateLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper());
 			this.sendBedrockPacket(levelChunkPacket);
 		}
@@ -341,8 +337,6 @@ public final class PlayerSession
 		{
 			if (position.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getX() < MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() < MAX_NONEMPTY_CHUNK_RADIUS * 16)
 			{
-				LogManager.getLogger().trace("Sending block update " + position.getX() + ", " + position.getY() + ", " + position.getZ());
-
 				// TODO: flower pots, pistons, cauldrons, lecterns
 
 				// TODO: Geyser said we need to special-case doors here, but they seem to work fine?
@@ -350,7 +344,7 @@ public final class PlayerSession
 				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock(), this.fabricRegistryManager);
 				if (bedrockId == -1)
 				{
-					LogManager.getLogger().warn("Block update contained block with no mapping " + JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
+					LogManager.getLogger().warn("Block update contained block with no mapping {}", JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
 					bedrockId = BedrockBlocks.AIR;
 				}
 
@@ -376,7 +370,7 @@ public final class PlayerSession
 		EntityManager.JavaEntityInstance entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData());
 		if (entityInstance == null)
 		{
-			LogManager.getLogger().warn("Ignoring Java entity with type " + clientboundAddEntityPacket.getType().name());
+			LogManager.getLogger().warn("Ignoring Java entity with type {}", clientboundAddEntityPacket.getType().name());
 			return;
 		}
 		entityInstance.setInitialPosition(
@@ -510,7 +504,7 @@ public final class PlayerSession
 			{
 				if (metadata.getType() != MetadataType.FLOAT)
 				{
-					LogManager.getLogger().warn("Java server sent bad player entity metadata");
+					LogManager.getLogger().warn("Server sent bad player entity metadata");
 					return;
 				}
 				this.javaPlayerHealth = (float) metadata.getValue();
@@ -576,7 +570,7 @@ public final class PlayerSession
 		{
 			if (!entityInstance.handleEvent(entityEvent))
 			{
-				LogManager.getLogger().warn("Entity event with type " + entityEvent.name() + " ignored by entity ID " + javaEntityInstanceId);
+				LogManager.getLogger().debug("Entity event with type {} ignored by entity ID {}", entityEvent.name(), javaEntityInstanceId);
 			}
 		}
 	}
@@ -593,7 +587,7 @@ public final class PlayerSession
 		{
 			if (!entityInstance.handleAnimation(animation))
 			{
-				LogManager.getLogger().warn("Entity animation with type " + animation.name() + " ignored by entity ID " + javaEntityInstanceId);
+				LogManager.getLogger().debug("Entity animation with type {} ignored by entity ID {}", animation.name(), javaEntityInstanceId);
 			}
 		}
 	}
@@ -631,7 +625,7 @@ public final class PlayerSession
 	{
 		if (animatePacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
 		{
-			LogManager.getLogger().warn("Unrecognised AnimatePacket (incorrect entity ID)");
+			LogManager.getLogger().warn("Unrecognised client AnimatePacket (entity ID does not match player)");
 			return;
 		}
 
@@ -641,7 +635,7 @@ public final class PlayerSession
 		}
 		else
 		{
-			LogManager.getLogger().warn("Ignoring AnimatePacket with action " + animatePacket.getAction().name());
+			LogManager.getLogger().debug("Ignoring AnimatePacket with action {}", animatePacket.getAction().name());
 		}
 	}
 
@@ -680,7 +674,7 @@ public final class PlayerSession
 			EntityManager.BedrockEntityInstance entityInstance = this.entityManager.getBedrockEntity(packet.getRuntimeEntityId());
 			if (entityInstance == null)
 			{
-				LogManager.getLogger().warn("Client tried to interact with entity ID " + packet.getRuntimeEntityId() + " that does not exist");
+				LogManager.getLogger().warn("Client tried to interact with entity ID {} that does not exist", packet.getRuntimeEntityId());
 				return;
 			}
 			if (packet.getActionType() == 0) // use item
@@ -705,7 +699,7 @@ public final class PlayerSession
 		EntityManager.BedrockEntityInstance bedrockEntityInstance = this.entityManager.getBedrockEntity(itemEntityId);
 		if (bedrockEntityInstance == null || !(bedrockEntityInstance instanceof ItemJavaEntityInstance.ItemBedrockEntityInstance))
 		{
-			LogManager.getLogger().warn("Client sent item pickup with entity ID " + itemEntityId + " that does not exist or is not an item entity");
+			LogManager.getLogger().warn("Client sent item pickup with entity ID {} that does not exist or is not an item entity", itemEntityId);
 			return;
 		}
 		ItemJavaEntityInstance javaEntityInstance = ((ItemJavaEntityInstance.ItemBedrockEntityInstance) bedrockEntityInstance).getJavaEntityInstance();
@@ -716,12 +710,12 @@ public final class PlayerSession
 	{
 		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
 		{
-			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (incorrect entity ID)");
+			LogManager.getLogger().warn("Unrecognised client MobEquipmentPacket (entity ID does not match player)");
 			return;
 		}
 		else if (!(mobEquipmentPacket.getContainerId() == 0 || mobEquipmentPacket.getContainerId() == 125))
 		{
-			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (container ID " + mobEquipmentPacket.getContainerId() + ")");
+			LogManager.getLogger().warn("Unrecognised MobEquipmentPacket (unrecognised container ID {})", mobEquipmentPacket.getContainerId());
 			return;
 		}
 
@@ -776,7 +770,7 @@ public final class PlayerSession
 			JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
 			if (bedrockMapping == null)
 			{
-				LogManager.getLogger().warn("Item pickup particle for item with no mapping " + JavaItems.getName(javaId));
+				LogManager.getLogger().warn("Item pickup particle for item with no mapping {}", JavaItems.getName(javaId));
 				return;
 			}
 
@@ -784,7 +778,7 @@ public final class PlayerSession
 		}
 		catch (IOException | NullPointerException exception)
 		{
-			LogManager.getLogger().debug(exception);
+			LogManager.getLogger().warn("Server sent bad item pickup particle data", exception);
 		}
 	}
 
@@ -792,14 +786,10 @@ public final class PlayerSession
 	{
 		if (slot != this.bedrockSelectedHotbarSlot)
 		{
-			LogManager.getLogger().warn("Server set selected hotbar slot to " + slot + ", client has requested " + (this.bedrockSelectedHotbarSlot));
+			LogManager.getLogger().warn("Server set selected hotbar slot to {}, client has requested {}", slot, this.bedrockSelectedHotbarSlot);
 
 			ServerboundSetCarriedItemPacket serverboundSetCarriedItemPacket = new ServerboundSetCarriedItemPacket(this.bedrockSelectedHotbarSlot);
 			this.sendJavaPacket(serverboundSetCarriedItemPacket);
-		}
-		else
-		{
-			LogManager.getLogger().debug("Server set selected hotbar slot to " + slot);
 		}
 	}
 

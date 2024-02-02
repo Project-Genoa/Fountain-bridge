@@ -61,7 +61,7 @@ public class EntityManager
 	{
 		if (this.javaEntities.containsKey(instanceId))
 		{
-			LogManager.getLogger().warn("Duplicate Java entity instance ID " + instanceId);
+			LogManager.getLogger().warn("Duplicate Java entity instance ID {}", instanceId);
 			return;
 		}
 		if (entityInstance.entityManager != null)
@@ -79,7 +79,7 @@ public class EntityManager
 	{
 		if (this.javaEntities.containsKey(javaEntityInstanceId))
 		{
-			LogManager.getLogger().warn("Duplicate Java entity instance ID " + javaEntityInstanceId);
+			LogManager.getLogger().warn("Duplicate Java entity instance ID {}", javaEntityInstanceId);
 		}
 
 		long bedrockEntityInstanceId = this.getNewBedrockEntityId();
@@ -115,7 +115,7 @@ public class EntityManager
 		entityInstance.getEntityAttributes(bedrockAttributes);
 		addEntityPacket.getAttributes().addAll(bedrockAttributes);
 		this.playerSession.sendBedrockPacket(addEntityPacket);
-		LogManager.getLogger().trace("Added Bedrock entity with ID " + entityInstance.instanceId);
+		LogManager.getLogger().trace("Added Bedrock entity with ID {}", entityInstance.instanceId);
 
 		entityInstance.entityManager = this;
 		this.bedrockEntities.put(entityInstance.instanceId, entityInstance);
@@ -143,7 +143,7 @@ public class EntityManager
 		entityInstance.getEntityFlags(bedrockEntityFlags);
 		addItemEntityPacket.getMetadata().putFlags(bedrockEntityFlags);
 		this.playerSession.sendBedrockPacket(addItemEntityPacket);
-		LogManager.getLogger().trace("Added Bedrock item entity with ID " + entityInstance.instanceId);
+		LogManager.getLogger().trace("Added Bedrock item entity with ID {}", entityInstance.instanceId);
 
 		entityInstance.entityManager = this;
 		this.bedrockEntities.put(entityInstance.instanceId, entityInstance);
@@ -184,7 +184,7 @@ public class EntityManager
 		RemoveEntityPacket removeEntityPacket = new RemoveEntityPacket();
 		removeEntityPacket.setUniqueEntityId(entityInstance.instanceId);
 		this.playerSession.sendBedrockPacket(removeEntityPacket);
-		LogManager.getLogger().trace("Removed Bedrock entity with ID " + entityInstance.instanceId);
+		LogManager.getLogger().trace("Removed Bedrock entity with ID {}", entityInstance.instanceId);
 	}
 
 	private int nextBedrockEntityId = 1;
@@ -476,7 +476,7 @@ public class EntityManager
 			{
 				if (metadata.getType() != targetType)
 				{
-					LogManager.getLogger().warn("Java server sent bad entity metadata (ID " + metadataId + " of type " + metadata.getType() + " did not match expected type " + targetType + ")");
+					LogManager.getLogger().warn("Server sent bad entity metadata (ID {} of type {} did not match expected type {})", metadataId, metadata.getType(), targetType);
 					return false;
 				}
 				consumer.accept((V) metadata.getValue());

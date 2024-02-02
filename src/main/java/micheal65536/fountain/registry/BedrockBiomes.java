@@ -25,17 +25,17 @@ public class BedrockBiomes
 				String name = element.getAsJsonObject().get("name").getAsString();
 				if (idMap.containsValue(id))
 				{
-					LogManager.getLogger().warn("Duplicate Bedrock biome ID " + id);
+					LogManager.getLogger().warn("Duplicate biome ID {}", id);
 				}
 				if (idMap.put(name, id) != null)
 				{
-					LogManager.getLogger().warn("Duplicate Bedrock biome name " + name);
+					LogManager.getLogger().warn("Duplicate biome name {}", name);
 				}
 			}
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot load Bedrock biomes", exception);
+			LogManager.getLogger().fatal("Cannot load biomes data", exception);
 			System.exit(1);
 		}
 	}

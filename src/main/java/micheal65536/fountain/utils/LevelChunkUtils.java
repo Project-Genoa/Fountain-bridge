@@ -76,7 +76,7 @@ public class LevelChunkUtils
 					{
 						if (alreadyNotifiedMissingBlocks.add(javaId))
 						{
-							LogManager.getLogger().warn("Chunk contained block with no mapping " + JavaBlocks.getName(javaId, fabricRegistryManager));
+							LogManager.getLogger().warn("Chunk contained block with no mapping {}", JavaBlocks.getName(javaId, fabricRegistryManager));
 						}
 						bedrockId = BedrockBlocks.AIR;
 					}
@@ -120,7 +120,7 @@ public class LevelChunkUtils
 					String biomeName = javaBiomesMap.getOrDefault(javaId, null);
 					if (biomeName == null)
 					{
-						LogManager.getLogger().warn("Java server sent bad biome data");
+						LogManager.getLogger().warn("Server sent bad biome data");
 						bedrockId = -1;
 					}
 					else
@@ -130,7 +130,7 @@ public class LevelChunkUtils
 						{
 							if (alreadyNotifiedMissingBiomes.add(biomeName))
 							{
-								LogManager.getLogger().warn("Chunk contained biome with no mapping " + biomeName);
+								LogManager.getLogger().warn("Chunk contained biome with no mapping {}", biomeName);
 							}
 						}
 					}
@@ -190,7 +190,7 @@ public class LevelChunkUtils
 
 						if (mostCommonBiomeId == -1)
 						{
-							LogManager.getLogger().warn("Could not determine biome for " + x + ", " + z + " (" + biomeCounts.size() + " candidates)");
+							LogManager.getLogger().warn("Could not determine biome for {}, {} ({} candidates)", x, z, biomeCounts.size());
 							mostCommonBiomeId = 4;
 						}
 

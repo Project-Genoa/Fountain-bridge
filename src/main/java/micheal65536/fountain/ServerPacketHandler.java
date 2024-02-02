@@ -48,6 +48,7 @@ import com.github.steveice10.packetlib.Session;
 import com.github.steveice10.packetlib.event.session.DisconnectedEvent;
 import com.github.steveice10.packetlib.event.session.SessionAdapter;
 import com.github.steveice10.packetlib.packet.Packet;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3f;
@@ -267,14 +268,14 @@ public final class ServerPacketHandler extends SessionAdapter
 
 		else
 		{
-			LogManager.getLogger().debug("Unhandled Java packet " + packet.getClass().getSimpleName());
+			LogManager.getLogger().debug("Unhandled server packet {}", packet.getClass().getSimpleName());
 		}
 	}
 
 	@Override
 	public void disconnected(DisconnectedEvent event)
 	{
-		LogManager.getLogger().info("Java server has disconnected");
+		LogManager.getLogger().info("Server has disconnected: {}", event != null ? PlainTextComponentSerializer.plainText().serialize(event.getReason()) : "null");
 		this.playerSession.disconnectForced();
 	}
 }

@@ -6,6 +6,7 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
@@ -81,6 +82,8 @@ public class Main
 					@Override
 					protected void initSession(BedrockServerSession session)
 					{
+						LogManager.getLogger().info("New connection from {}", session.getPeer().getSocketAddress());
+
 						session.setCodec(Bedrock_v425_Genoa.CODEC);
 						session.setPacketHandler(new ClientPacketHandler(session));
 						session.getPeer().getCodecHelper().setBlockDefinitions(BLOCK_DEFINITION_REGISTRY);

@@ -65,7 +65,7 @@ public class FabricRegistryManager
 								String[] states = JavaBlocks.getStatesForNonVanillaBlock(name);
 								if (states == null)
 								{
-									LogManager.getLogger().warn("Fabric registry contained unrecognised block " + name + ", block state IDs will likely be incorrect");
+									LogManager.getLogger().warn("Fabric registry contained unrecognised block {}, block state IDs will likely be incorrect", name);
 									return;
 								}
 								for (String state : states)

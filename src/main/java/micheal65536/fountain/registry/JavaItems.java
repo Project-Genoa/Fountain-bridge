@@ -30,13 +30,13 @@ public class JavaItems
 				String name = element.getAsJsonObject().get("name").getAsString();
 				if (map.put(id, name) != null)
 				{
-					LogManager.getLogger().warn("Duplicate Java item ID " + id);
+					LogManager.getLogger().warn("Duplicate Java item ID {}", id);
 				}
 
 				JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
 				if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
 				{
-					LogManager.getLogger().debug("Ignoring Java item " + name);
+					LogManager.getLogger().debug("Ignoring Java item {}", name);
 					continue;
 				}
 				String bedrockName = bedrockMapping.get("name").getAsString();
@@ -45,21 +45,21 @@ public class JavaItems
 				int bedrockId = BedrockItems.getId(bedrockName);
 				if (bedrockId == 0)
 				{
-					LogManager.getLogger().warn("Cannot find Bedrock item for Java item " + name);
+					LogManager.getLogger().warn("Cannot find Bedrock item for Java item {}", name);
 				}
 				else
 				{
 					bedrockMappingMap.put(id, new BedrockMapping(bedrockId, bedrockAux, bedrockToolWear));
 					if (javaIdMap.put(new ItemNameAndAux(bedrockName, bedrockAux), id) != null)
 					{
-						LogManager.getLogger().warn("Duplicate Bedrock item mapping " + bedrockName + " " + bedrockAux);
+						LogManager.getLogger().warn("Duplicate Bedrock item mapping {} {}", bedrockName, bedrockAux);
 					}
 				}
 			}
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot load Java items", exception);
+			LogManager.getLogger().fatal("Cannot load Java items data", exception);
 			System.exit(1);
 		}
 	}

@@ -107,7 +107,7 @@ public final class GenoaInventory
 			EarthItemCatalog.NameAndAux nameAndAux = EarthItemCatalog.getNameAndAux(item.uuid);
 			if (nameAndAux == null)
 			{
-				LogManager.getLogger().warn("Cannot find item " + item.uuid);
+				LogManager.getLogger().warn("Cannot find item with UUID {}", item.uuid);
 				return null;
 			}
 			EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
@@ -247,7 +247,7 @@ public final class GenoaInventory
 		EarthItemCatalog.NameAndAux nameAndAux = EarthItemCatalog.getNameAndAux(item.uuid);
 		if (nameAndAux == null)
 		{
-			LogManager.getLogger().warn("Cannot find item " + item.uuid);
+			LogManager.getLogger().warn("Cannot find item with UUID {}", item.uuid);
 			return null;
 		}
 		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
@@ -307,14 +307,14 @@ public final class GenoaInventory
 		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
 		if (bedrockMapping == null)
 		{
-			LogManager.getLogger().warn("Attempt to translate item with no mapping " + JavaItems.getName(javaId));
+			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId));
 			return null;
 		}
 		String bedrockName = BedrockItems.getName(bedrockMapping.id);
 		String uuid = EarthItemCatalog.getUUID(bedrockName, bedrockMapping.aux);
 		if (uuid == null)
 		{
-			LogManager.getLogger().warn("Cannot find item UUID for " + bedrockName + " " + bedrockMapping.aux);
+			LogManager.getLogger().warn("Cannot find item UUID for {} {}", bedrockName, bedrockMapping.aux);
 			return null;
 		}
 		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
@@ -338,14 +338,14 @@ public final class GenoaInventory
 		int bedrockId = BedrockItems.getId(name);
 		if (bedrockId == 0)
 		{
-			LogManager.getLogger().warn("Cannot find Bedrock item for " + name);
+			LogManager.getLogger().warn("Cannot find Bedrock item for {}", name);
 			return null;
 		}
 
 		int javaId = JavaItems.getJavaId(name, aux);
 		if (javaId == -1)
 		{
-			LogManager.getLogger().warn("Cannot find Java item for " + name + " " + aux);
+			LogManager.getLogger().warn("Cannot find Java item for {} {}", name, aux);
 			return null;
 		}
 		return JavaItems.getName(javaId);

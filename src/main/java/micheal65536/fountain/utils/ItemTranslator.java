@@ -26,7 +26,7 @@ public final class ItemTranslator
 		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
 		if (bedrockMapping == null)
 		{
-			LogManager.getLogger().warn("Attempt to translate item with no mapping " + JavaItems.getName(javaId));
+			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId));
 			return builder.build();
 		}
 		builder.definition(Main.ITEM_DEFINITION_REGISTRY.getDefinition(bedrockMapping.id));

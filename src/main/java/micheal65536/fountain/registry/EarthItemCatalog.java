@@ -40,7 +40,7 @@ public class EarthItemCatalog
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot load Earth item catalog", exception);
+			LogManager.getLogger().fatal("Cannot load Earth item catalog data", exception);
 			System.exit(1);
 		}
 	}

@@ -38,7 +38,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 		PacketSignal packetSignal = BedrockPacketHandler.super.handlePacket(packet);
 		if (packetSignal != PacketSignal.HANDLED)
 		{
-			LogManager.getLogger().debug("Unhandled Bedrock packet " + packet.getClass().getSimpleName());
+			LogManager.getLogger().debug("Unhandled client packet {}", packet.getClass().getSimpleName());
 		}
 		return PacketSignal.HANDLED;
 	}
@@ -145,7 +145,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public void onDisconnect(String reason)
 	{
-		LogManager.getLogger().info("Bedrock client has disconnected");
+		LogManager.getLogger().info("Client has disconnected: {}", reason);
 		this.playerSession.disconnectForced();
 	}
 }

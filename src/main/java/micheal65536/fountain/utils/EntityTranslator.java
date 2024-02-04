@@ -77,13 +77,13 @@ public class EntityTranslator
 			case FALLING_BLOCK ->
 			{
 				int javaBlockId = ((FallingBlockData) data).getId();
-				int bedrockBlockId = JavaBlocks.getBedrockId(javaBlockId);
-				if (bedrockBlockId == -1)
+				JavaBlocks.BedrockMapping bedrockMapping = JavaBlocks.getBedrockMapping(javaBlockId);
+				if (bedrockMapping == null)
 				{
 					LogManager.getLogger().warn("Falling block entity for block with no mapping {}", JavaBlocks.getName(javaBlockId));
 					yield null;
 				}
-				yield new BaseJavaEntityInstanceWithSingleBedrockEntityInstance<>("minecraft:falling_block", new FallingBlockBedrockEntityInstance(bedrockBlockId));
+				yield new BaseJavaEntityInstanceWithSingleBedrockEntityInstance<>("minecraft:falling_block", new FallingBlockBedrockEntityInstance(bedrockMapping.id));
 			}
 			case ARROW -> new BaseJavaEntityInstanceWithSingleBedrockEntityInstance<>("minecraft:arrow", new BaseBedrockEntityInstance());    // TODO: does Minecraft Earth have potion and spectral arrows?
 			case EGG -> new BaseJavaEntityInstanceWithSingleBedrockEntityInstance<>("minecraft:egg", new BaseBedrockEntityInstance());    // TODO: movement is broken

@@ -71,18 +71,17 @@ public class LevelChunkUtils
 						javaId = javaBlockPalette.idToState(javaBlockData.get(yzx));
 					}
 
-					int bedrockId = JavaBlocks.getBedrockId(javaId, fabricRegistryManager);
-					if (bedrockId == -1)
+					JavaBlocks.BedrockMapping bedrockMapping = JavaBlocks.getBedrockMapping(javaId, fabricRegistryManager);
+					if (bedrockMapping == null)
 					{
 						if (alreadyNotifiedMissingBlocks.add(javaId))
 						{
 							LogManager.getLogger().warn("Chunk contained block with no mapping {}", JavaBlocks.getName(javaId, fabricRegistryManager));
 						}
-						bedrockId = BedrockBlocks.AIR;
 					}
-					bedrockChunk.set(YZXToXZY(yzx), bedrockId, JavaBlocks.isWaterlogged(javaId, fabricRegistryManager) ? BedrockBlocks.WATER : BedrockBlocks.AIR);
+					bedrockChunk.set(YZXToXZY(yzx), bedrockMapping != null ? bedrockMapping.id : BedrockBlocks.AIR, bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR);
 
-					if (bedrockId != BedrockBlocks.AIR)
+					if (bedrockMapping != null && bedrockMapping.id != BedrockBlocks.AIR)
 					{
 						int x = yzx & 0x00F;
 						int z = (yzx & 0x0F0) >> 4;

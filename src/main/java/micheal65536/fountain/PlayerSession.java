@@ -341,24 +341,23 @@ public final class PlayerSession
 
 				// TODO: Geyser said we need to special-case doors here, but they seem to work fine?
 
-				int bedrockId = JavaBlocks.getBedrockId(blockChangeEntry.getBlock(), this.fabricRegistryManager);
-				if (bedrockId == -1)
+				JavaBlocks.BedrockMapping bedrockMapping = JavaBlocks.getBedrockMapping(blockChangeEntry.getBlock(), this.fabricRegistryManager);
+				if (bedrockMapping == null)
 				{
 					LogManager.getLogger().warn("Block update contained block with no mapping {}", JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
-					bedrockId = BedrockBlocks.AIR;
 				}
 
 				UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(0);
-				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockId));
+				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockMapping != null ? bedrockMapping.id : BedrockBlocks.AIR));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 
 				updateBlockPacket = new UpdateBlockPacket();
 				updateBlockPacket.setBlockPosition(position);
 				updateBlockPacket.setDataLayer(1);
-				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(JavaBlocks.isWaterlogged(blockChangeEntry.getBlock(), this.fabricRegistryManager) ? BedrockBlocks.WATER : BedrockBlocks.AIR));
+				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR));
 				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 				this.sendBedrockPacket(updateBlockPacket);
 			}

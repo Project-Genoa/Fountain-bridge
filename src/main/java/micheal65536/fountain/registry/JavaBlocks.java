@@ -22,10 +22,8 @@ public class JavaBlocks
 	private static final HashMap<Integer, String> map = new HashMap<>();
 	private static final HashMap<String, LinkedList<String>> nonVanillaStatesList = new HashMap<>();
 
-	private static final HashMap<Integer, Integer> bedrockIdMap = new HashMap<>();
-	private static final HashMap<Integer, Boolean> bedrockWaterloggedMap = new HashMap<>();
-	private static final HashMap<String, Integer> bedrockNonVanillaIdMap = new HashMap<>();
-	private static final HashMap<String, Boolean> bedrockNonVanillaWaterloggedMap = new HashMap<>();
+	private static final HashMap<Integer, BedrockMapping> bedrockMap = new HashMap<>();
+	private static final HashMap<String, BedrockMapping> bedrockNonVanillaMap = new HashMap<>();
 
 	static
 	{
@@ -43,45 +41,19 @@ public class JavaBlocks
 						LogManager.getLogger().warn("Duplicate Java block ID {}", id);
 					}
 
-					JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
-					if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
+					BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject());
+					if (bedrockMapping == null)
 					{
 						LogManager.getLogger().debug("Ignoring Java block {}", name);
 						continue;
 					}
-					String bedrockName = bedrockMapping.get("name").getAsString();
-					HashMap<String, Object> bedrockState = new HashMap<>();
-					if (bedrockMapping.has("state"))
-					{
-						JsonObject bedrockStateObject = bedrockMapping.get("state").getAsJsonObject();
-						for (Map.Entry<String, JsonElement> entry : bedrockStateObject.entrySet())
-						{
-							JsonElement bedrockStateElement = entry.getValue();
-							if (bedrockStateElement.getAsJsonPrimitive().isString())
-							{
-								bedrockState.put(entry.getKey(), bedrockStateElement.getAsString());
-							}
-							else if (bedrockStateElement.getAsJsonPrimitive().isBoolean())
-							{
-								bedrockState.put(entry.getKey(), bedrockStateElement.getAsBoolean() ? 1 : 0);
-							}
-							else
-							{
-								bedrockState.put(entry.getKey(), bedrockStateElement.getAsInt());
-							}
-						}
-					}
-					int bedrockId = BedrockBlocks.getId(bedrockName, bedrockState);
-					if (bedrockId == -1)
+					if (bedrockMapping.id == -1)
 					{
 						LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
 					}
 					else
 					{
-						bedrockIdMap.put(id, bedrockId);
-
-						boolean waterlogged = name.contains("waterlogged=true") || bedrockName.equals("minecraft:bubble_column") || bedrockName.equals("minecraft:kelp") || bedrockName.equals("minecraft:seagrass");    // TODO: consider putting this in data file
-						bedrockWaterloggedMap.put(id, waterlogged);
+						bedrockMap.put(id, bedrockMapping);
 					}
 				}
 			}
@@ -102,45 +74,19 @@ public class JavaBlocks
 
 						String name = baseName + stateName;
 
-						JsonObject bedrockMapping = stateElement.getAsJsonObject().get("bedrock").getAsJsonObject();
-						if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
+						BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject());
+						if (bedrockMapping == null)
 						{
 							LogManager.getLogger().debug("Ignoring Java block {}", name);
 							continue;
 						}
-						String bedrockName = bedrockMapping.get("name").getAsString();
-						HashMap<String, Object> bedrockState = new HashMap<>();
-						if (bedrockMapping.has("state"))
-						{
-							JsonObject bedrockStateObject = bedrockMapping.get("state").getAsJsonObject();
-							for (Map.Entry<String, JsonElement> entry : bedrockStateObject.entrySet())
-							{
-								JsonElement bedrockStateElement = entry.getValue();
-								if (bedrockStateElement.getAsJsonPrimitive().isString())
-								{
-									bedrockState.put(entry.getKey(), bedrockStateElement.getAsString());
-								}
-								else if (bedrockStateElement.getAsJsonPrimitive().isBoolean())
-								{
-									bedrockState.put(entry.getKey(), bedrockStateElement.getAsBoolean() ? 1 : 0);
-								}
-								else
-								{
-									bedrockState.put(entry.getKey(), bedrockStateElement.getAsInt());
-								}
-							}
-						}
-						int bedrockId = BedrockBlocks.getId(bedrockName, bedrockState);
-						if (bedrockId == -1)
+						if (bedrockMapping.id == -1)
 						{
 							LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
 						}
 						else
 						{
-							bedrockNonVanillaIdMap.put(name, bedrockId);
-
-							boolean waterlogged = name.contains("waterlogged=true");    // TODO: consider putting this in data file
-							bedrockNonVanillaWaterloggedMap.put(name, waterlogged);
+							bedrockNonVanillaMap.put(name, bedrockMapping);
 						}
 					}
 
@@ -156,6 +102,44 @@ public class JavaBlocks
 			LogManager.getLogger().fatal("Cannot load Java blocks data", exception);
 			System.exit(1);
 		}
+	}
+
+	@Nullable
+	private static BedrockMapping readBedrockMapping(JsonObject bedrockMappingObject)
+	{
+		if (bedrockMappingObject.has("ignore") && bedrockMappingObject.get("ignore").getAsBoolean())
+		{
+			return null;
+		}
+
+		String name = bedrockMappingObject.get("name").getAsString();
+
+		HashMap<String, Object> state = new HashMap<>();
+		if (bedrockMappingObject.has("state"))
+		{
+			JsonObject stateObject = bedrockMappingObject.get("state").getAsJsonObject();
+			for (Map.Entry<String, JsonElement> entry : stateObject.entrySet())
+			{
+				JsonElement stateElement = entry.getValue();
+				if (stateElement.getAsJsonPrimitive().isString())
+				{
+					state.put(entry.getKey(), stateElement.getAsString());
+				}
+				else if (stateElement.getAsJsonPrimitive().isBoolean())
+				{
+					state.put(entry.getKey(), stateElement.getAsBoolean() ? 1 : 0);
+				}
+				else
+				{
+					state.put(entry.getKey(), stateElement.getAsInt());
+				}
+			}
+		}
+
+		boolean waterlogged = bedrockMappingObject.has("waterlogged") ? bedrockMappingObject.get("waterlogged").getAsBoolean() : false;
+
+		int id = BedrockBlocks.getId(name, state);
+		return new BedrockMapping(id, waterlogged);
 	}
 
 	public static void init()
@@ -182,15 +166,9 @@ public class JavaBlocks
 	}
 
 	@Deprecated
-	public static int getBedrockId(int javaId)
+	public static BedrockMapping getBedrockMapping(int javaId)
 	{
-		return getBedrockId(javaId, null);
-	}
-
-	@Deprecated
-	public static boolean isWaterlogged(int javaId)
-	{
-		return isWaterlogged(javaId, null);
+		return getBedrockMapping(javaId, null);
 	}
 
 	@Nullable
@@ -204,34 +182,30 @@ public class JavaBlocks
 		return name;
 	}
 
-	public static int getBedrockId(int javaId, @Nullable FabricRegistryManager fabricRegistryManager)
+	@Nullable
+	public static BedrockMapping getBedrockMapping(int javaId, @Nullable FabricRegistryManager fabricRegistryManager)
 	{
-		int bedrockId = bedrockIdMap.getOrDefault(javaId, -1);
-		if (bedrockId == -1 && fabricRegistryManager != null)
+		BedrockMapping bedrockMapping = bedrockMap.getOrDefault(javaId, null);
+		if (bedrockMapping == null && fabricRegistryManager != null)
 		{
 			String fabricName = fabricRegistryManager.getBlockName(javaId);
 			if (fabricName != null)
 			{
-				bedrockId = bedrockNonVanillaIdMap.getOrDefault(fabricName, -1);
+				bedrockMapping = bedrockNonVanillaMap.getOrDefault(fabricName, null);
 			}
 		}
-		return bedrockId;
+		return bedrockMapping;
 	}
 
-	public static boolean isWaterlogged(int javaId, @Nullable FabricRegistryManager fabricRegistryManager)
+	public static final class BedrockMapping
 	{
-		if (bedrockWaterloggedMap.containsKey(javaId))
+		public final int id;
+		public final boolean waterlogged;
+
+		private BedrockMapping(int id, boolean waterlogged)
 		{
-			return bedrockWaterloggedMap.get(javaId);
+			this.id = id;
+			this.waterlogged = waterlogged;
 		}
-		if (fabricRegistryManager != null)
-		{
-			String fabricName = fabricRegistryManager.getBlockName(javaId);
-			if (fabricName != null)
-			{
-				return bedrockNonVanillaWaterloggedMap.getOrDefault(fabricName, false);
-			}
-		}
-		return false;
 	}
 }

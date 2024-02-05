@@ -177,7 +177,7 @@
     "name": "minecraft:ancient_debris",
     "id": 80,
     "bedrock": {
-      "name": "minecraft:ancient_debris"
+      "ignore": true
     }
   },
   {
@@ -444,7 +444,7 @@
     "name": "minecraft:basalt",
     "id": 327,
     "bedrock": {
-      "name": "minecraft:basalt"
+      "ignore": true
     }
   },
   {
@@ -528,7 +528,7 @@
     "name": "minecraft:big_dripleaf",
     "id": 248,
     "bedrock": {
-      "name": "minecraft:big_dripleaf"
+      "ignore": true
     }
   },
   {
@@ -674,7 +674,7 @@
     "name": "minecraft:black_candle",
     "id": 1245,
     "bedrock": {
-      "name": "minecraft:black_candle"
+      "ignore": true
     }
   },
   {
@@ -751,28 +751,28 @@
     "name": "minecraft:blackstone",
     "id": 1216,
     "bedrock": {
-      "name": "minecraft:blackstone"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:blackstone_slab",
     "id": 1217,
     "bedrock": {
-      "name": "minecraft:blackstone_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:blackstone_stairs",
     "id": 1218,
     "bedrock": {
-      "name": "minecraft:blackstone_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:blackstone_wall",
     "id": 411,
     "bedrock": {
-      "name": "minecraft:blackstone_wall"
+      "ignore": true
     }
   },
   {
@@ -828,7 +828,7 @@
     "name": "minecraft:blue_candle",
     "id": 1241,
     "bedrock": {
-      "name": "minecraft:blue_candle"
+      "ignore": true
     }
   },
   {
@@ -1067,7 +1067,7 @@
     "name": "minecraft:brown_candle",
     "id": 1242,
     "bedrock": {
-      "name": "minecraft:brown_candle"
+      "ignore": true
     }
   },
   {
@@ -1194,7 +1194,7 @@
     "name": "minecraft:budding_amethyst",
     "id": 86,
     "bedrock": {
-      "name": "minecraft:budding_amethyst"
+      "ignore": true
     }
   },
   {
@@ -1229,14 +1229,14 @@
     "name": "minecraft:calcite",
     "id": 11,
     "bedrock": {
-      "name": "minecraft:calcite"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:calibrated_sculk_sensor",
     "id": 675,
     "bedrock": {
-      "name": "minecraft:calibrated_sculk_sensor"
+      "ignore": true
     }
   },
   {
@@ -1257,7 +1257,7 @@
     "name": "minecraft:candle",
     "id": 1229,
     "bedrock": {
-      "name": "minecraft:candle"
+      "ignore": true
     }
   },
   {
@@ -1516,21 +1516,21 @@
     "name": "minecraft:chiseled_bookshelf",
     "id": 286,
     "bedrock": {
-      "name": "minecraft:chiseled_bookshelf"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:chiseled_copper",
     "id": 95,
     "bedrock": {
-      "name": "minecraft:chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:chiseled_deepslate",
     "id": 349,
     "bedrock": {
-      "name": "minecraft:chiseled_deepslate"
+      "ignore": true
     }
   },
   {
@@ -1544,7 +1544,7 @@
     "name": "minecraft:chiseled_polished_blackstone",
     "id": 1223,
     "bedrock": {
-      "name": "minecraft:chiseled_polished_blackstone"
+      "ignore": true
     }
   },
   {
@@ -1581,14 +1581,14 @@
     "name": "minecraft:chiseled_tuff",
     "id": 16,
     "bedrock": {
-      "name": "minecraft:chiseled_tuff"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:chiseled_tuff_bricks",
     "id": 25,
     "bedrock": {
-      "name": "minecraft:chiseled_tuff_bricks"
+      "ignore": true
     }
   },
   {
@@ -1672,28 +1672,28 @@
     "name": "minecraft:cobbled_deepslate",
     "id": 9,
     "bedrock": {
-      "name": "minecraft:cobbled_deepslate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cobbled_deepslate_slab",
     "id": 651,
     "bedrock": {
-      "name": "minecraft:cobbled_deepslate_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cobbled_deepslate_stairs",
     "id": 634,
     "bedrock": {
-      "name": "minecraft:cobbled_deepslate_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cobbled_deepslate_wall",
     "id": 414,
     "bedrock": {
-      "name": "minecraft:cobbled_deepslate_wall"
+      "ignore": true
     }
   },
   {
@@ -1862,49 +1862,49 @@
     "name": "minecraft:copper_block",
     "id": 88,
     "bedrock": {
-      "name": "minecraft:copper_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_bulb",
     "id": 1302,
     "bedrock": {
-      "name": "minecraft:copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_door",
     "id": 721,
     "bedrock": {
-      "name": "minecraft:copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_grate",
     "id": 1294,
     "bedrock": {
-      "name": "minecraft:copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_ingot",
     "id": 809,
     "bedrock": {
-      "name": "minecraft:copper_ingot"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_ore",
     "id": 66,
     "bedrock": {
-      "name": "minecraft:copper_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:copper_trapdoor",
     "id": 741,
     "bedrock": {
-      "name": "minecraft:copper_trapdoor"
+      "ignore": true
     }
   },
   {
@@ -1925,14 +1925,14 @@
     "name": "minecraft:cracked_deepslate_bricks",
     "id": 346,
     "bedrock": {
-      "name": "minecraft:cracked_deepslate_bricks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cracked_deepslate_tiles",
     "id": 348,
     "bedrock": {
-      "name": "minecraft:cracked_deepslate_tiles"
+      "ignore": true
     }
   },
   {
@@ -1946,7 +1946,7 @@
     "name": "minecraft:cracked_polished_blackstone_bricks",
     "id": 1227,
     "bedrock": {
-      "name": "minecraft:cracked_polished_blackstone_bricks"
+      "ignore": true
     }
   },
   {
@@ -1960,7 +1960,7 @@
     "name": "minecraft:crafter",
     "id": 978,
     "bedrock": {
-      "name": "minecraft:crafter"
+      "ignore": true
     }
   },
   {
@@ -2121,21 +2121,21 @@
     "name": "minecraft:cut_copper",
     "id": 99,
     "bedrock": {
-      "name": "minecraft:cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cut_copper_slab",
     "id": 107,
     "bedrock": {
-      "name": "minecraft:cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:cut_copper_stairs",
     "id": 103,
     "bedrock": {
-      "name": "minecraft:cut_copper_stairs"
+      "ignore": true
     }
   },
   {
@@ -2186,7 +2186,7 @@
     "name": "minecraft:cyan_candle",
     "id": 1239,
     "bedrock": {
-      "name": "minecraft:cyan_candle"
+      "ignore": true
     }
   },
   {
@@ -2556,126 +2556,126 @@
     "name": "minecraft:decorated_pot",
     "id": 287,
     "bedrock": {
-      "name": "minecraft:decorated_pot"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate",
     "id": 8,
     "bedrock": {
-      "name": "minecraft:deepslate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_brick_slab",
     "id": 653,
     "bedrock": {
-      "name": "minecraft:deepslate_brick_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_brick_stairs",
     "id": 636,
     "bedrock": {
-      "name": "minecraft:deepslate_brick_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_brick_wall",
     "id": 416,
     "bedrock": {
-      "name": "minecraft:deepslate_brick_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_bricks",
     "id": 345,
     "bedrock": {
-      "name": "minecraft:deepslate_bricks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_coal_ore",
     "id": 63,
     "bedrock": {
-      "name": "minecraft:deepslate_coal_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_copper_ore",
     "id": 67,
     "bedrock": {
-      "name": "minecraft:deepslate_copper_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_diamond_ore",
     "id": 77,
     "bedrock": {
-      "name": "minecraft:deepslate_diamond_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_emerald_ore",
     "id": 73,
     "bedrock": {
-      "name": "minecraft:deepslate_emerald_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_gold_ore",
     "id": 69,
     "bedrock": {
-      "name": "minecraft:deepslate_gold_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_iron_ore",
     "id": 65,
     "bedrock": {
-      "name": "minecraft:deepslate_iron_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_lapis_ore",
     "id": 75,
     "bedrock": {
-      "name": "minecraft:deepslate_lapis_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_redstone_ore",
     "id": 71,
     "bedrock": {
-      "name": "minecraft:deepslate_redstone_ore"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_tile_slab",
     "id": 654,
     "bedrock": {
-      "name": "minecraft:deepslate_tile_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_tile_stairs",
     "id": 637,
     "bedrock": {
-      "name": "minecraft:deepslate_tile_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_tile_wall",
     "id": 417,
     "bedrock": {
-      "name": "minecraft:deepslate_tile_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:deepslate_tiles",
     "id": 347,
     "bedrock": {
-      "name": "minecraft:deepslate_tiles"
+      "ignore": true
     }
   },
   {
@@ -2891,7 +2891,7 @@
     "name": "minecraft:dripstone_block",
     "id": 26,
     "bedrock": {
-      "name": "minecraft:dripstone_block"
+      "ignore": true
     }
   },
   {
@@ -3108,63 +3108,63 @@
     "name": "minecraft:exposed_chiseled_copper",
     "id": 96,
     "bedrock": {
-      "name": "minecraft:exposed_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_copper",
     "id": 92,
     "bedrock": {
-      "name": "minecraft:exposed_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_copper_bulb",
     "id": 1303,
     "bedrock": {
-      "name": "minecraft:exposed_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_copper_door",
     "id": 722,
     "bedrock": {
-      "name": "minecraft:exposed_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_copper_grate",
     "id": 1295,
     "bedrock": {
-      "name": "minecraft:exposed_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_copper_trapdoor",
     "id": 742,
     "bedrock": {
-      "name": "minecraft:exposed_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_cut_copper",
     "id": 100,
     "bedrock": {
-      "name": "minecraft:exposed_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_cut_copper_slab",
     "id": 108,
     "bedrock": {
-      "name": "minecraft:exposed_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:exposed_cut_copper_stairs",
     "id": 104,
     "bedrock": {
-      "name": "minecraft:exposed_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
@@ -3326,14 +3326,14 @@
     "name": "minecraft:frog_spawn_egg",
     "id": 1027,
     "bedrock": {
-      "name": "minecraft:frog_spawn_egg"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:frogspawn",
     "id": 1254,
     "bedrock": {
-      "name": "minecraft:frogspawn"
+      "ignore": true
     }
   },
   {
@@ -3368,7 +3368,7 @@
     "name": "minecraft:gilded_blackstone",
     "id": 1219,
     "bedrock": {
-      "name": "minecraft:gilded_blackstone"
+      "ignore": true
     }
   },
   {
@@ -3431,7 +3431,7 @@
     "name": "minecraft:glow_lichen",
     "id": 359,
     "bedrock": {
-      "name": "minecraft:glow_lichen"
+      "ignore": true
     }
   },
   {
@@ -3647,7 +3647,7 @@
     "name": "minecraft:gray_candle",
     "id": 1237,
     "bedrock": {
-      "name": "minecraft:gray_candle"
+      "ignore": true
     }
   },
   {
@@ -3738,7 +3738,7 @@
     "name": "minecraft:green_candle",
     "id": 1243,
     "bedrock": {
-      "name": "minecraft:green_candle"
+      "ignore": true
     }
   },
   {
@@ -3836,7 +3836,7 @@
     "name": "minecraft:hanging_roots",
     "id": 247,
     "bedrock": {
-      "name": "minecraft:hanging_roots"
+      "ignore": true
     }
   },
   {
@@ -3885,28 +3885,28 @@
     "name": "minecraft:honey_block",
     "id": 664,
     "bedrock": {
-      "name": "minecraft:honey_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:honey_bottle",
     "id": 1212,
     "bedrock": {
-      "name": "minecraft:honey_bottle"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:honeycomb",
     "id": 1209,
     "bedrock": {
-      "name": "minecraft:honeycomb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:honeycomb_block",
     "id": 1213,
     "bedrock": {
-      "name": "minecraft:honeycomb_block"
+      "ignore": true
     }
   },
   {
@@ -4004,7 +4004,7 @@
     "name": "minecraft:infested_deepslate",
     "id": 338,
     "bedrock": {
-      "name": "minecraft:infested_deepslate"
+      "ignore": true
     }
   },
   {
@@ -4372,7 +4372,7 @@
     "name": "minecraft:large_amethyst_bud",
     "id": 1248,
     "bedrock": {
-      "name": "minecraft:large_amethyst_bud"
+      "ignore": true
     }
   },
   {
@@ -4457,7 +4457,7 @@
     "name": "minecraft:light",
     "id": 443,
     "bedrock": {
-      "name": "minecraft:light"
+      "ignore": true
     }
   },
   {
@@ -4478,7 +4478,7 @@
     "name": "minecraft:light_blue_candle",
     "id": 1233,
     "bedrock": {
-      "name": "minecraft:light_blue_candle"
+      "ignore": true
     }
   },
   {
@@ -4569,7 +4569,7 @@
     "name": "minecraft:light_gray_candle",
     "id": 1238,
     "bedrock": {
-      "name": "minecraft:light_gray_candle"
+      "ignore": true
     }
   },
   {
@@ -4653,7 +4653,7 @@
     "name": "minecraft:lightning_rod",
     "id": 672,
     "bedrock": {
-      "name": "minecraft:lightning_rod"
+      "ignore": true
     }
   },
   {
@@ -4695,7 +4695,7 @@
     "name": "minecraft:lime_candle",
     "id": 1235,
     "bedrock": {
-      "name": "minecraft:lime_candle"
+      "ignore": true
     }
   },
   {
@@ -4786,7 +4786,7 @@
     "name": "minecraft:lodestone",
     "id": 1214,
     "bedrock": {
-      "name": "minecraft:lodestone"
+      "ignore": true
     }
   },
   {
@@ -4814,7 +4814,7 @@
     "name": "minecraft:magenta_candle",
     "id": 1232,
     "bedrock": {
-      "name": "minecraft:magenta_candle"
+      "ignore": true
     }
   },
   {
@@ -5045,7 +5045,7 @@
     "name": "minecraft:medium_amethyst_bud",
     "id": 1247,
     "bedrock": {
-      "name": "minecraft:medium_amethyst_bud"
+      "ignore": true
     }
   },
   {
@@ -5109,14 +5109,14 @@
     "name": "minecraft:moss_block",
     "id": 246,
     "bedrock": {
-      "name": "minecraft:moss_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:moss_carpet",
     "id": 244,
     "bedrock": {
-      "name": "minecraft:moss_carpet"
+      "ignore": true
     }
   },
   {
@@ -5186,35 +5186,35 @@
     "name": "minecraft:mud",
     "id": 32,
     "bedrock": {
-      "name": "minecraft:mud"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mud_brick_slab",
     "id": 271,
     "bedrock": {
-      "name": "minecraft:mud_brick_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mud_brick_stairs",
     "id": 362,
     "bedrock": {
-      "name": "minecraft:mud_brick_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mud_brick_wall",
     "id": 404,
     "bedrock": {
-      "name": "minecraft:mud_brick_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:mud_bricks",
     "id": 344,
     "bedrock": {
-      "name": "minecraft:mud_bricks"
+      "ignore": true
     }
   },
   {
@@ -5725,7 +5725,7 @@
     "name": "minecraft:ochre_froglight",
     "id": 1251,
     "bedrock": {
-      "name": "minecraft:ochre_froglight"
+      "ignore": true
     }
   },
   {
@@ -5746,7 +5746,7 @@
     "name": "minecraft:orange_candle",
     "id": 1231,
     "bedrock": {
-      "name": "minecraft:orange_candle"
+      "ignore": true
     }
   },
   {
@@ -5837,63 +5837,63 @@
     "name": "minecraft:oxidized_chiseled_copper",
     "id": 98,
     "bedrock": {
-      "name": "minecraft:oxidized_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_copper",
     "id": 94,
     "bedrock": {
-      "name": "minecraft:oxidized_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_copper_bulb",
     "id": 1305,
     "bedrock": {
-      "name": "minecraft:oxidized_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_copper_door",
     "id": 724,
     "bedrock": {
-      "name": "minecraft:oxidized_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_copper_grate",
     "id": 1297,
     "bedrock": {
-      "name": "minecraft:oxidized_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_copper_trapdoor",
     "id": 744,
     "bedrock": {
-      "name": "minecraft:oxidized_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_cut_copper",
     "id": 102,
     "bedrock": {
-      "name": "minecraft:oxidized_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_cut_copper_slab",
     "id": 110,
     "bedrock": {
-      "name": "minecraft:oxidized_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:oxidized_cut_copper_stairs",
     "id": 106,
     "bedrock": {
-      "name": "minecraft:oxidized_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
@@ -5907,7 +5907,7 @@
     "name": "minecraft:packed_mud",
     "id": 343,
     "bedrock": {
-      "name": "minecraft:packed_mud"
+      "ignore": true
     }
   },
   {
@@ -5942,7 +5942,7 @@
     "name": "minecraft:pearlescent_froglight",
     "id": 1253,
     "bedrock": {
-      "name": "minecraft:pearlescent_froglight"
+      "ignore": true
     }
   },
   {
@@ -6034,7 +6034,7 @@
     "name": "minecraft:pink_candle",
     "id": 1236,
     "bedrock": {
-      "name": "minecraft:pink_candle"
+      "ignore": true
     }
   },
   {
@@ -6076,7 +6076,7 @@
     "name": "minecraft:pink_petals",
     "id": 245,
     "bedrock": {
-      "name": "minecraft:pink_petals"
+      "ignore": true
     }
   },
   {
@@ -6132,14 +6132,14 @@
     "name": "minecraft:pitcher_plant",
     "id": 231,
     "bedrock": {
-      "name": "minecraft:pitcher_plant"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:pitcher_pod",
     "id": 1146,
     "bedrock": {
-      "name": "minecraft:pitcher_pod"
+      "ignore": true
     }
   },
   {
@@ -6167,7 +6167,7 @@
     "name": "minecraft:pointed_dripstone",
     "id": 1250,
     "bedrock": {
-      "name": "minecraft:pointed_dripstone"
+      "ignore": true
     }
   },
   {
@@ -6210,105 +6210,105 @@
     "name": "minecraft:polished_basalt",
     "id": 328,
     "bedrock": {
-      "name": "minecraft:polished_basalt"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone",
     "id": 1220,
     "bedrock": {
-      "name": "minecraft:polished_blackstone"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_brick_slab",
     "id": 1225,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_brick_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_brick_stairs",
     "id": 1226,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_brick_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_brick_wall",
     "id": 413,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_brick_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_bricks",
     "id": 1224,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_bricks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_button",
     "id": 682,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_button"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_pressure_plate",
     "id": 695,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_pressure_plate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_slab",
     "id": 1221,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_stairs",
     "id": 1222,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_blackstone_wall",
     "id": 412,
     "bedrock": {
-      "name": "minecraft:polished_blackstone_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_deepslate",
     "id": 10,
     "bedrock": {
-      "name": "minecraft:polished_deepslate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_deepslate_slab",
     "id": 652,
     "bedrock": {
-      "name": "minecraft:polished_deepslate_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_deepslate_stairs",
     "id": 635,
     "bedrock": {
-      "name": "minecraft:polished_deepslate_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_deepslate_wall",
     "id": 415,
     "bedrock": {
-      "name": "minecraft:polished_deepslate_wall"
+      "ignore": true
     }
   },
   {
@@ -6359,28 +6359,28 @@
     "name": "minecraft:polished_tuff",
     "id": 17,
     "bedrock": {
-      "name": "minecraft:polished_tuff"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_tuff_slab",
     "id": 18,
     "bedrock": {
-      "name": "minecraft:polished_tuff_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_tuff_stairs",
     "id": 19,
     "bedrock": {
-      "name": "minecraft:polished_tuff_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:polished_tuff_wall",
     "id": 20,
     "bedrock": {
-      "name": "minecraft:polished_tuff_wall"
+      "ignore": true
     }
   },
   {
@@ -6562,7 +6562,7 @@
     "name": "minecraft:purple_candle",
     "id": 1240,
     "bedrock": {
-      "name": "minecraft:purple_candle"
+      "ignore": true
     }
   },
   {
@@ -6765,42 +6765,42 @@
     "name": "minecraft:raw_copper",
     "id": 808,
     "bedrock": {
-      "name": "minecraft:raw_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:raw_copper_block",
     "id": 83,
     "bedrock": {
-      "name": "minecraft:raw_copper_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:raw_gold",
     "id": 810,
     "bedrock": {
-      "name": "minecraft:raw_gold"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:raw_gold_block",
     "id": 84,
     "bedrock": {
-      "name": "minecraft:raw_gold_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:raw_iron",
     "id": 806,
     "bedrock": {
-      "name": "minecraft:raw_iron"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:raw_iron_block",
     "id": 82,
     "bedrock": {
-      "name": "minecraft:raw_iron_block"
+      "ignore": true
     }
   },
   {
@@ -6828,7 +6828,7 @@
     "name": "minecraft:red_candle",
     "id": 1244,
     "bedrock": {
-      "name": "minecraft:red_candle"
+      "ignore": true
     }
   },
   {
@@ -7026,7 +7026,7 @@
     "name": "minecraft:reinforced_deepslate",
     "id": 350,
     "bedrock": {
-      "name": "minecraft:reinforced_deepslate"
+      "ignore": true
     }
   },
   {
@@ -7047,7 +7047,7 @@
     "name": "minecraft:respawn_anchor",
     "id": 1228,
     "bedrock": {
-      "name": "minecraft:respawn_anchor"
+      "ignore": true
     }
   },
   {
@@ -7061,7 +7061,7 @@
     "name": "minecraft:rooted_dirt",
     "id": 31,
     "bedrock": {
-      "name": "minecraft:rooted_dirt"
+      "ignore": true
     }
   },
   {
@@ -7155,35 +7155,35 @@
     "name": "minecraft:sculk",
     "id": 370,
     "bedrock": {
-      "name": "minecraft:sculk"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:sculk_catalyst",
     "id": 372,
     "bedrock": {
-      "name": "minecraft:sculk_catalyst"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:sculk_sensor",
     "id": 674,
     "bedrock": {
-      "name": "minecraft:sculk_sensor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:sculk_shrieker",
     "id": 373,
     "bedrock": {
-      "name": "minecraft:sculk_shrieker"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:sculk_vein",
     "id": 371,
     "bedrock": {
-      "name": "minecraft:sculk_vein"
+      "ignore": true
     }
   },
   {
@@ -7275,7 +7275,7 @@
     "name": "minecraft:shroomlight",
     "id": 1208,
     "bedrock": {
-      "name": "minecraft:shroomlight"
+      "ignore": true
     }
   },
   {
@@ -7373,14 +7373,14 @@
     "name": "minecraft:small_amethyst_bud",
     "id": 1246,
     "bedrock": {
-      "name": "minecraft:small_amethyst_bud"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:small_dripleaf",
     "id": 249,
     "bedrock": {
-      "name": "minecraft:small_dripleaf"
+      "ignore": true
     }
   },
   {
@@ -7401,7 +7401,7 @@
     "name": "minecraft:smooth_basalt",
     "id": 329,
     "bedrock": {
-      "name": "minecraft:smooth_basalt"
+      "ignore": true
     }
   },
   {
@@ -7487,14 +7487,14 @@
     "name": "minecraft:sniffer_egg",
     "id": 587,
     "bedrock": {
-      "name": "minecraft:sniffer_egg"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:sniffer_spawn_egg",
     "id": 1059,
     "bedrock": {
-      "name": "minecraft:sniffer_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -7627,7 +7627,7 @@
     "name": "minecraft:spore_blossom",
     "id": 232,
     "bedrock": {
-      "name": "minecraft:spore_blossom"
+      "ignore": true
     }
   },
   {
@@ -8101,14 +8101,14 @@
     "name": "minecraft:suspicious_gravel",
     "id": 59,
     "bedrock": {
-      "name": "minecraft:suspicious_gravel"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:suspicious_sand",
     "id": 58,
     "bedrock": {
-      "name": "minecraft:suspicious_sand"
+      "ignore": true
     }
   },
   {
@@ -8206,14 +8206,14 @@
     "name": "minecraft:torchflower",
     "id": 230,
     "bedrock": {
-      "name": "minecraft:torchflower"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:torchflower_seeds",
     "id": 1145,
     "bedrock": {
-      "name": "minecraft:torchflower_seeds"
+      "ignore": true
     }
   },
   {
@@ -8312,56 +8312,56 @@
     "name": "minecraft:tuff",
     "id": 12,
     "bedrock": {
-      "name": "minecraft:tuff"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_brick_slab",
     "id": 22,
     "bedrock": {
-      "name": "minecraft:tuff_brick_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_brick_stairs",
     "id": 23,
     "bedrock": {
-      "name": "minecraft:tuff_brick_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_brick_wall",
     "id": 24,
     "bedrock": {
-      "name": "minecraft:tuff_brick_wall"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_bricks",
     "id": 21,
     "bedrock": {
-      "name": "minecraft:tuff_bricks"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_slab",
     "id": 13,
     "bedrock": {
-      "name": "minecraft:tuff_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_stairs",
     "id": 14,
     "bedrock": {
-      "name": "minecraft:tuff_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:tuff_wall",
     "id": 15,
     "bedrock": {
-      "name": "minecraft:tuff_wall"
+      "ignore": true
     }
   },
   {
@@ -8389,14 +8389,14 @@
     "name": "minecraft:twisting_vines",
     "id": 241,
     "bedrock": {
-      "name": "minecraft:twisting_vines"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:verdant_froglight",
     "id": 1252,
     "bedrock": {
-      "name": "minecraft:verdant_froglight"
+      "ignore": true
     }
   },
   {
@@ -8593,252 +8593,252 @@
     "name": "minecraft:waxed_chiseled_copper",
     "id": 115,
     "bedrock": {
-      "name": "minecraft:waxed_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_copper_block",
     "id": 111,
     "bedrock": {
-      "name": "minecraft:waxed_copper_block"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_copper_bulb",
     "id": 1306,
     "bedrock": {
-      "name": "minecraft:waxed_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_copper_door",
     "id": 725,
     "bedrock": {
-      "name": "minecraft:waxed_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_copper_grate",
     "id": 1298,
     "bedrock": {
-      "name": "minecraft:waxed_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_copper_trapdoor",
     "id": 745,
     "bedrock": {
-      "name": "minecraft:waxed_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_cut_copper",
     "id": 119,
     "bedrock": {
-      "name": "minecraft:waxed_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_cut_copper_slab",
     "id": 127,
     "bedrock": {
-      "name": "minecraft:waxed_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_cut_copper_stairs",
     "id": 123,
     "bedrock": {
-      "name": "minecraft:waxed_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_chiseled_copper",
     "id": 116,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_copper",
     "id": 112,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_copper_bulb",
     "id": 1307,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_copper_door",
     "id": 726,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_copper_grate",
     "id": 1299,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_copper_trapdoor",
     "id": 746,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_cut_copper",
     "id": 120,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_cut_copper_slab",
     "id": 128,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_exposed_cut_copper_stairs",
     "id": 124,
     "bedrock": {
-      "name": "minecraft:waxed_exposed_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_chiseled_copper",
     "id": 118,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_copper",
     "id": 114,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_copper_bulb",
     "id": 1309,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_copper_door",
     "id": 728,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_copper_grate",
     "id": 1301,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_copper_trapdoor",
     "id": 748,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_cut_copper",
     "id": 122,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_cut_copper_slab",
     "id": 130,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_oxidized_cut_copper_stairs",
     "id": 126,
     "bedrock": {
-      "name": "minecraft:waxed_oxidized_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_chiseled_copper",
     "id": 117,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_copper",
     "id": 113,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_copper_bulb",
     "id": 1308,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_copper_door",
     "id": 727,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_copper_grate",
     "id": 1300,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_copper_trapdoor",
     "id": 747,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_cut_copper",
     "id": 121,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_cut_copper_slab",
     "id": 129,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:waxed_weathered_cut_copper_stairs",
     "id": 125,
     "bedrock": {
-      "name": "minecraft:waxed_weathered_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
@@ -8852,70 +8852,70 @@
     "name": "minecraft:weathered_chiseled_copper",
     "id": 97,
     "bedrock": {
-      "name": "minecraft:weathered_chiseled_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_copper",
     "id": 93,
     "bedrock": {
-      "name": "minecraft:weathered_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_copper_bulb",
     "id": 1304,
     "bedrock": {
-      "name": "minecraft:weathered_copper_bulb"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_copper_door",
     "id": 723,
     "bedrock": {
-      "name": "minecraft:weathered_copper_door"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_copper_grate",
     "id": 1296,
     "bedrock": {
-      "name": "minecraft:weathered_copper_grate"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_copper_trapdoor",
     "id": 743,
     "bedrock": {
-      "name": "minecraft:weathered_copper_trapdoor"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_cut_copper",
     "id": 101,
     "bedrock": {
-      "name": "minecraft:weathered_cut_copper"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_cut_copper_slab",
     "id": 109,
     "bedrock": {
-      "name": "minecraft:weathered_cut_copper_slab"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weathered_cut_copper_stairs",
     "id": 105,
     "bedrock": {
-      "name": "minecraft:weathered_cut_copper_stairs"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:weeping_vines",
     "id": 240,
     "bedrock": {
-      "name": "minecraft:weeping_vines"
+      "ignore": true
     }
   },
   {
@@ -8957,7 +8957,7 @@
     "name": "minecraft:white_candle",
     "id": 1230,
     "bedrock": {
-      "name": "minecraft:white_candle"
+      "ignore": true
     }
   },
   {
@@ -9158,7 +9158,7 @@
     "name": "minecraft:yellow_candle",
     "id": 1234,
     "bedrock": {
-      "name": "minecraft:yellow_candle"
+      "ignore": true
     }
   },
   {

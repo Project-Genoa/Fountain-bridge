@@ -32,6 +32,8 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockDestructionPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchFinishedPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundChunkBatchStartPacket;
@@ -132,6 +134,14 @@ public final class ServerPacketHandler extends SessionAdapter
 			{
 				this.playerSession.onJavaBlockUpdate(blockChangeEntry);
 			}
+		}
+		else if (packet instanceof ClientboundBlockEntityDataPacket)
+		{
+			// TODO
+		}
+		else if (packet instanceof ClientboundBlockEventPacket)
+		{
+			// TODO
 		}
 		else if (packet instanceof ClientboundLightUpdatePacket)
 		{

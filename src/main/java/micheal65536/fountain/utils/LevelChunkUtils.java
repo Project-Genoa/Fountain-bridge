@@ -9,8 +9,12 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufOutputStream;
 import io.netty.buffer.Unpooled;
 import org.apache.logging.log4j.LogManager;
+import org.cloudburstmc.nbt.NBTOutputStream;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
 import org.jetbrains.annotations.NotNull;
@@ -25,6 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 public class LevelChunkUtils
@@ -35,6 +40,7 @@ public class LevelChunkUtils
 		try
 		{
 			BedrockChunk[] bedrockChunks = new BedrockChunk[16];
+			LinkedList<NbtMap> bedrockBlockEntities = new LinkedList<>();
 			HashSet<Integer> alreadyNotifiedMissingBlocks = new HashSet<>();
 			HashSet<String> alreadyNotifiedMissingBiomes = new HashSet<>();
 			ByteBuf byteBuf = Unpooled.wrappedBuffer(clientboundLevelChunkWithLightPacket.getChunkData());
@@ -61,6 +67,10 @@ public class LevelChunkUtils
 				BitStorage javaBlockData = chunkSection.getChunkData().getStorage();
 				for (int yzx = 0; yzx < 4096; yzx++)
 				{
+					int x = yzx & 0x00F;
+					int z = (yzx & 0x0F0) >> 4;
+					int y = ((yzx & 0xF00) >> 8) + chunkY * 16;
+
 					int javaId;
 					if (javaBlockPalette instanceof SingletonPalette)
 					{
@@ -79,26 +89,23 @@ public class LevelChunkUtils
 							LogManager.getLogger().warn("Chunk contained block with no mapping {}", JavaBlocks.getName(javaId, fabricRegistryManager));
 						}
 					}
-					bedrockChunk.set(YZXToXZY(yzx), bedrockMapping != null ? bedrockMapping.id : BedrockBlocks.AIR, bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR);
+					bedrockChunk.set((x << 8) | (z << 4) | (y - chunkY * 16), bedrockMapping != null ? bedrockMapping.id : BedrockBlocks.AIR, bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR);
 
 					if (bedrockMapping != null && bedrockMapping.id != BedrockBlocks.AIR)
 					{
-						int x = yzx & 0x00F;
-						int z = (yzx & 0x0F0) >> 4;
-						int y = (yzx & 0xF00) >> 8;
-						y = y + chunkY * 16;
 						if (y > heightmap[x][z])
 						{
 							heightmap[x][z] = y;
 						}
 					}
 
-					// TODO: flower pots, pistons, cauldrons, lecterns
-				}
-
-				for (BlockEntityInfo blockEntityInfo : clientboundLevelChunkWithLightPacket.getBlockEntities())
-				{
-					// TODO: block entities
+					if (bedrockMapping != null && bedrockMapping.blockEntity != null)
+					{
+						// TODO: optimise block entity lookup
+						BlockEntityInfo blockEntityInfo = Arrays.stream(clientboundLevelChunkWithLightPacket.getBlockEntities()).filter(blockEntityInfo1 -> blockEntityInfo1.getX() == x && blockEntityInfo1.getY() == y && blockEntityInfo1.getZ() == z).findAny().orElse(null);
+						NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(x, y, z, bedrockMapping.blockEntity, blockEntityInfo);
+						bedrockBlockEntities.add(bedrockBlockEntityData);
+					}
 				}
 
 				Palette javaBiomePalette = chunkSection.getBiomeData().getPalette();
@@ -199,7 +206,15 @@ public class LevelChunkUtils
 
 				VarInts.writeUnsignedInt(byteBuf, 0);
 
-				// TODO: block entities
+				if (!bedrockBlockEntities.isEmpty())
+				{
+					NBTOutputStream nbtOutputStream = NbtUtils.createNetworkWriter(new ByteBufOutputStream(byteBuf));
+					for (NbtMap nbtMap : bedrockBlockEntities)
+					{
+						nbtOutputStream.writeTag(nbtMap);
+					}
+					nbtOutputStream.close();
+				}
 
 				data = new byte[byteBuf.readableBytes()];
 				byteBuf.readBytes(data);
@@ -230,11 +245,6 @@ public class LevelChunkUtils
 		levelChunkPacket.setChunkZ(chunkZ);
 		levelChunkPacket.setData(Unpooled.wrappedBuffer(new byte[0]));
 		return levelChunkPacket;
-	}
-
-	private static int YZXToXZY(int yzx)
-	{
-		return ((yzx & 0xF00) >> 8) | ((yzx & 0x0F0) >> 0) | ((yzx & 0x00F) << 8);
 	}
 
 	private static final class BedrockChunk

@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -41,19 +43,19 @@ public class JavaBlocks
 						LogManager.getLogger().warn("Duplicate Java block ID {}", id);
 					}
 
-					BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject());
-					if (bedrockMapping == null)
+					try
 					{
-						LogManager.getLogger().debug("Ignoring Java block {}", name);
-						continue;
-					}
-					if (bedrockMapping.id == -1)
-					{
-						LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
-					}
-					else
-					{
+						BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject(), root.getAsJsonArray());
+						if (bedrockMapping == null)
+						{
+							LogManager.getLogger().debug("Ignoring Java block {}", name);
+							continue;
+						}
 						bedrockMap.put(id, bedrockMapping);
+					}
+					catch (BedrockMappingFailException exception)
+					{
+						LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}: {}", name, exception.getMessage());
 					}
 				}
 			}
@@ -74,19 +76,19 @@ public class JavaBlocks
 
 						String name = baseName + stateName;
 
-						BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject());
-						if (bedrockMapping == null)
+						try
 						{
-							LogManager.getLogger().debug("Ignoring Java block {}", name);
-							continue;
-						}
-						if (bedrockMapping.id == -1)
-						{
-							LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}", name);
-						}
-						else
-						{
+							BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject(), null);
+							if (bedrockMapping == null)
+							{
+								LogManager.getLogger().debug("Ignoring Java block {}", name);
+								continue;
+							}
 							bedrockNonVanillaMap.put(name, bedrockMapping);
+						}
+						catch (BedrockMappingFailException exception)
+						{
+							LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}: {}", name, exception.getMessage());
 						}
 					}
 
@@ -105,7 +107,7 @@ public class JavaBlocks
 	}
 
 	@Nullable
-	private static BedrockMapping readBedrockMapping(JsonObject bedrockMappingObject)
+	private static BedrockMapping readBedrockMapping(@NotNull JsonObject bedrockMappingObject, @Nullable JsonArray javaBlocksArray) throws BedrockMappingFailException
 	{
 		if (bedrockMappingObject.has("ignore") && bedrockMappingObject.get("ignore").getAsBoolean())
 		{
@@ -136,10 +138,80 @@ public class JavaBlocks
 			}
 		}
 
+		int id = BedrockBlocks.getId(name, state);
+		if (id == -1)
+		{
+			throw new BedrockMappingFailException("Cannot find Bedrock block with provided name and state");
+		}
+
+		BedrockMapping.BlockEntity blockEntity = null;
+		if (bedrockMappingObject.has("block_entity"))
+		{
+			JsonObject blockEntityObject = bedrockMappingObject.get("block_entity").getAsJsonObject();
+			String type = blockEntityObject.get("type").getAsString();
+			switch (type)
+			{
+				case "flower_pot":
+				{
+					NbtMap contents = null;
+					if (blockEntityObject.has("contents") && !blockEntityObject.get("contents").isJsonNull())
+					{
+						String contentsName = blockEntityObject.get("contents").getAsString();
+						if (javaBlocksArray != null)
+						{
+							contents = javaBlocksArray.asList().stream()
+									.filter(element -> element.getAsJsonObject().get("name").getAsString().equals(contentsName))
+									.map(element -> element.getAsJsonObject().get("bedrock").getAsJsonObject())
+									.filter(element -> !element.has("ignore") || !element.get("ignore").getAsBoolean())
+									.findFirst().map(element ->
+									{
+										NbtMapBuilder builder = NbtMap.builder();
+										builder.putString("name", element.get("name").getAsString());
+										if (element.has("state"))
+										{
+											NbtMapBuilder stateBuilder = NbtMap.builder();
+											element.get("state").getAsJsonObject().asMap().forEach((key, stateElement) ->
+											{
+												if (stateElement.getAsJsonPrimitive().isString())
+												{
+													stateBuilder.putString(key, stateElement.getAsString());
+												}
+												else if (stateElement.getAsJsonPrimitive().isBoolean())
+												{
+													stateBuilder.putInt(key, stateElement.getAsBoolean() ? 1 : 0);
+												}
+												else
+												{
+													stateBuilder.putInt(key, stateElement.getAsInt());
+												}
+											});
+											builder.putCompound("states", stateBuilder.build());
+										}
+										return builder.build();
+									}).orElse(null);
+						}
+						if (contents == null)
+						{
+							throw new BedrockMappingFailException("Could not find contents for flower pot");
+						}
+					}
+					blockEntity = new BedrockMapping.BlockEntity(type, contents);
+				}
+				break;
+			}
+		}
+
 		boolean waterlogged = bedrockMappingObject.has("waterlogged") ? bedrockMappingObject.get("waterlogged").getAsBoolean() : false;
 
-		int id = BedrockBlocks.getId(name, state);
-		return new BedrockMapping(id, waterlogged);
+		return new BedrockMapping(id, blockEntity, waterlogged);
+	}
+
+	private static class BedrockMappingFailException extends Exception
+	{
+		public BedrockMappingFailException(String message)
+		{
+			super(message);
+		}
 	}
 
 	public static void init()
@@ -200,12 +272,29 @@ public class JavaBlocks
 	public static final class BedrockMapping
 	{
 		public final int id;
+		@Nullable
+		public final BlockEntity blockEntity;
 		public final boolean waterlogged;
 
-		private BedrockMapping(int id, boolean waterlogged)
+		private BedrockMapping(int id, @Nullable BlockEntity blockEntity, boolean waterlogged)
 		{
 			this.id = id;
+			this.blockEntity = blockEntity;
 			this.waterlogged = waterlogged;
+		}
+
+		public static final class BlockEntity
+		{
+			@NotNull
+			public final String type;
+			@Nullable
+			public final Object contents;
+
+			private BlockEntity(@NotNull String type, @Nullable Object contents)
+			{
+				this.type = type;
+				this.contents = contents;
+			}
 		}
 	}
 }

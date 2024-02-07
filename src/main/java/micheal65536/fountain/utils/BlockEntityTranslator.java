@@ -11,13 +11,14 @@ import micheal65536.fountain.registry.JavaBlocks;
 public class BlockEntityTranslator
 {
 	@NotNull
-	public static NbtMap translateBlockEntity(int x, int y, int z, @NotNull JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping, @Nullable BlockEntityInfo javaBlockEntityInfo)
+	public static NbtMap translateBlockEntity(@NotNull JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping, @Nullable BlockEntityInfo javaBlockEntityInfo)
 	{
 		switch (blockEntityMapping.type)
 		{
 			case "flower_pot":
 			{
-				NbtMapBuilder builder = createBaseBuilder("FlowerPot", x, y, z);
+				NbtMapBuilder builder = NbtMap.builder();
+				builder.putString("id", "FlowerPot");
 				if (blockEntityMapping.contents != null)
 				{
 					builder.putCompound("PlantBlock", (NbtMap) blockEntityMapping.contents);
@@ -27,16 +28,5 @@ public class BlockEntityTranslator
 			default:
 				throw new AssertionError();
 		}
-	}
-
-	@NotNull
-	private static NbtMapBuilder createBaseBuilder(@NotNull String type, int x, int y, int z)
-	{
-		return NbtMap.builder()
-				.putString("id", type)
-				.putInt("x", x)
-				.putInt("y", y)
-				.putInt("z", z)
-				.putBoolean("isMovable", false);
 	}
 }

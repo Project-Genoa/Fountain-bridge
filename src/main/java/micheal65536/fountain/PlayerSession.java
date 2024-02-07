@@ -76,19 +76,16 @@ import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket;
-import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import micheal65536.fountain.registry.BedrockBlocks;
-import micheal65536.fountain.registry.JavaBlocks;
 import micheal65536.fountain.registry.JavaItems;
+import micheal65536.fountain.utils.ChunkManager;
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.FabricRegistryManager;
 import micheal65536.fountain.utils.GenoaInventory;
 import micheal65536.fountain.utils.ItemTranslator;
-import micheal65536.fountain.utils.LevelChunkUtils;
 import micheal65536.fountain.utils.LoginUtils;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 
@@ -108,6 +105,7 @@ public final class PlayerSession
 	private static final int JAVA_MAIN_INVENTORY_OFFSET = 9;
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
 
+	private final ChunkManager chunkManager;
 	private final EntityManager entityManager;
 	private final FabricRegistryManager fabricRegistryManager;
 
@@ -138,6 +136,7 @@ public final class PlayerSession
 			LogManager.getLogger().warn("Could not get username from login packet");
 			this.java = null;
 			this.fabricRegistryManager = null;
+			this.chunkManager = null;
 			this.disconnectForced();
 			return;
 		}
@@ -148,6 +147,7 @@ public final class PlayerSession
 		this.java.connect(true);
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
+		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 	}
 
 	public void disconnectForced()
@@ -243,7 +243,11 @@ public final class PlayerSession
 		{
 			for (int chunkZ = -HARDCODED_CHUNK_RADIUS; chunkZ < HARDCODED_CHUNK_RADIUS; chunkZ++)
 			{
-				this.sendBedrockPacket(LevelChunkUtils.makeEmpty(chunkX, chunkZ));
+				LevelChunkPacket levelChunkPacket = new LevelChunkPacket();
+				levelChunkPacket.setChunkX(chunkX);
+				levelChunkPacket.setChunkZ(chunkZ);
+				levelChunkPacket.setData(Unpooled.wrappedBuffer(new byte[0]));
+				this.sendBedrockPacket(levelChunkPacket);
 			}
 		}
 
@@ -323,45 +327,12 @@ public final class PlayerSession
 
 	public void onJavaLevelChunk(@NotNull ClientboundLevelChunkWithLightPacket clientboundLevelChunkWithLightPacket)
 	{
-		if (clientboundLevelChunkWithLightPacket.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getX() < MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS && clientboundLevelChunkWithLightPacket.getZ() < MAX_NONEMPTY_CHUNK_RADIUS)
-		{
-			LevelChunkPacket levelChunkPacket = LevelChunkUtils.translateLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper());
-			this.sendBedrockPacket(levelChunkPacket);
-		}
+		this.chunkManager.onJavaLevelChunk(clientboundLevelChunkWithLightPacket, this.javaBiomes, (MinecraftCodecHelper) this.java.getCodecHelper());
 	}
 
 	public void onJavaBlockUpdate(@NotNull BlockChangeEntry blockChangeEntry)
 	{
-		Vector3i position = blockChangeEntry.getPosition();
-		if (position.getY() > 0 && position.getY() < 256)
-		{
-			if (position.getX() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getX() < MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() >= -MAX_NONEMPTY_CHUNK_RADIUS * 16 && position.getZ() < MAX_NONEMPTY_CHUNK_RADIUS * 16)
-			{
-				// TODO: flower pots, pistons, cauldrons, lecterns
-
-				// TODO: Geyser said we need to special-case doors here, but they seem to work fine?
-
-				JavaBlocks.BedrockMapping bedrockMapping = JavaBlocks.getBedrockMapping(blockChangeEntry.getBlock(), this.fabricRegistryManager);
-				if (bedrockMapping == null)
-				{
-					LogManager.getLogger().warn("Block update contained block with no mapping {}", JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
-				}
-
-				UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-				updateBlockPacket.setBlockPosition(position);
-				updateBlockPacket.setDataLayer(0);
-				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockMapping != null ? bedrockMapping.id : BedrockBlocks.AIR));
-				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
-				this.sendBedrockPacket(updateBlockPacket);
-
-				updateBlockPacket = new UpdateBlockPacket();
-				updateBlockPacket.setBlockPosition(position);
-				updateBlockPacket.setDataLayer(1);
-				updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR));
-				updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
-				this.sendBedrockPacket(updateBlockPacket);
-			}
-		}
+		this.chunkManager.onJavaBlockUpdate(blockChangeEntry);
 	}
 
 	public void onJavaEntityAdd(@NotNull ClientboundAddEntityPacket clientboundAddEntityPacket)

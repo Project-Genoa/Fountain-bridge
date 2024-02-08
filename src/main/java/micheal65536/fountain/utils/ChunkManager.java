@@ -442,7 +442,17 @@ public class ChunkManager
 
 	public void onJavaBlockEvent(@NotNull ClientboundBlockEventPacket clientboundBlockEventPacket)
 	{
-		// TODO
+		Vector3i position = clientboundBlockEventPacket.getPosition();
+		if (position.getY() < 0 || position.getY() >= 256 || position.getX() < -this.chunkRadius * 16 || position.getX() >= this.chunkRadius * 16 || position.getZ() < -this.chunkRadius * 16 || position.getZ() >= this.chunkRadius * 16)
+		{
+			return;
+		}
+		Chunk chunk = this.getChunkForBlock(position.getX(), position.getZ());
+		int blockX = getChunkBlockOffset(position.getX());
+		int blockY = position.getY();
+		int blockZ = getChunkBlockOffset(position.getZ());
+
+		LogManager.getLogger().debug("Ignoring block event of type {}", clientboundBlockEventPacket.getValue().getClass().getSimpleName());
 	}
 
 	private Chunk getChunk(int x, int z)

@@ -7,6 +7,8 @@ import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
@@ -17,6 +19,7 @@ import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
+import org.cloudburstmc.protocol.bedrock.packet.BlockEntityDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
@@ -52,9 +55,16 @@ public class ChunkManager
 	{
 		this.playerSession = playerSession;
 		this.fabricRegistryManager = fabricRegistryManager;
+
 		this.chunkRadius = chunkRadius;
 		this.chunks = new Chunk[this.chunkRadius * 2][this.chunkRadius * 2];
-		Arrays.stream(this.chunks).forEach(chunks -> Arrays.setAll(chunks, index -> new Chunk()));
+		for (int chunkX = -this.chunkRadius; chunkX < this.chunkRadius; chunkX++)
+		{
+			for (int chunkZ = -this.chunkRadius; chunkZ < this.chunkRadius; chunkZ++)
+			{
+				this.chunks[chunkX + this.chunkRadius][chunkZ + this.chunkRadius] = new Chunk(chunkX, chunkZ);
+			}
+		}
 	}
 
 	public void sendFullChunk(int chunkX, int chunkZ)
@@ -235,10 +245,8 @@ public class ChunkManager
 
 					if (bedrockMapping != null && bedrockMapping.blockEntity != null)
 					{
-						// TODO: optimise block entity lookup
-						BlockEntityInfo blockEntityInfo = Arrays.stream(clientboundLevelChunkWithLightPacket.getBlockEntities()).filter(blockEntityInfo1 -> blockEntityInfo1.getX() == x && blockEntityInfo1.getY() == y && blockEntityInfo1.getZ() == z).findAny().orElse(null);
-						NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, blockEntityInfo);
-						bedrockChunk.setBlockEntity(x, y, z, bedrockBlockEntityData);
+						NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
+						bedrockChunk.setBlockEntity(x, y, z, bedrockBlockEntityData, bedrockMapping.blockEntity);
 					}
 					else
 					{
@@ -320,6 +328,23 @@ public class ChunkManager
 					bedrockChunk.setBiome(x, z, mostCommonBiomeId);
 				}
 			}
+
+			for (BlockEntityInfo blockEntityInfo : clientboundLevelChunkWithLightPacket.getBlockEntities())
+			{
+				int x = blockEntityInfo.getX();
+				int y = blockEntityInfo.getY();
+				int z = blockEntityInfo.getZ();
+				JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = bedrockChunk.getBlockEntityMapping(x, y, z);
+				if (blockEntityMapping == null)
+				{
+					LogManager.getLogger().debug("Ignoring block entity of type {}", blockEntityInfo.getType());
+				}
+				else
+				{
+					NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(blockEntityMapping, blockEntityInfo);
+					bedrockChunk.setBlockEntity(x, y, z, bedrockBlockEntityData, blockEntityMapping);
+				}
+			}
 		}
 		catch (IOException exception)
 		{
@@ -369,6 +394,55 @@ public class ChunkManager
 			updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
 			this.playerSession.sendBedrockPacket(updateBlockPacket);
 		}
+
+		if (bedrockMapping != null && bedrockMapping.blockEntity != null)
+		{
+			NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
+			chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, bedrockMapping.blockEntity);
+
+			BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
+			blockEntityDataPacket.setBlockPosition(position);
+			blockEntityDataPacket.setData(chunk.getBlockEntity(blockX, blockY, blockZ));
+			this.playerSession.sendBedrockPacket(blockEntityDataPacket);
+		}
+		else
+		{
+			chunk.removeBlockEntity(blockX, blockY, blockZ);
+		}
+	}
+
+	public void onJavaBlockEntityUpdate(@NotNull ClientboundBlockEntityDataPacket clientboundBlockEntityDataPacket)
+	{
+		Vector3i position = clientboundBlockEntityDataPacket.getPosition();
+		if (position.getY() < 0 || position.getY() >= 256 || position.getX() < -this.chunkRadius * 16 || position.getX() >= this.chunkRadius * 16 || position.getZ() < -this.chunkRadius * 16 || position.getZ() >= this.chunkRadius * 16)
+		{
+			return;
+		}
+		Chunk chunk = this.getChunkForBlock(position.getX(), position.getZ());
+		int blockX = getChunkBlockOffset(position.getX());
+		int blockY = position.getY();
+		int blockZ = getChunkBlockOffset(position.getZ());
+
+		JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = chunk.getBlockEntityMapping(blockX, blockY, blockZ);
+		if (blockEntityMapping == null)
+		{
+			LogManager.getLogger().debug("Ignoring block entity of type {}", clientboundBlockEntityDataPacket.getType());
+		}
+		else
+		{
+			NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(blockEntityMapping, new BlockEntityInfo(blockX, blockY, blockZ, clientboundBlockEntityDataPacket.getType(), clientboundBlockEntityDataPacket.getNbt()));
+			chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, blockEntityMapping);
+
+			BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
+			blockEntityDataPacket.setBlockPosition(position);
+			blockEntityDataPacket.setData(chunk.getBlockEntity(blockX, blockY, blockZ));
+			this.playerSession.sendBedrockPacket(blockEntityDataPacket);
+		}
+	}
+
+	public void onJavaBlockEvent(@NotNull ClientboundBlockEventPacket clientboundBlockEventPacket)
+	{
+		// TODO
 	}
 
 	private Chunk getChunk(int x, int z)
@@ -388,13 +462,20 @@ public class ChunkManager
 
 	private static final class Chunk
 	{
+		private final int chunkX;
+		private final int chunkZ;
+
 		private final int[][] blocks = new int[2][16 * 16 * 256];
 		private final int[] heightmap = new int[16 * 16];
 		private final int[] biomes = new int[16 * 16];
 		private final NbtMap[] blockEntities = new NbtMap[16 * 16 * 256];
+		private final JavaBlocks.BedrockMapping.BlockEntity[] blockEntityMappings = new JavaBlocks.BedrockMapping.BlockEntity[16 * 16 * 256];
 
-		public Chunk()
+		public Chunk(int chunkX, int chunkZ)
 		{
+			this.chunkX = chunkX;
+			this.chunkZ = chunkZ;
+
 			this.clear();
 		}
 
@@ -405,6 +486,7 @@ public class ChunkManager
 			Arrays.fill(this.heightmap, 0);
 			Arrays.fill(this.biomes, DEFAULT_BIOME);
 			Arrays.fill(this.blockEntities, null);
+			Arrays.fill(this.blockEntityMappings, null);
 		}
 
 		public int getBlock(int x, int y, int z, int layer)
@@ -455,14 +537,22 @@ public class ChunkManager
 			return this.blockEntities[(x * 16 + z) * 256 + y];
 		}
 
-		public void setBlockEntity(int x, int y, int z, @NotNull NbtMap blockEntity)
+		@Nullable
+		public JavaBlocks.BedrockMapping.BlockEntity getBlockEntityMapping(int x, int y, int z)
 		{
-			this.blockEntities[(x * 16 + z) * 256 + y] = blockEntity.toBuilder().putInt("x", x).putInt("y", y).putInt("z", z).putBoolean("isMovable", false).build();
+			return this.blockEntityMappings[(x * 16 + z) * 256 + y];
+		}
+
+		public void setBlockEntity(int x, int y, int z, @NotNull NbtMap blockEntity, @NotNull JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping)
+		{
+			this.blockEntities[(x * 16 + z) * 256 + y] = blockEntity.toBuilder().putInt("x", x + this.chunkX * 16).putInt("y", y).putInt("z", z + this.chunkZ * 16).putBoolean("isMovable", false).build();
+			this.blockEntityMappings[(x * 16 + z) * 256 + y] = blockEntityMapping;
 		}
 
 		public void removeBlockEntity(int x, int y, int z)
 		{
 			this.blockEntities[(x * 16 + z) * 256 + y] = null;
+			this.blockEntityMappings[(x * 16 + z) * 256 + y] = null;
 		}
 
 		@NotNull

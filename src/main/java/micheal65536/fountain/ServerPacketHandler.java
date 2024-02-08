@@ -137,11 +137,11 @@ public final class ServerPacketHandler extends SessionAdapter
 		}
 		else if (packet instanceof ClientboundBlockEntityDataPacket)
 		{
-			// TODO
+			this.playerSession.onJavaBlockEntityUpdate((ClientboundBlockEntityDataPacket) packet);
 		}
 		else if (packet instanceof ClientboundBlockEventPacket)
 		{
-			// TODO
+			this.playerSession.onJavaBlockEvent((ClientboundBlockEventPacket) packet);
 		}
 		else if (packet instanceof ClientboundLightUpdatePacket)
 		{

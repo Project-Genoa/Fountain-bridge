@@ -27,6 +27,8 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
@@ -333,6 +335,16 @@ public final class PlayerSession
 	public void onJavaBlockUpdate(@NotNull BlockChangeEntry blockChangeEntry)
 	{
 		this.chunkManager.onJavaBlockUpdate(blockChangeEntry);
+	}
+
+	public void onJavaBlockEntityUpdate(@NotNull ClientboundBlockEntityDataPacket clientboundBlockEntityDataPacket)
+	{
+		this.chunkManager.onJavaBlockEntityUpdate(clientboundBlockEntityDataPacket);
+	}
+
+	public void onJavaBlockEvent(@NotNull ClientboundBlockEventPacket clientboundBlockEventPacket)
+	{
+		this.chunkManager.onJavaBlockEvent(clientboundBlockEventPacket);
 	}
 
 	public void onJavaEntityAdd(@NotNull ClientboundAddEntityPacket clientboundAddEntityPacket)

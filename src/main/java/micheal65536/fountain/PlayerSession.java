@@ -17,6 +17,11 @@ import com.github.steveice10.mc.protocol.data.game.entity.player.Hand;
 import com.github.steveice10.mc.protocol.data.game.entity.player.HandPreference;
 import com.github.steveice10.mc.protocol.data.game.entity.player.PlayerAction;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
+import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType;
+import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
 import com.github.steveice10.mc.protocol.data.game.setting.ChatVisibility;
 import com.github.steveice10.mc.protocol.data.game.setting.Difficulty;
 import com.github.steveice10.mc.protocol.data.game.setting.SkinPart;
@@ -51,6 +56,7 @@ import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
+import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.data.AttributeData;
 import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting;
@@ -83,6 +89,7 @@ import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.ChunkManager;
+import micheal65536.fountain.utils.EffectManager;
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.FabricRegistryManager;
@@ -107,9 +114,10 @@ public final class PlayerSession
 	private static final int JAVA_MAIN_INVENTORY_OFFSET = 9;
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
 
+	private final FabricRegistryManager fabricRegistryManager;
 	private final ChunkManager chunkManager;
 	private final EntityManager entityManager;
-	private final FabricRegistryManager fabricRegistryManager;
+	private final EffectManager effectManager;
 
 	private final BedrockSession bedrock;
 	private long bedrockPlayerEntityId;
@@ -128,8 +136,6 @@ public final class PlayerSession
 	{
 		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
 
-		this.entityManager = new EntityManager(this);
-
 		this.bedrock = bedrockSession;
 
 		String username = LoginUtils.getUsername(loginPacket);
@@ -139,6 +145,8 @@ public final class PlayerSession
 			this.java = null;
 			this.fabricRegistryManager = null;
 			this.chunkManager = null;
+			this.entityManager = null;
+			this.effectManager = null;
 			this.disconnectForced();
 			return;
 		}
@@ -150,6 +158,8 @@ public final class PlayerSession
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
+		this.entityManager = new EntityManager(this);
+		this.effectManager = new EffectManager(this);
 	}
 
 	public void disconnectForced()
@@ -600,6 +610,30 @@ public final class PlayerSession
 		else
 		{
 			LogManager.getLogger().debug("Ignoring entity taken by non-player entity");
+		}
+	}
+
+	public void onJavaLevelEvent(@NotNull Vector3i position, @NotNull LevelEvent event, @NotNull LevelEventData eventData)
+	{
+		if (!this.effectManager.handleLevelEvent(position, event, eventData))
+		{
+			LogManager.getLogger().debug("Unhandled level event {}", event instanceof LevelEventType ? ((LevelEventType) event).name() : event.getId());
+		}
+	}
+
+	public void onJavaParticleEvent(@NotNull Particle particle, @NotNull Vector3f position, @NotNull Vector4f offset, int amount, boolean longDistance)
+	{
+		if (!this.effectManager.handleParticleEvent(particle, position, offset, amount, longDistance))
+		{
+			LogManager.getLogger().debug("Unhandled particle event {}", particle.getType().name());
+		}
+	}
+
+	public void onJavaSoundEvent(@NotNull Sound sound, @NotNull Vector3f position, float pitch, float volume)
+	{
+		if (!this.effectManager.handleSoundEvent(sound, position, pitch, volume))
+		{
+			LogManager.getLogger().debug("Unhandled sound event {}", sound.getName());
 		}
 	}
 

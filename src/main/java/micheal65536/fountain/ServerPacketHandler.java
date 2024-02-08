@@ -40,9 +40,12 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.Clientb
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundForgetLevelChunkPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundGameEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelEventPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelParticlesPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLightUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSectionBlocksUpdatePacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSetTimePacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundSoundPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundAcceptTeleportationPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.level.ServerboundChunkBatchReceivedPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -54,6 +57,7 @@ import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector2f;
 import org.cloudburstmc.math.vector.Vector3f;
+import org.cloudburstmc.math.vector.Vector4f;
 import org.jetbrains.annotations.NotNull;
 
 import java.nio.charset.StandardCharsets;
@@ -180,6 +184,19 @@ public final class ServerPacketHandler extends SessionAdapter
 		else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("fountain:item_particle"))
 		{
 			this.playerSession.onJavaItemPickupParticle(((ClientboundCustomPayloadPacket) packet).getData());
+		}
+
+		else if (packet instanceof ClientboundLevelEventPacket)
+		{
+			this.playerSession.onJavaLevelEvent(((ClientboundLevelEventPacket) packet).getPosition(), ((ClientboundLevelEventPacket) packet).getEvent(), ((ClientboundLevelEventPacket) packet).getData());
+		}
+		else if (packet instanceof ClientboundLevelParticlesPacket)
+		{
+			this.playerSession.onJavaParticleEvent(((ClientboundLevelParticlesPacket) packet).getParticle(), Vector3f.from(((ClientboundLevelParticlesPacket) packet).getX(), ((ClientboundLevelParticlesPacket) packet).getY(), ((ClientboundLevelParticlesPacket) packet).getZ()), Vector4f.from(((ClientboundLevelParticlesPacket) packet).getOffsetX(), ((ClientboundLevelParticlesPacket) packet).getOffsetY(), ((ClientboundLevelParticlesPacket) packet).getOffsetZ(), ((ClientboundLevelParticlesPacket) packet).getVelocityOffset()), ((ClientboundLevelParticlesPacket) packet).getAmount(), ((ClientboundLevelParticlesPacket) packet).isLongDistance());
+		}
+		else if (packet instanceof ClientboundSoundPacket)
+		{
+			this.playerSession.onJavaSoundEvent(((ClientboundSoundPacket) packet).getSound(), Vector3f.from(((ClientboundSoundPacket) packet).getX(), ((ClientboundSoundPacket) packet).getY(), ((ClientboundSoundPacket) packet).getZ()), ((ClientboundSoundPacket) packet).getPitch(), ((ClientboundSoundPacket) packet).getVolume());
 		}
 
 		else if (packet instanceof ClientboundAddEntityPacket)

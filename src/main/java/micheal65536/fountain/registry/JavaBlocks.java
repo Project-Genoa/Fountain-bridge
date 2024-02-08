@@ -198,6 +198,12 @@ public class JavaBlocks
 					blockEntity = new BedrockMapping.BlockEntity(type, contents);
 				}
 				break;
+				case "bed":
+				{
+					String color = blockEntityObject.get("color").getAsString();
+					blockEntity = new BedrockMapping.BlockEntity(type, color);
+				}
+				break;
 			}
 		}
 

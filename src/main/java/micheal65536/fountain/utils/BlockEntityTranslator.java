@@ -25,6 +25,32 @@ public class BlockEntityTranslator
 				}
 				return builder.build();
 			}
+			case "bed":
+			{
+				NbtMapBuilder builder = NbtMap.builder();
+				builder.putString("id", "Bed");
+				builder.putByte("color", (byte) switch ((String) blockEntityMapping.contents)
+				{
+					case "white" -> 0;
+					case "orange" -> 1;
+					case "magenta" -> 2;
+					case "light_blue" -> 3;
+					case "yellow" -> 4;
+					case "lime" -> 5;
+					case "pink" -> 6;
+					case "gray" -> 7;
+					case "light_gray" -> 8;
+					case "cyan" -> 9;
+					case "purple" -> 10;
+					case "blue" -> 11;
+					case "brown" -> 12;
+					case "green" -> 13;
+					case "red" -> 14;
+					case "black" -> 15;
+					default -> 0;
+				});
+				return builder.build();
+			}
 			default:
 				throw new AssertionError();
 		}

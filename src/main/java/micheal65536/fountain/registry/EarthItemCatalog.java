@@ -2,14 +2,11 @@ package micheal65536.fountain.registry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileReader;
-import java.io.IOException;
+import micheal65536.fountain.DataFile;
+
 import java.util.HashMap;
 
 public class EarthItemCatalog
@@ -20,9 +17,8 @@ public class EarthItemCatalog
 
 	static
 	{
-		try (FileReader fileReader = new FileReader("data/items_catalog.json"))
+		DataFile.load("registry/items_catalog.json", root ->
 		{
-			JsonElement root = JsonParser.parseReader(fileReader);
 			for (JsonElement element : root.getAsJsonArray())
 			{
 				String uuid = element.getAsJsonObject().get("id").getAsString();
@@ -37,17 +33,7 @@ public class EarthItemCatalog
 				itemUUIDMap.put(new NameAndAux(name, aux), uuid);
 				itemNameMap.put(uuid, new NameAndAux(name, aux));
 			}
-		}
-		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
-		{
-			LogManager.getLogger().fatal("Cannot load Earth item catalog data", exception);
-			System.exit(1);
-		}
-	}
-
-	public static void init()
-	{
-		// empty, forces static initialiser to run if it hasn't already
+		});
 	}
 
 	@Nullable

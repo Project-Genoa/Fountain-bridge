@@ -1,13 +1,11 @@
 package micheal65536.fountain.registry;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.FileReader;
-import java.io.IOException;
+import micheal65536.fountain.DataFile;
+
 import java.util.HashMap;
 
 public class BedrockBiomes
@@ -16,9 +14,8 @@ public class BedrockBiomes
 
 	static
 	{
-		try (FileReader fileReader = new FileReader("data/biomes_bedrock.json"))
+		DataFile.load("registry/biomes_bedrock.json", root ->
 		{
-			JsonElement root = JsonParser.parseReader(fileReader);
 			for (JsonElement element : root.getAsJsonArray())
 			{
 				int id = element.getAsJsonObject().get("id").getAsInt();
@@ -32,17 +29,7 @@ public class BedrockBiomes
 					LogManager.getLogger().warn("Duplicate biome name {}", name);
 				}
 			}
-		}
-		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
-		{
-			LogManager.getLogger().fatal("Cannot load biomes data", exception);
-			System.exit(1);
-		}
-	}
-
-	public static void init()
-	{
-		// empty, forces static initialiser to run if it hasn't already
+		});
 	}
 
 	public static int getId(@NotNull String name)

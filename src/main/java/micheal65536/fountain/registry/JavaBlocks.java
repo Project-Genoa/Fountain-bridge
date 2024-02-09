@@ -3,18 +3,15 @@ package micheal65536.fountain.registry;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtMapBuilder;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.DataFile;
 import micheal65536.fountain.utils.FabricRegistryManager;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
@@ -29,81 +26,71 @@ public class JavaBlocks
 
 	static
 	{
-		try
+		DataFile.load("registry/blocks_java.json", root ->
 		{
-			try (FileReader fileReader = new FileReader("data/blocks_java.json"))
+			for (JsonElement element : root.getAsJsonArray())
 			{
-				JsonElement root = JsonParser.parseReader(fileReader);
-				for (JsonElement element : root.getAsJsonArray())
+				int id = element.getAsJsonObject().get("id").getAsInt();
+				String name = element.getAsJsonObject().get("name").getAsString();
+				if (map.put(id, name) != null)
 				{
-					int id = element.getAsJsonObject().get("id").getAsInt();
-					String name = element.getAsJsonObject().get("name").getAsString();
-					if (map.put(id, name) != null)
+					LogManager.getLogger().warn("Duplicate Java block ID {}", id);
+				}
+
+				try
+				{
+					BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject(), root.getAsJsonArray());
+					if (bedrockMapping == null)
 					{
-						LogManager.getLogger().warn("Duplicate Java block ID {}", id);
+						LogManager.getLogger().debug("Ignoring Java block {}", name);
+						continue;
 					}
+					bedrockMap.put(id, bedrockMapping);
+				}
+				catch (BedrockMappingFailException exception)
+				{
+					LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}: {}", name, exception.getMessage());
+				}
+			}
+		});
+
+		DataFile.load("registry/blocks_java_nonvanilla.json", root ->
+		{
+			for (JsonElement element : root.getAsJsonArray())
+			{
+				String baseName = element.getAsJsonObject().get("name").getAsString();
+
+				LinkedList<String> stateNames = new LinkedList<>();
+				JsonArray statesArray = element.getAsJsonObject().get("states").getAsJsonArray();
+				for (JsonElement stateElement : statesArray)
+				{
+					String stateName = stateElement.getAsJsonObject().get("name").getAsString();
+					stateNames.add(stateName);
+
+					String name = baseName + stateName;
 
 					try
 					{
-						BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject(), root.getAsJsonArray());
+						BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject(), null);
 						if (bedrockMapping == null)
 						{
 							LogManager.getLogger().debug("Ignoring Java block {}", name);
 							continue;
 						}
-						bedrockMap.put(id, bedrockMapping);
+						bedrockNonVanillaMap.put(name, bedrockMapping);
 					}
 					catch (BedrockMappingFailException exception)
 					{
 						LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}: {}", name, exception.getMessage());
 					}
 				}
-			}
 
-			try (FileReader fileReader = new FileReader("data/blocks_java_nonvanilla.json"))
-			{
-				JsonElement root = JsonParser.parseReader(fileReader);
-				for (JsonElement element : root.getAsJsonArray())
+				if (nonVanillaStatesList.put(baseName, stateNames) != null)
 				{
-					String baseName = element.getAsJsonObject().get("name").getAsString();
-
-					LinkedList<String> stateNames = new LinkedList<>();
-					JsonArray statesArray = element.getAsJsonObject().get("states").getAsJsonArray();
-					for (JsonElement stateElement : statesArray)
-					{
-						String stateName = stateElement.getAsJsonObject().get("name").getAsString();
-						stateNames.add(stateName);
-
-						String name = baseName + stateName;
-
-						try
-						{
-							BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject(), null);
-							if (bedrockMapping == null)
-							{
-								LogManager.getLogger().debug("Ignoring Java block {}", name);
-								continue;
-							}
-							bedrockNonVanillaMap.put(name, bedrockMapping);
-						}
-						catch (BedrockMappingFailException exception)
-						{
-							LogManager.getLogger().warn("Cannot find Bedrock block for Java block {}: {}", name, exception.getMessage());
-						}
-					}
-
-					if (nonVanillaStatesList.put(baseName, stateNames) != null)
-					{
-						LogManager.getLogger().warn("Duplicate Java non-vanilla block name {}", baseName);
-					}
+					LogManager.getLogger().warn("Duplicate Java non-vanilla block name {}", baseName);
 				}
 			}
-		}
-		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
-		{
-			LogManager.getLogger().fatal("Cannot load Java blocks data", exception);
-			System.exit(1);
-		}
+		});
 	}
 
 	@Nullable
@@ -218,11 +205,6 @@ public class JavaBlocks
 		{
 			super(message);
 		}
-	}
-
-	public static void init()
-	{
-		/// empty, forces static initialiser to run if it hasn't already
 	}
 
 	public static int getMaxVanillaBlockId()

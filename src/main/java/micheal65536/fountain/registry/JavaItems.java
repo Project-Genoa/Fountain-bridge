@@ -2,14 +2,12 @@ package micheal65536.fountain.registry;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileReader;
-import java.io.IOException;
+import micheal65536.fountain.DataFile;
+
 import java.util.HashMap;
 
 public class JavaItems
@@ -21,9 +19,8 @@ public class JavaItems
 
 	static
 	{
-		try (FileReader fileReader = new FileReader("data/items_java.json"))
+		DataFile.load("registry/items_java.json", root ->
 		{
-			JsonElement root = JsonParser.parseReader(fileReader);
 			for (JsonElement element : root.getAsJsonArray())
 			{
 				int id = element.getAsJsonObject().get("id").getAsInt();
@@ -56,17 +53,7 @@ public class JavaItems
 					}
 				}
 			}
-		}
-		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
-		{
-			LogManager.getLogger().fatal("Cannot load Java items data", exception);
-			System.exit(1);
-		}
-	}
-
-	public static void init()
-	{
-		// empty, forces static initialiser to run if it hasn't already
+		});
 	}
 
 	@Nullable

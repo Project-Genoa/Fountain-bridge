@@ -2,14 +2,12 @@ package micheal65536.fountain.mappings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.io.FileReader;
-import java.io.IOException;
+import micheal65536.fountain.DataFile;
+
 import java.util.HashMap;
 
 public class DirectSounds
@@ -18,17 +16,10 @@ public class DirectSounds
 
 	static
 	{
-		try (FileReader fileReader = new FileReader("data/direct_sounds.json"))
+		DataFile.load("mappings/direct_sounds.json", root ->
 		{
-			JsonElement root = JsonParser.parseReader(fileReader);
-
 			readSegment("", "", root.getAsJsonObject());
-		}
-		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
-		{
-			LogManager.getLogger().fatal("Cannot load direct sounds mapping data", exception);
-			System.exit(1);
-		}
+		});
 	}
 
 	private static void readSegment(@NotNull String javaPath, @NotNull String bedrockPath, @NotNull JsonObject segment)
@@ -85,11 +76,6 @@ public class DirectSounds
 				}
 			}
 		});
-	}
-
-	public static void init()
-	{
-		// empty, forces static initialiser to run if it hasn't already
 	}
 
 	@Nullable

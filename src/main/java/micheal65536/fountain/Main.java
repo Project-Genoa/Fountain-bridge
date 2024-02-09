@@ -68,14 +68,26 @@ public class Main
 		Configurator.setRootLevel(Level.DEBUG);
 		InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
 
-		BedrockBlocks.init();
-		JavaBlocks.init();
-		BedrockItems.init();
-		JavaItems.init();
-		EarthItemCatalog.init();
-		BedrockBiomes.init();
+		for (Class<?> staticClassToInitialise : new Class[]{
+				BedrockBlocks.class,
+				JavaBlocks.class,
+				BedrockItems.class,
+				JavaItems.class,
+				EarthItemCatalog.class,
+				BedrockBiomes.class,
 
-		DirectSounds.init();
+				DirectSounds.class
+		})
+		{
+			try
+			{
+				staticClassToInitialise.getConstructor().newInstance();
+			}
+			catch (ReflectiveOperationException exception)
+			{
+				throw new AssertionError(exception);
+			}
+		}
 
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))

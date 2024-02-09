@@ -21,8 +21,6 @@ import micheal65536.fountain.utils.entities.FallingBlockBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 import micheal65536.fountain.utils.entities.MobBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.MobJavaEntityInstance;
-import micheal65536.fountain.utils.entities.PufferfishBedrockEntityInstance;
-import micheal65536.fountain.utils.entities.PufferfishJavaEntityInstance;
 import micheal65536.fountain.utils.entities.RabbitBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.RabbitJavaEntityInstance;
 import micheal65536.fountain.utils.entities.SheepBedrockEntityInstance;
@@ -53,23 +51,14 @@ public class EntityTranslator
 			case RABBIT -> new RabbitJavaEntityInstance<>("minecraft:rabbit", new RabbitBedrockEntityInstance());    // TODO: variants don't work
 
 			case SQUID -> new MobJavaEntityInstance<>("minecraft:squid", new MobBedrockEntityInstance());    // TODO: squid rotation
-			case COD -> new MobJavaEntityInstance<>("minecraft:cod", new MobBedrockEntityInstance());    // TODO: not visible
 			case SALMON -> new MobJavaEntityInstance<>("minecraft:salmon", new MobBedrockEntityInstance());
 			case TROPICAL_FISH -> new MobJavaEntityInstance<>("minecraft:tropicalfish", new MobBedrockEntityInstance());    // TODO: variants
-			case PUFFERFISH -> new PufferfishJavaEntityInstance<>("minecraft:pufferfish", new PufferfishBedrockEntityInstance());    // TODO: not visible
 
-			case CAVE_SPIDER -> new SpiderJavaEntityInstance<>("minecraft:cave_spider", new SpiderBedrockEntityInstance());    // TODO: not visible
 			case CREEPER -> new CreeperJavaEntityInstance<>("minecraft:creeper", new CreeperBedrockEntityInstance());
-			case DROWNED -> new ZombieJavaEntityInstance<>("minecraft:drowned", new ZombieBedrockEntityInstance());    // TODO: not visible
-			case HUSK -> new ZombieJavaEntityInstance<>("minecraft:husk", new ZombieBedrockEntityInstance());    // TODO: not visible
 			case SKELETON -> new MobJavaEntityInstance<>("minecraft:skeleton", new MobBedrockEntityInstance());
 			case SLIME -> new SlimeJavaEntityInstance<>("minecraft:slime", new SlimeBedrockEntityInstance());    // TODO: not visible
 			case SPIDER -> new SpiderJavaEntityInstance<>("minecraft:spider", new SpiderBedrockEntityInstance());
-			case STRAY -> new MobJavaEntityInstance<>("minecraft:stray", new MobBedrockEntityInstance());    // TODO: not visible
 			case ZOMBIE -> new ZombieJavaEntityInstance<>("minecraft:zombie", new ZombieBedrockEntityInstance());
-			case ZOMBIE_VILLAGER -> new ZombieJavaEntityInstance<>("minecraft:zombie_villager", new ZombieBedrockEntityInstance());    // TODO: not visible
-
-			case VILLAGER -> new AgeableJavaEntityInstance<>("minecraft:villager", new AgeableBedrockEntityInstance());    // TODO: not visible
 
 			// TODO: minecart
 

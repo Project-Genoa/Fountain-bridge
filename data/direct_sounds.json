@@ -1,0 +1,100 @@
+{
+  "entity": {
+    "_bedrock_name": "mob",
+    "_all": [
+      {
+        "_include": [
+          "salmon",
+          "tropical_fish"
+        ],
+        "death": "mob.fish.hurt",
+        "hurt": "mob.fish.hurt",
+        "flop": "mob.fish.flop"
+      },
+      {
+        "_exclude": [
+          "generic",
+          "player",
+          "hostile",
+          "fish"
+        ],
+        "ambient": "say",
+        "death": "death",
+        "hurt": "hurt",
+        "step": "step"
+      }
+    ],
+    "generic": {
+      "burn": "random.fizz",
+      "drink": "random.drink",
+      "eat": "random.eat",
+      "explode": "random.explode",
+      "extinguish_fire": "random.fizz",
+      "splash": "random.splash",
+      "swim": "random.swim"
+    },
+    "player": {
+      "burp": "random.burp",
+      "death": "game.player.die",
+      "hurt": "game.player.hurt",
+      "splash": "random.splash",
+      "splash_high_speed": "random.splash",
+      "swim": "random.swim"
+    },
+    "hostile": {
+      "splash": "random.splash",
+      "swim": "random.swim"
+    },
+    "fish": {
+      "swim": "step"
+    },
+    "chicken": {
+      "death": "hurt",
+      "egg": "plop"
+    },
+    "cow": {
+      "death": "hurt",
+      "milk": "milk"
+    },
+    "creeper": {
+      "hurt": "say",
+      "primed": "random.fuse"
+    },
+    "pig": {
+      "hurt": "death"
+    },
+    "rabbit": {
+      "ambient": "idle",
+      "jump": "hop"
+    },
+    "salmon": {},
+    "sheep": {
+      "death": "say",
+      "hurt": "say",
+      "shear": "shear"
+    },
+    "skeleton": {
+      "shoot": "random.bow"
+    },
+    "slime": {
+      "death": "small",
+      "death_small": "small",
+      "hurt": "small",
+      "hurt_small": "small",
+      "jump": "big",
+      "jump_small": "small",
+      "squish": "big",
+      "squish_small": "small"
+    },
+    "spider": {
+      "hurt": "say"
+    },
+    "squid": {
+      "squirt": "ink_squirt"
+    },
+    "tropical_fish": {},
+    "zombie": {
+      "destroy_egg": "fall.egg"
+    }
+  }
+}

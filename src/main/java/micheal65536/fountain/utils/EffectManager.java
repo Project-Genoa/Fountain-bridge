@@ -3,7 +3,9 @@ package micheal65536.fountain.utils;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
+import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
 import com.github.steveice10.mc.protocol.data.game.level.sound.Sound;
+import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
@@ -15,6 +17,7 @@ import org.cloudburstmc.protocol.bedrock.packet.PlaySoundPacket;
 import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.PlayerSession;
+import micheal65536.fountain.mappings.DirectSounds;
 
 // this groups level events, particle events, and sound events together and dispatches each event in the appropriate way for Bedrock
 public class EffectManager
@@ -38,7 +41,30 @@ public class EffectManager
 
 	public boolean handleSoundEvent(@NotNull Sound sound, @NotNull Vector3f position, float pitch, float volume)
 	{
-		return false;
+		if (!(sound instanceof BuiltinSound))
+		{
+			return false;
+		}
+
+		String javaName = sound.getName();
+
+		// TODO: do specific handling here
+
+		String bedrockName = DirectSounds.getDirectSoundMapping(javaName);
+		if (bedrockName == null)
+		{
+			LogManager.getLogger().warn("No direct sound mapping for {}", javaName);
+			return true;
+		}
+		else if (bedrockName.equals("_ignore"))
+		{
+			return true;
+		}
+		else
+		{
+			this.sendPlaySound(bedrockName, position, pitch, volume);
+			return true;
+		}
 	}
 
 	private void sendLevelEvent(@NotNull LevelEventType levelEventType, int data, @NotNull Vector3f position)

@@ -79,6 +79,7 @@ public class BaseBedrockEntityInstance extends EntityManager.BedrockEntityInstan
 	{
 		super.getEntityFlags(entityFlags);
 		entityFlags.add(EntityFlag.HAS_COLLISION);
+		entityFlags.add(EntityFlag.SILENT);
 		if (this.burning)
 		{
 			entityFlags.add(EntityFlag.ON_FIRE);

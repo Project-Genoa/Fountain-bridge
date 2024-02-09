@@ -17,6 +17,7 @@ import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitiali
 import org.cloudburstmc.protocol.common.Definition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
 
+import micheal65536.fountain.mappings.DirectSounds;
 import micheal65536.fountain.registry.BedrockBiomes;
 import micheal65536.fountain.registry.BedrockBlocks;
 import micheal65536.fountain.registry.BedrockItems;
@@ -73,6 +74,8 @@ public class Main
 		JavaItems.init();
 		EarthItemCatalog.init();
 		BedrockBiomes.init();
+
+		DirectSounds.init();
 
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))

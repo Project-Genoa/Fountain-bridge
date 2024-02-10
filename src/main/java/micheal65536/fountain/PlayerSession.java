@@ -104,6 +104,7 @@ import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public final class PlayerSession
 {
@@ -119,6 +120,8 @@ public final class PlayerSession
 	private final EntityManager entityManager;
 	private final EffectManager effectManager;
 
+	private final Thread tickThread;
+
 	private final BedrockSession bedrock;
 	private long bedrockPlayerEntityId;
 	private boolean bedrockDoDaylightCycle = true;
@@ -132,8 +135,13 @@ public final class PlayerSession
 
 	private final GenoaInventory genoaInventory;
 
+	final ReentrantLock mutex = new ReentrantLock(true);
+
+	// TODO: clean up initialisation
 	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
 	{
+		this.mutex.lock();
+
 		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
 
 		this.bedrock = bedrockSession;
@@ -147,7 +155,8 @@ public final class PlayerSession
 			this.chunkManager = null;
 			this.entityManager = null;
 			this.effectManager = null;
-			this.disconnectForced();
+			this.tickThread = null;
+			this.bedrock.disconnect();
 			return;
 		}
 
@@ -160,11 +169,50 @@ public final class PlayerSession
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);
+
+		this.tickThread = new Thread(() ->
+		{
+			final long tickInterval = 50;
+			long nextTickTime = System.nanoTime() / 1000000l + tickInterval;
+			while (!Thread.interrupted())
+			{
+				long sleepTime = nextTickTime - System.nanoTime() / 1000000l;
+				if (sleepTime > 0)
+				{
+					try
+					{
+						Thread.sleep(sleepTime);
+					}
+					catch (InterruptedException exception)
+					{
+						break;
+					}
+				}
+
+				this.tick();
+
+				nextTickTime += tickInterval;
+			}
+		});
+		this.tickThread.start();
 	}
 
 	public void disconnectForced()
 	{
 		// TODO
+
+		this.tickThread.interrupt();
+		while (this.tickThread.isAlive())
+		{
+			try
+			{
+				this.tickThread.join();
+			}
+			catch (InterruptedException exception)
+			{
+				// empty
+			}
+		}
 
 		try
 		{
@@ -175,6 +223,11 @@ public final class PlayerSession
 			LogManager.getLogger().debug("Disconnect with Bedrock session already closed (this is usually normal)");
 		}
 		this.java.disconnect("");
+	}
+
+	private void tick()
+	{
+		// TODO
 	}
 
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)

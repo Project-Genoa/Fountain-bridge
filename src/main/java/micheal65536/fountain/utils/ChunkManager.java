@@ -7,6 +7,10 @@ import com.github.steveice10.mc.protocol.data.game.chunk.palette.Palette;
 import com.github.steveice10.mc.protocol.data.game.chunk.palette.SingletonPalette;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
@@ -375,8 +379,11 @@ public class ChunkManager
 			LogManager.getLogger().warn("Block update contained block with no mapping {}", JavaBlocks.getName(blockChangeEntry.getBlock(), this.fabricRegistryManager));
 		}
 
+		boolean bedrockChanged = false;
 		if (chunk.setBlock(blockX, blockY, blockZ, 0, bedrockMapping != null ? bedrockMapping.id : REPLACEMENT_BLOCK))
 		{
+			bedrockChanged = true;
+
 			UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
 			updateBlockPacket.setBlockPosition(position);
 			updateBlockPacket.setDataLayer(0);
@@ -395,19 +402,18 @@ public class ChunkManager
 			this.playerSession.sendBedrockPacket(updateBlockPacket);
 		}
 
-		if (bedrockMapping != null && bedrockMapping.blockEntity != null)
+		if (bedrockChanged)    // required for pistons
 		{
-			NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
-			chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, bedrockMapping.blockEntity);
-
-			BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
-			blockEntityDataPacket.setBlockPosition(position);
-			blockEntityDataPacket.setData(chunk.getBlockEntity(blockX, blockY, blockZ));
-			this.playerSession.sendBedrockPacket(blockEntityDataPacket);
-		}
-		else
-		{
-			chunk.removeBlockEntity(blockX, blockY, blockZ);
+			if (bedrockMapping != null && bedrockMapping.blockEntity != null)
+			{
+				NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
+				chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, bedrockMapping.blockEntity);
+				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
+			}
+			else
+			{
+				chunk.removeBlockEntity(blockX, blockY, blockZ);
+			}
 		}
 	}
 
@@ -432,11 +438,7 @@ public class ChunkManager
 		{
 			NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(blockEntityMapping, new BlockEntityInfo(blockX, blockY, blockZ, clientboundBlockEntityDataPacket.getType(), clientboundBlockEntityDataPacket.getNbt()));
 			chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, blockEntityMapping);
-
-			BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
-			blockEntityDataPacket.setBlockPosition(position);
-			blockEntityDataPacket.setData(chunk.getBlockEntity(blockX, blockY, blockZ));
-			this.playerSession.sendBedrockPacket(blockEntityDataPacket);
+			this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
 		}
 	}
 
@@ -452,7 +454,106 @@ public class ChunkManager
 		int blockY = position.getY();
 		int blockZ = getChunkBlockOffset(position.getZ());
 
-		LogManager.getLogger().debug("Ignoring block event of type {}", clientboundBlockEventPacket.getValue().getClass().getSimpleName());
+		BlockValue blockValue = clientboundBlockEventPacket.getValue();
+		BlockValueType blockValueType = clientboundBlockEventPacket.getType();
+
+		if (blockValue instanceof PistonValue)
+		{
+			NbtMap bedrockBlockEntityData = chunk.getBlockEntity(blockX, blockY, blockZ);
+			if (bedrockBlockEntityData != null)
+			{
+				bedrockBlockEntityData = switch ((PistonValueType) blockValueType)
+				{
+					case PUSHING -> bedrockBlockEntityData.toBuilder()
+							.putByte("State", (byte) 0)
+							.putByte("NewState", (byte) 1)
+							.putFloat("Progress", 0.0f)
+							.putFloat("LastProgress", 0.0f)
+							.build();
+					case PULLING -> bedrockBlockEntityData.toBuilder()
+							.putByte("State", (byte) 2)
+							.putByte("NewState", (byte) 3)
+							.putFloat("Progress", 1.0f)
+							.putFloat("LastProgress", 1.0f)
+							.build();
+					case CANCELLED_MID_PUSH -> bedrockBlockEntityData.toBuilder()
+							.putByte("State", (byte) 1)
+							.putByte("NewState", (byte) 3)
+							.putFloat("Progress", bedrockBlockEntityData.getFloat("Progress"))
+							.putFloat("LastProgress", bedrockBlockEntityData.getFloat("Progress"))
+							.build();
+				};
+				chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, chunk.getBlockEntityMapping(blockX, blockY, blockZ));
+				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
+			}
+		}
+		else
+		{
+			LogManager.getLogger().debug("Ignoring block event of type {}", clientboundBlockEventPacket.getValue().getClass().getSimpleName());
+		}
+	}
+
+	public void tick()
+	{
+		Arrays.stream(this.chunks).flatMap(Arrays::stream).forEach(chunk ->
+		{
+			Arrays.stream(chunk.getBlockEntities()).forEach(nbtMap ->
+			{
+				Vector3i position = Vector3i.from(nbtMap.getInt("x"), nbtMap.getInt("y"), nbtMap.getInt("z"));
+				int blockX = getChunkBlockOffset(position.getX());
+				int blockY = position.getY();
+				int blockZ = getChunkBlockOffset(position.getZ());
+
+				if (!chunk.getBlockEntityMapping(blockX, blockY, blockZ).type.equals("piston"))
+				{
+					return;
+				}
+
+				byte state = nbtMap.getByte("State");
+				byte newState = nbtMap.getByte("NewState");
+				if ((state & 1) == 0 && (newState & 1) == 0)
+				{
+					return;
+				}
+				nbtMap = switch (newState)
+				{
+					case 0 -> nbtMap.toBuilder()
+							.putByte("State", newState)
+							.putFloat("Progress", 0.0f)
+							.putFloat("LastProgress", 0.0f)
+							.build();
+					case 2 -> nbtMap.toBuilder()
+							.putFloat("State", newState)
+							.putFloat("Progress", 1.0f)
+							.putFloat("LastProgress", 1.0f)
+							.build();
+					case 1 -> nbtMap.toBuilder()
+							.putByte("State", newState)
+							.putByte("NewState", nbtMap.getFloat("Progress") == 0.5f ? (byte) 2 : newState)
+							.putFloat("Progress", nbtMap.getFloat("Progress") == 0.5f ? 1.0f : 0.5f)
+							.putFloat("LastProgress", nbtMap.getFloat("Progress"))
+							.build();
+					case 3 -> nbtMap.toBuilder()
+							.putByte("State", newState)
+							.putByte("NewState", nbtMap.getFloat("Progress") == 0.5f ? (byte) 0 : newState)
+							.putFloat("Progress", nbtMap.getFloat("Progress") == 0.5f ? 0.0f : 0.5f)
+							.putFloat("LastProgress", nbtMap.getFloat("Progress"))
+							.build();
+					default -> nbtMap;
+				};
+
+				chunk.setBlockEntity(blockX, blockY, blockZ, nbtMap, chunk.getBlockEntityMapping(blockX, blockY, blockZ));
+				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
+			});
+		});
+	}
+
+	private void sendBlockEntity(Vector3i position, NbtMap data)
+	{
+		BlockEntityDataPacket blockEntityDataPacket = new BlockEntityDataPacket();
+		blockEntityDataPacket.setBlockPosition(position);
+		blockEntityDataPacket.setData(data);
+		this.playerSession.sendBedrockPacket(blockEntityDataPacket);
 	}
 
 	private Chunk getChunk(int x, int z)

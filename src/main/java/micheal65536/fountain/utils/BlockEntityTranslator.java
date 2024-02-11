@@ -19,9 +19,10 @@ public class BlockEntityTranslator
 			{
 				NbtMapBuilder builder = NbtMap.builder();
 				builder.putString("id", "FlowerPot");
-				if (blockEntityMapping.contents != null)
+				NbtMap contents = ((JavaBlocks.BedrockMapping.FlowerPotBlockEntity) blockEntityMapping).contents;
+				if (contents != null)
 				{
-					builder.putCompound("PlantBlock", (NbtMap) blockEntityMapping.contents);
+					builder.putCompound("PlantBlock", contents);
 				}
 				return builder.build();
 			}
@@ -29,7 +30,7 @@ public class BlockEntityTranslator
 			{
 				NbtMapBuilder builder = NbtMap.builder();
 				builder.putString("id", "Bed");
-				builder.putByte("color", (byte) switch ((String) blockEntityMapping.contents)
+				builder.putByte("color", (byte) switch (((JavaBlocks.BedrockMapping.BedBlockEntity) blockEntityMapping).color)
 				{
 					case "white" -> 0;
 					case "orange" -> 1;
@@ -49,6 +50,18 @@ public class BlockEntityTranslator
 					case "black" -> 15;
 					default -> 0;
 				});
+				return builder.build();
+			}
+			case "piston":
+			{
+				JavaBlocks.BedrockMapping.PistonBlockEntity pistonBlockEntity = (JavaBlocks.BedrockMapping.PistonBlockEntity) blockEntityMapping;
+				NbtMapBuilder builder = NbtMap.builder();
+				builder.putString("id", "PistonArm");
+				builder.putByte("State", (byte) (pistonBlockEntity.extended ? 2 : 0));
+				builder.putByte("NewState", (byte) (pistonBlockEntity.extended ? 2 : 0));
+				builder.putFloat("Progress", pistonBlockEntity.extended ? 1.0f : 0.0f);
+				builder.putFloat("LastProgress", pistonBlockEntity.extended ? 1.0f : 0.0f);
+				builder.putBoolean("Sticky", pistonBlockEntity.sticky);
 				return builder.build();
 			}
 			default:

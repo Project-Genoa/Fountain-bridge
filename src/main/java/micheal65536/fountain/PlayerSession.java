@@ -227,7 +227,7 @@ public final class PlayerSession
 
 	private void tick()
 	{
-		// TODO
+		this.chunkManager.tick();
 	}
 
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)

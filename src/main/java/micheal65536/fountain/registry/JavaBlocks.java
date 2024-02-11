@@ -182,13 +182,20 @@ public class JavaBlocks
 							throw new BedrockMappingFailException("Could not find contents for flower pot");
 						}
 					}
-					blockEntity = new BedrockMapping.BlockEntity(type, contents);
+					blockEntity = new BedrockMapping.FlowerPotBlockEntity(type, contents);
 				}
 				break;
 				case "bed":
 				{
 					String color = blockEntityObject.get("color").getAsString();
-					blockEntity = new BedrockMapping.BlockEntity(type, color);
+					blockEntity = new BedrockMapping.BedBlockEntity(type, color);
+				}
+				break;
+				case "piston":
+				{
+					boolean sticky = blockEntityObject.get("sticky").getAsBoolean();
+					boolean extended = blockEntityObject.get("extended").getAsBoolean();
+					blockEntity = new BedrockMapping.PistonBlockEntity(type, sticky, extended);
 				}
 				break;
 			}
@@ -271,17 +278,51 @@ public class JavaBlocks
 			this.waterlogged = waterlogged;
 		}
 
-		public static final class BlockEntity
+		public static class BlockEntity
 		{
 			@NotNull
 			public final String type;
-			@Nullable
-			public final Object contents;
 
-			private BlockEntity(@NotNull String type, @Nullable Object contents)
+			private BlockEntity(@NotNull String type)
 			{
 				this.type = type;
+			}
+		}
+
+		public static class BedBlockEntity extends BlockEntity
+		{
+			@NotNull
+			public final String color;
+
+			private BedBlockEntity(@NotNull String type, @NotNull String color)
+			{
+				super(type);
+				this.color = color;
+			}
+		}
+
+		public static class FlowerPotBlockEntity extends BlockEntity
+		{
+			@Nullable
+			public final NbtMap contents;
+
+			private FlowerPotBlockEntity(@NotNull String type, @Nullable NbtMap contents)
+			{
+				super(type);
 				this.contents = contents;
+			}
+		}
+
+		public static class PistonBlockEntity extends BlockEntity
+		{
+			public final boolean sticky;
+			public final boolean extended;
+
+			private PistonBlockEntity(@NotNull String type, boolean sticky, boolean extended)
+			{
+				super(type);
+				this.sticky = sticky;
+				this.extended = extended;
 			}
 		}
 	}

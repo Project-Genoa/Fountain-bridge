@@ -15319,7 +15319,7 @@
     "id": 2022
   },
   {
-    "name": "minecraft:movingBlock",
+    "name": "minecraft:moving_block",
     "state": {},
     "id": 2023
   },
@@ -15997,112 +15997,112 @@
     "id": 2116
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 0
     },
     "id": 2117
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 1
     },
     "id": 2118
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 2
     },
     "id": 2119
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 3
     },
     "id": 2120
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 4
     },
     "id": 2121
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 5
     },
     "id": 2122
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 6
     },
     "id": 2123
   },
   {
-    "name": "minecraft:pistonArmCollision",
+    "name": "minecraft:piston_arm_collision",
     "state": {
       "facing_direction": 7
     },
     "id": 2124
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 0
     },
     "id": 2125
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 1
     },
     "id": 2126
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 2
     },
     "id": 2127
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 3
     },
     "id": 2128
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 4
     },
     "id": 2129
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 5
     },
     "id": 2130
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 6
     },
     "id": 2131
   },
   {
-    "name": "minecraft:pistonArmCollisionSticky",
+    "name": "minecraft:piston_arm_collision_sticky",
     "state": {
       "facing_direction": 7
     },

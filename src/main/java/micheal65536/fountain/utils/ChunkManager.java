@@ -247,15 +247,9 @@ public class ChunkManager
 					bedrockChunk.setBlock(x, y, z, 0, bedrockMapping != null ? bedrockMapping.id : REPLACEMENT_BLOCK);
 					bedrockChunk.setBlock(x, y, z, 1, bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR);
 
-					if (bedrockMapping != null && bedrockMapping.blockEntity != null)
-					{
-						NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
-						bedrockChunk.setBlockEntity(x, y, z, bedrockBlockEntityData, bedrockMapping.blockEntity);
-					}
-					else
-					{
-						bedrockChunk.removeBlockEntity(x, y, z);
-					}
+					JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = bedrockMapping != null && bedrockMapping.blockEntity != null ? bedrockMapping.blockEntity : null;
+					NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, null) : null;
+					bedrockChunk.setBlockEntity(x, y, z, blockEntityMapping, bedrockBlockEntityData);
 				}
 
 				Palette javaBiomePalette = chunkSection.getBiomeData().getPalette();
@@ -343,11 +337,8 @@ public class ChunkManager
 				{
 					LogManager.getLogger().debug("Ignoring block entity of type {}", blockEntityInfo.getType());
 				}
-				else
-				{
-					NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(blockEntityMapping, blockEntityInfo);
-					bedrockChunk.setBlockEntity(x, y, z, bedrockBlockEntityData, blockEntityMapping);
-				}
+				NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, null) : null;
+				bedrockChunk.setBlockEntity(x, y, z, blockEntityMapping, bedrockBlockEntityData);
 			}
 		}
 		catch (IOException exception)
@@ -362,7 +353,7 @@ public class ChunkManager
 	public void onJavaBlockUpdate(@NotNull BlockChangeEntry blockChangeEntry)
 	{
 		Vector3i position = blockChangeEntry.getPosition();
-		if (position.getY() < 0 || position.getY() >= 256 || position.getX() < -this.chunkRadius * 16 || position.getX() >= this.chunkRadius * 16 || position.getZ() < -this.chunkRadius * 16 || position.getZ() >= this.chunkRadius * 16)
+		if (this.isOutOfBounds(position.getX(), position.getY(), position.getZ()))
 		{
 			return;
 		}
@@ -383,36 +374,22 @@ public class ChunkManager
 		if (chunk.setBlock(blockX, blockY, blockZ, 0, bedrockMapping != null ? bedrockMapping.id : REPLACEMENT_BLOCK))
 		{
 			bedrockChanged = true;
-
-			UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-			updateBlockPacket.setBlockPosition(position);
-			updateBlockPacket.setDataLayer(0);
-			updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(chunk.getBlock(blockX, blockY, blockZ, 0)));
-			updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
-			this.playerSession.sendBedrockPacket(updateBlockPacket);
+			this.sendBlockUpdate(position, 0, chunk.getBlock(blockX, blockY, blockZ, 0));
 		}
 
 		if (chunk.setBlock(blockX, blockY, blockZ, 1, bedrockMapping != null && bedrockMapping.waterlogged ? BedrockBlocks.WATER : BedrockBlocks.AIR))
 		{
-			UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
-			updateBlockPacket.setBlockPosition(position);
-			updateBlockPacket.setDataLayer(1);
-			updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(chunk.getBlock(blockX, blockY, blockZ, 1)));
-			updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
-			this.playerSession.sendBedrockPacket(updateBlockPacket);
+			this.sendBlockUpdate(position, 1, chunk.getBlock(blockX, blockY, blockZ, 1));
 		}
 
 		if (bedrockChanged)    // required for pistons
 		{
-			if (bedrockMapping != null && bedrockMapping.blockEntity != null)
+			JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = bedrockMapping != null && bedrockMapping.blockEntity != null ? bedrockMapping.blockEntity : null;
+			NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, null) : null;
+			chunk.setBlockEntity(blockX, blockY, blockZ, blockEntityMapping, bedrockBlockEntityData);
+			if (bedrockBlockEntityData != null)
 			{
-				NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(bedrockMapping.blockEntity, null);
-				chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, bedrockMapping.blockEntity);
 				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
-			}
-			else
-			{
-				chunk.removeBlockEntity(blockX, blockY, blockZ);
 			}
 		}
 	}
@@ -420,7 +397,7 @@ public class ChunkManager
 	public void onJavaBlockEntityUpdate(@NotNull ClientboundBlockEntityDataPacket clientboundBlockEntityDataPacket)
 	{
 		Vector3i position = clientboundBlockEntityDataPacket.getPosition();
-		if (position.getY() < 0 || position.getY() >= 256 || position.getX() < -this.chunkRadius * 16 || position.getX() >= this.chunkRadius * 16 || position.getZ() < -this.chunkRadius * 16 || position.getZ() >= this.chunkRadius * 16)
+		if (this.isOutOfBounds(position.getX(), position.getY(), position.getZ()))
 		{
 			return;
 		}
@@ -434,10 +411,10 @@ public class ChunkManager
 		{
 			LogManager.getLogger().debug("Ignoring block entity of type {}", clientboundBlockEntityDataPacket.getType());
 		}
-		else
+		NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, new BlockEntityInfo(blockX, blockY, blockZ, clientboundBlockEntityDataPacket.getType(), clientboundBlockEntityDataPacket.getNbt())) : null;
+		chunk.setBlockEntity(blockX, blockY, blockZ, blockEntityMapping, bedrockBlockEntityData);
+		if (bedrockBlockEntityData != null)
 		{
-			NbtMap bedrockBlockEntityData = BlockEntityTranslator.translateBlockEntity(blockEntityMapping, new BlockEntityInfo(blockX, blockY, blockZ, clientboundBlockEntityDataPacket.getType(), clientboundBlockEntityDataPacket.getNbt()));
-			chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, blockEntityMapping);
 			this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
 		}
 	}
@@ -445,7 +422,7 @@ public class ChunkManager
 	public void onJavaBlockEvent(@NotNull ClientboundBlockEventPacket clientboundBlockEventPacket)
 	{
 		Vector3i position = clientboundBlockEventPacket.getPosition();
-		if (position.getY() < 0 || position.getY() >= 256 || position.getX() < -this.chunkRadius * 16 || position.getX() >= this.chunkRadius * 16 || position.getZ() < -this.chunkRadius * 16 || position.getZ() >= this.chunkRadius * 16)
+		if (this.isOutOfBounds(position.getX(), position.getY(), position.getZ()))
 		{
 			return;
 		}
@@ -483,7 +460,7 @@ public class ChunkManager
 							.putFloat("LastProgress", bedrockBlockEntityData.getFloat("Progress"))
 							.build();
 				};
-				chunk.setBlockEntity(blockX, blockY, blockZ, bedrockBlockEntityData, chunk.getBlockEntityMapping(blockX, blockY, blockZ));
+				chunk.setBlockEntity(blockX, blockY, blockZ, chunk.getBlockEntityMapping(blockX, blockY, blockZ), bedrockBlockEntityData);
 				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
 			}
 		}
@@ -542,10 +519,20 @@ public class ChunkManager
 					default -> nbtMap;
 				};
 
-				chunk.setBlockEntity(blockX, blockY, blockZ, nbtMap, chunk.getBlockEntityMapping(blockX, blockY, blockZ));
+				chunk.setBlockEntity(blockX, blockY, blockZ, chunk.getBlockEntityMapping(blockX, blockY, blockZ), nbtMap);
 				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
 			});
 		});
+	}
+
+	private void sendBlockUpdate(Vector3i position, int layer, int blockId)
+	{
+		UpdateBlockPacket updateBlockPacket = new UpdateBlockPacket();
+		updateBlockPacket.setBlockPosition(position);
+		updateBlockPacket.setDataLayer(layer);
+		updateBlockPacket.setDefinition(Main.BLOCK_DEFINITION_REGISTRY.getDefinition(blockId));
+		updateBlockPacket.getFlags().add(UpdateBlockPacket.Flag.NETWORK);
+		this.playerSession.sendBedrockPacket(updateBlockPacket);
 	}
 
 	private void sendBlockEntity(Vector3i position, NbtMap data)
@@ -554,6 +541,11 @@ public class ChunkManager
 		blockEntityDataPacket.setBlockPosition(position);
 		blockEntityDataPacket.setData(data);
 		this.playerSession.sendBedrockPacket(blockEntityDataPacket);
+	}
+
+	private boolean isOutOfBounds(int x, int y, int z)
+	{
+		return y < 0 || y >= 256 || x < -this.chunkRadius * 16 || x >= this.chunkRadius * 16 || z < -this.chunkRadius * 16 || z >= this.chunkRadius * 16;
 	}
 
 	private Chunk getChunk(int x, int z)
@@ -654,16 +646,21 @@ public class ChunkManager
 			return this.blockEntityMappings[(x * 16 + z) * 256 + y];
 		}
 
-		public void setBlockEntity(int x, int y, int z, @NotNull NbtMap blockEntity, @NotNull JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping)
+		public void setBlockEntity(int x, int y, int z, @Nullable JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping, @Nullable NbtMap blockEntity)
 		{
-			this.blockEntities[(x * 16 + z) * 256 + y] = blockEntity.toBuilder().putInt("x", x + this.chunkX * 16).putInt("y", y).putInt("z", z + this.chunkZ * 16).putBoolean("isMovable", false).build();
+			if (blockEntity != null && blockEntityMapping == null)
+			{
+				throw new IllegalArgumentException();
+			}
 			this.blockEntityMappings[(x * 16 + z) * 256 + y] = blockEntityMapping;
-		}
-
-		public void removeBlockEntity(int x, int y, int z)
-		{
-			this.blockEntities[(x * 16 + z) * 256 + y] = null;
-			this.blockEntityMappings[(x * 16 + z) * 256 + y] = null;
+			if (blockEntity != null)
+			{
+				this.blockEntities[(x * 16 + z) * 256 + y] = blockEntity.toBuilder().putInt("x", x + this.chunkX * 16).putInt("y", y).putInt("z", z + this.chunkZ * 16).putBoolean("isMovable", false).build();
+			}
+			else
+			{
+				this.blockEntities[(x * 16 + z) * 256 + y] = null;
+			}
 		}
 
 		@NotNull

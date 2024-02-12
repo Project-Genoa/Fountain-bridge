@@ -10,7 +10,7 @@ import micheal65536.fountain.registry.JavaBlocks;
 
 public class BlockEntityTranslator
 {
-	@NotNull
+	@Nullable
 	public static NbtMap translateBlockEntity(@NotNull JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping, @Nullable BlockEntityInfo javaBlockEntityInfo)
 	{
 		switch (blockEntityMapping.type)

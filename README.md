@@ -26,8 +26,10 @@ Set your game mode to creative if you are playing on a buildplate, and survival 
 
 Disable daylight cycle and set the time to noon with `/gamerule doDaylightCycle false` and `/time set noon` (or `/time set midnight`) in the server console.
 
-Disable natural mob spawning with `/gamerule doMobSpawning false` in the server console. Use `/kill @e[type=!player]` to get rid of naturally-spawned mobs that appear outside of the buildplate area.
+Disable natural mob spawning with `/gamerule doMobSpawning false` in the server console, otherwise bats and hostile mobs may spawn and make noise.
 
 Each time you join the server you will have an empty inventory and hotbar (inventory is not synchronised with the Minecraft Earth API server). Use `/give` in the server console to give yourself items/blocks.
 
 Minecraft sea level is at Y 63. In order to have the surface level of your buildplate appear at ground level in AR, set the Y offset in your API server buildplate response to 63.
+
+The Fountain Fabric mod includes a chunk generator that will generate a world containing a section of Minecraft terrain surrounded by the appropriate special-purpose blocks for it to appear and behave correctly as a buildplate in Minecraft Earth. To use it, set `level-type=fountain\:wrapper` and `generate-structures=false` in the `server.properties` file (do not forget the backslash in `fountain\:wrapper`). You must do this before you create the world as the settings are only applied to new worlds (if the `world` directory already exists then delete or move it first). Due to the nature of Minecraft world generation, you may end up with a buildplate containing a tall mountain, empty ocean, etc. and need to change the world seed a few times to find one that works well.

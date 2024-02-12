@@ -19,17 +19,6 @@ public class BlockEntityTranslator
 	{
 		switch (blockEntityMapping.type)
 		{
-			case "flower_pot":
-			{
-				NbtMapBuilder builder = NbtMap.builder();
-				builder.putString("id", "FlowerPot");
-				NbtMap contents = ((JavaBlocks.BedrockMapping.FlowerPotBlockEntity) blockEntityMapping).contents;
-				if (contents != null)
-				{
-					builder.putCompound("PlantBlock", contents);
-				}
-				return builder.build();
-			}
 			case "bed":
 			{
 				NbtMapBuilder builder = NbtMap.builder();
@@ -54,6 +43,17 @@ public class BlockEntityTranslator
 					case "black" -> 15;
 					default -> 0;
 				});
+				return builder.build();
+			}
+			case "flower_pot":
+			{
+				NbtMapBuilder builder = NbtMap.builder();
+				builder.putString("id", "FlowerPot");
+				NbtMap contents = ((JavaBlocks.BedrockMapping.FlowerPotBlockEntity) blockEntityMapping).contents;
+				if (contents != null)
+				{
+					builder.putCompound("PlantBlock", contents);
+				}
 				return builder.build();
 			}
 			case "moving_block":

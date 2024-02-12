@@ -138,6 +138,12 @@ public class JavaBlocks
 			String type = blockEntityObject.get("type").getAsString();
 			switch (type)
 			{
+				case "bed":
+				{
+					String color = blockEntityObject.get("color").getAsString();
+					blockEntity = new BedrockMapping.BedBlockEntity(type, color);
+				}
+				break;
 				case "flower_pot":
 				{
 					NbtMap contents = null;
@@ -183,12 +189,6 @@ public class JavaBlocks
 						}
 					}
 					blockEntity = new BedrockMapping.FlowerPotBlockEntity(type, contents);
-				}
-				break;
-				case "bed":
-				{
-					String color = blockEntityObject.get("color").getAsString();
-					blockEntity = new BedrockMapping.BedBlockEntity(type, color);
 				}
 				break;
 				case "moving_block":

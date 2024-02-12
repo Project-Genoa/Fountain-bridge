@@ -462,6 +462,29 @@ public class ChunkManager
 				};
 				chunk.setBlockEntity(blockX, blockY, blockZ, chunk.getBlockEntityMapping(blockX, blockY, blockZ), bedrockBlockEntityData);
 				this.sendBlockEntity(position, chunk.getBlockEntity(blockX, blockY, blockZ));
+
+				if ((PistonValueType) blockValueType == PistonValueType.PUSHING)
+				{
+					// remove the block in front of the piston (Java edition replaces this with a minecraft:moving_piston block for the piston head, Bedrock edition does not use a separate minecraft:moving_block for the piston head block and expects that space to be air)
+					Vector3i headPosition = switch ((int) BedrockBlocks.getState(chunk.getBlock(blockX, blockY, blockZ, 0)).get("facing_direction"))
+					{
+						case 0 -> position.add(0, -1, 0);
+						case 1 -> position.add(0, 1, 0);
+						case 2 -> position.add(0, 0, 1);
+						case 3 -> position.add(0, 0, -1);
+						case 4 -> position.add(1, 0, 0);
+						case 5 -> position.add(-1, 0, 0);
+						default -> position;
+					};
+					if (!this.isOutOfBounds(headPosition.getX(), headPosition.getY(), headPosition.getZ()))
+					{
+						Chunk headChunk = this.getChunkForBlock(headPosition.getX(), headPosition.getZ());
+						if (headChunk.setBlock(getChunkBlockOffset(headPosition.getX()), headPosition.getY(), getChunkBlockOffset(headPosition.getZ()), 0, BedrockBlocks.AIR))
+						{
+							this.sendBlockUpdate(headPosition, 0, BedrockBlocks.AIR);
+						}
+					}
+				}
 			}
 		}
 		else

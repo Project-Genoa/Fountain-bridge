@@ -191,6 +191,11 @@ public class JavaBlocks
 					blockEntity = new BedrockMapping.BedBlockEntity(type, color);
 				}
 				break;
+				case "moving_block":
+				{
+					blockEntity = new BedrockMapping.BlockEntity(type);
+				}
+				break;
 				case "piston":
 				{
 					boolean sticky = blockEntityObject.get("sticky").getAsBoolean();

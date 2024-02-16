@@ -1,4 +1,76 @@
 {
+  "block": {
+    "glass": {
+      "break": "dig.glass",
+      "fall": "fall.stone",
+      "hit": "hit.stone",
+      "place": "dig.stone",
+      "step": "step.stone"
+    },
+    "grass": {
+      "break": "dig.grass",
+      "fall": "fall.grass",
+      "hit": "hit.grass",
+      "place": "dig.grass",
+      "step": "step.grass"
+    },
+    "gravel": {
+      "break": "dig.gravel",
+      "fall": "fall.gravel",
+      "hit": "hit.gravel",
+      "place": "dig.gravel",
+      "step": "step.gravel"
+    },
+    "ladder": {
+      "break": "dig.wood",
+      "fall": "fall.ladder",
+      "hit": "hit.ladder",
+      "place": "dig.wood",
+      "step": "step.ladder"
+    },
+    "sand": {
+      "break": "dig.sand",
+      "fall": "fall.sand",
+      "hit": "hit.sand",
+      "place": "dig.sand",
+      "step": "step.sand"
+    },
+    "slime_block": {
+      "break": "mob.slime.big",
+      "fall": "fall.slime",
+      "hit": "hit.slime",
+      "place": "mob.slime.big",
+      "step": "step.slime"
+    },
+    "snow": {
+      "break": "dig.snow",
+      "fall": "fall.snow",
+      "hit": "hit.snow",
+      "place": "dig.snow",
+      "step": "step.snow"
+    },
+    "stone": {
+      "break": "dig.stone",
+      "fall": "fall.stone",
+      "hit": "hit.stone",
+      "place": "dig.stone",
+      "step": "step.stone"
+    },
+    "wood": {
+      "break": "dig.wood",
+      "fall": "fall.wood",
+      "hit": "hit.wood",
+      "place": "dig.wood",
+      "step": "step.wood"
+    },
+    "wool": {
+      "break": "dig.cloth",
+      "fall": "fall.cloth",
+      "hit": "hit.cloth",
+      "place": "dig.cloth",
+      "step": "step.cloth"
+    }
+  },
   "entity": {
     "_bedrock_name": "mob",
     "_all": [

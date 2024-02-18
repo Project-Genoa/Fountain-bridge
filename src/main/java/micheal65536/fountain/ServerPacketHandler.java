@@ -181,6 +181,14 @@ public final class ServerPacketHandler extends SessionAdapter
 			{
 				this.playerSession.onJavaContainerSetSlot((ClientboundContainerSetSlotPacket) packet);
 			}
+			else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("fountain:inventory_sync_response"))
+			{
+				this.playerSession.onJavaInventorySyncResponse(((ClientboundCustomPayloadPacket) packet).getData());
+			}
+			else if (packet instanceof ClientboundCustomPayloadPacket && ((ClientboundCustomPayloadPacket) packet).getChannel().equals("fountain:set_hotbar_response"))
+			{
+				this.playerSession.onJavaSetHotbarResponse(((ClientboundCustomPayloadPacket) packet).getData());
+			}
 			else if (packet instanceof ClientboundSetCarriedItemPacket)
 			{
 				this.playerSession.onJavaSetCarriedItem(((ClientboundSetCarriedItemPacket) packet).getSlot());

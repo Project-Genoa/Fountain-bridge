@@ -2,6 +2,8 @@ package micheal65536.fountain.utils;
 
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
+import com.github.steveice10.opennbt.tag.builtin.IntTag;
+import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
@@ -26,11 +28,11 @@ public final class GenoaInventory
 {
 	private final HashMap<String, Integer> stackableItems = new HashMap<>();
 	private final HashMap<String, HashMap<String, Integer>> nonStackableItems = new HashMap<>();
-	private final Item[] initialHotbar;
+	private final Item[] hotbar;
 
 	public GenoaInventory()
 	{
-		this.initialHotbar = new Item[7];
+		this.hotbar = new Item[7];
 	}
 
 	public void addItem(@NotNull ItemStack itemStack)
@@ -40,21 +42,18 @@ public final class GenoaInventory
 		{
 			return;
 		}
-		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
-
-		if (itemInfo.stackable)
-		{
-			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) + item.count);
-		}
-		else
-		{
-			this.nonStackableItems.computeIfAbsent(item.uuid, key -> new HashMap<>()).put(item.instanceId, item.wear);
-		}
+		this.addItem(item);
 	}
 
-	public String[] updateHotbar(ItemStack[] oldHotbar, @NotNull String jsonString)
+	public void setHotbarItem(int slot, @Nullable ItemStack itemStack)
 	{
-		Item[] newItems = new Item[7];
+		Item item = itemStack != null ? this.toGenoaItem(itemStack) : null;
+		this.hotbar[slot] = item;
+	}
+
+	public boolean update(@NotNull String jsonString)
+	{
+		Item[] newHotbarItems = new Item[7];
 		try
 		{
 			JsonElement root = JsonParser.parseReader(new StringReader(jsonString));
@@ -68,11 +67,11 @@ public final class GenoaInventory
 					String instanceId = element.getAsJsonObject().has("instance_data") ? element.getAsJsonObject().get("instance_data").getAsJsonObject().get("id").getAsString() : null;
 					if (instanceId != null)
 					{
-						newItems[index] = new Item(uuid, instanceId, -1);
+						newHotbarItems[index] = new Item(uuid, instanceId, -1);
 					}
 					else
 					{
-						newItems[index] = new Item(uuid, count);
+						newHotbarItems[index] = new Item(uuid, count);
 					}
 				}
 				index++;
@@ -81,23 +80,28 @@ public final class GenoaInventory
 		catch (JsonParseException | UnsupportedOperationException | NullPointerException | ArrayIndexOutOfBoundsException exception)
 		{
 			LogManager.getLogger().warn("Invalid JSON in updateHotbar");
-			return null;
+			return false;
 		}
 
-		for (ItemStack itemStack : oldHotbar)
+		for (Item item : this.hotbar)
 		{
-			if (itemStack != null)
+			if (item != null)
 			{
-				this.addItem(itemStack);
+				this.addItem(item);
 			}
 		}
+		for (int index = 0; index < 7; index++)
+		{
+			Item item = newHotbarItems[index];
+			this.hotbar[index] = item != null ? this.takeItem(item) : null;
+		}
 
-		return Arrays.stream(newItems).map(item -> item != null ? this.takeItem(item) : null).toArray(String[]::new);
+		return true;
 	}
 
-	public String[] getInitialHotbar()
+	public ItemStack[] getHotbar()
 	{
-		return Arrays.stream(this.initialHotbar).map(item ->
+		return Arrays.stream(this.hotbar).map(item ->
 		{
 			if (item == null || item.count == 0)
 			{
@@ -114,7 +118,7 @@ public final class GenoaInventory
 
 			if (itemInfo.stackable)
 			{
-				return toItemString(nameAndAux.name, nameAndAux.aux) + " " + item.count;
+				return toItemStack(nameAndAux.name, nameAndAux.aux, item.count);
 			}
 			else
 			{
@@ -123,16 +127,13 @@ public final class GenoaInventory
 					LogManager.getLogger().warn("Non-stackable item with no instance ID");
 					return null;
 				}
-				String toolData = "{Damage:" + item.wear + ", GenoaInstanceId:\"" + item.instanceId + "\"}";
-				return toItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
+				return toItemStack(nameAndAux.name, nameAndAux.aux, item.instanceId, item.wear);
 			}
-		}).toArray(String[]::new);
+		}).toArray(ItemStack[]::new);
 	}
 
-	public String getJSONString(ItemStack[] hotbar)
+	public String getJSONString()
 	{
-		Item[] genoaHotbar = Arrays.stream(hotbar).map(itemStack -> itemStack != null ? this.toGenoaItem(itemStack) : null).toArray(Item[]::new);
-
 		try
 		{
 			StringWriter stringWriter = new StringWriter();
@@ -141,7 +142,7 @@ public final class GenoaInventory
 			jsonWriter.beginObject();
 
 			jsonWriter.name("hotbar").beginArray();
-			for (Item item : genoaHotbar)
+			for (Item item : this.hotbar)
 			{
 				jsonWriter.beginObject();
 
@@ -212,7 +213,7 @@ public final class GenoaInventory
 					jsonWriter.endObject();
 				}
 			}
-			for (Item item : Arrays.stream(genoaHotbar).filter(item -> item != null && item.count > 0 && this.stackableItems.getOrDefault(item.uuid, 0) == 0 && this.nonStackableItems.getOrDefault(item.uuid, new HashMap<>()).isEmpty()).toArray(Item[]::new))
+			for (Item item : Arrays.stream(this.hotbar).filter(item -> item != null && item.count > 0 && this.stackableItems.getOrDefault(item.uuid, 0) == 0 && this.nonStackableItems.getOrDefault(item.uuid, new HashMap<>()).isEmpty()).toArray(Item[]::new))
 			{
 				jsonWriter.beginObject();
 
@@ -236,8 +237,21 @@ public final class GenoaInventory
 		}
 	}
 
+	private void addItem(@NotNull Item item)
+	{
+		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
+		if (itemInfo.stackable)
+		{
+			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) + item.count);
+		}
+		else
+		{
+			this.nonStackableItems.computeIfAbsent(item.uuid, key -> new HashMap<>()).put(item.instanceId, item.wear);
+		}
+	}
+
 	@Nullable
-	private String takeItem(@NotNull Item item)
+	private Item takeItem(@NotNull Item item)
 	{
 		if (item.count == 0)
 		{
@@ -267,7 +281,7 @@ public final class GenoaInventory
 
 			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) - takeCount);
 
-			return toItemString(nameAndAux.name, nameAndAux.aux) + " " + takeCount;
+			return new Item(item.uuid, takeCount);
 		}
 		else
 		{
@@ -289,9 +303,7 @@ public final class GenoaInventory
 			}
 			int wear = instances.remove(item.instanceId);
 
-			String toolData = "{Damage:" + wear + ", GenoaInstanceId:\"" + item.instanceId + "\"}";
-
-			return toItemString(nameAndAux.name, nameAndAux.aux) + toolData + " 1";    // TODO: concatenation will break if there is ever a non-stackable item that includes other Java NBT data
+			return new Item(item.uuid, item.instanceId, wear);
 		}
 	}
 
@@ -333,7 +345,19 @@ public final class GenoaInventory
 	}
 
 	@Nullable
-	private static String toItemString(@NotNull String name, int aux)
+	private static ItemStack toItemStack(@NotNull String name, int aux, int count)
+	{
+		return toItemStack(name, aux, null, 0, count);
+	}
+
+	@Nullable
+	private static ItemStack toItemStack(@NotNull String name, int aux, @NotNull String instanceId, int wear)
+	{
+		return toItemStack(name, aux, instanceId, wear, 1);
+	}
+
+	@Nullable
+	private static ItemStack toItemStack(@NotNull String name, int aux, @Nullable String instanceId, int wear, int count)
 	{
 		int bedrockId = BedrockItems.getId(name);
 		if (bedrockId == 0)
@@ -348,7 +372,18 @@ public final class GenoaInventory
 			LogManager.getLogger().warn("Cannot find Java item for {} {}", name, aux);
 			return null;
 		}
-		return JavaItems.getName(javaId);
+
+		if (instanceId != null)
+		{
+			CompoundTag nbt = new CompoundTag("");
+			nbt.put(new IntTag("Damage", wear));
+			nbt.put(new StringTag("GenoaInstanceId", instanceId));
+			return new ItemStack(javaId, count, nbt);
+		}
+		else
+		{
+			return new ItemStack(javaId, count);
+		}
 	}
 
 	public static final class Item

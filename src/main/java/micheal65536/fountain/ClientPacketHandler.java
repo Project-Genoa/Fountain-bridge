@@ -136,7 +136,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	@Override
 	public PacketSignal handle(GenoaOpenInventoryPacket packet)
 	{
-		this.playerSession.sendGenoaInventory();
+		this.playerSession.onGenoaInventoryOpen();
 		return PacketSignal.HANDLED;
 	}
 

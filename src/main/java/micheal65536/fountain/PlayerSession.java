@@ -35,7 +35,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.Cli
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEventPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundLevelChunkWithLightPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundChatCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
@@ -72,7 +71,6 @@ import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaGameplaySettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaItemParticlePacket;
-import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
@@ -93,15 +91,13 @@ import micheal65536.fountain.utils.EffectManager;
 import micheal65536.fountain.utils.EntityManager;
 import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.FabricRegistryManager;
-import micheal65536.fountain.utils.GenoaInventory;
+import micheal65536.fountain.utils.InventoryManager;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.LoginUtils;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.BitSet;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
@@ -116,6 +112,7 @@ public final class PlayerSession
 	private static final int JAVA_HOTBAR_OFFSET = JAVA_MAIN_INVENTORY_OFFSET + 27;
 
 	private final FabricRegistryManager fabricRegistryManager;
+	private final InventoryManager inventoryManager;
 	private final ChunkManager chunkManager;
 	private final EntityManager entityManager;
 	private final EffectManager effectManager;
@@ -130,10 +127,7 @@ public final class PlayerSession
 	private final TcpClientSession java;
 	private int javaPlayerEntityId;
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
-	private final ItemStack[] javaPlayerHotbar = new ItemStack[7];
 	private float javaPlayerHealth = 20.0f;
-
-	private final GenoaInventory genoaInventory;
 
 	final ReentrantLock mutex = new ReentrantLock(true);
 
@@ -141,8 +135,6 @@ public final class PlayerSession
 	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
 	{
 		this.mutex.lock();
-
-		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
 
 		this.bedrock = bedrockSession;
 
@@ -152,6 +144,7 @@ public final class PlayerSession
 			LogManager.getLogger().warn("Could not get username from login packet");
 			this.java = null;
 			this.fabricRegistryManager = null;
+			this.inventoryManager = null;
 			this.chunkManager = null;
 			this.entityManager = null;
 			this.effectManager = null;
@@ -166,6 +159,7 @@ public final class PlayerSession
 		this.java.connect(true);
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
+		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);
@@ -326,7 +320,7 @@ public final class PlayerSession
 		ServerboundCustomPayloadPacket serverboundCustomPayloadPacket = new ServerboundCustomPayloadPacket("fountain:earth_mode", data);
 		this.sendJavaPacket(serverboundCustomPayloadPacket);
 
-		this.updateJavaHotbar(this.genoaInventory.getInitialHotbar());
+		this.inventoryManager.initialiseServerInventory();
 
 		ServerboundSetCarriedItemPacket serverboundSetCarriedItemPacket = new ServerboundSetCarriedItemPacket(this.bedrockSelectedHotbarSlot);
 		this.sendJavaPacket(serverboundSetCarriedItemPacket);
@@ -795,7 +789,7 @@ public final class PlayerSession
 			ServerboundSetCarriedItemPacket serverboundSetCarriedItemPacket = new ServerboundSetCarriedItemPacket(this.bedrockSelectedHotbarSlot);
 			this.sendJavaPacket(serverboundSetCarriedItemPacket);
 
-			this.sendHotbar();    // required because otherwise the client sometimes displays an old item in the selected slot
+			this.inventoryManager.sendClientHotbar();    // required because otherwise the client sometimes displays an old item in the selected slot
 		}
 		else if (mobEquipmentPacket.getContainerId() == 125)
 		{
@@ -817,13 +811,14 @@ public final class PlayerSession
 		}
 	}
 
+	public void onGenoaInventoryOpen()
+	{
+		this.inventoryManager.sendClientGenoaInventory();
+	}
+
 	public void onGenoaInventoryChange(@NotNull GenoaInventoryDataPacket genoaInventoryDataPacket)
 	{
-		String[] newHotbar = this.genoaInventory.updateHotbar(this.javaPlayerHotbar, genoaInventoryDataPacket.json);
-		if (newHotbar != null)
-		{
-			this.updateJavaHotbar(newHotbar);
-		}
+		this.inventoryManager.onGenoaInventoryChange(genoaInventoryDataPacket.json);
 	}
 
 	public void onJavaItemPickupParticle(byte[] data)
@@ -866,22 +861,7 @@ public final class PlayerSession
 	{
 		if (clientboundContainerSetContentPacket.getContainerId() == 0)
 		{
-			ItemStack[] items = clientboundContainerSetContentPacket.getItems();
-			for (int slotIndex = 0; slotIndex < items.length; slotIndex++)
-			{
-				if (slotIndex >= JAVA_HOTBAR_OFFSET && slotIndex < JAVA_HOTBAR_OFFSET + this.javaPlayerHotbar.length)
-				{
-					this.javaPlayerHotbar[slotIndex - JAVA_HOTBAR_OFFSET] = cloneItemStack(items[slotIndex]);
-				}
-				else
-				{
-					if (items[slotIndex] != null)
-					{
-						this.transferJavaInventorySlotToGenoa(items[slotIndex], slotIndex);
-					}
-				}
-			}
-			this.sendHotbar();
+			this.inventoryManager.syncInventory();
 		}
 	}
 
@@ -889,87 +869,51 @@ public final class PlayerSession
 	{
 		if (clientboundContainerSetSlotPacket.getContainerId() == 0)
 		{
-			int slotIndex = clientboundContainerSetSlotPacket.getSlot();
-			if (slotIndex >= JAVA_HOTBAR_OFFSET && slotIndex < JAVA_HOTBAR_OFFSET + this.javaPlayerHotbar.length)
+			this.inventoryManager.syncInventory();
+		}
+	}
+
+	public void onJavaInventorySyncResponse(byte[] data)
+	{
+		try
+		{
+			ByteBuf buf = Unpooled.wrappedBuffer(data);
+			MinecraftCodecHelper minecraftCodecHelper = (MinecraftCodecHelper) this.java.getCodecHelper();
+
+			int count = buf.readInt();
+			ItemStack[] itemStacks = new ItemStack[count];
+			for (int index = 0; index < count; index++)
 			{
-				this.javaPlayerHotbar[slotIndex - JAVA_HOTBAR_OFFSET] = cloneItemStack(clientboundContainerSetSlotPacket.getItem());
-				this.sendHotbar();
-			}
-			else
-			{
-				ItemStack itemStack = clientboundContainerSetSlotPacket.getItem();
-				if (itemStack != null)
+				ItemStack itemStack = minecraftCodecHelper.readItemStack(buf);
+				if (itemStack == null)
 				{
-					this.transferJavaInventorySlotToGenoa(itemStack, slotIndex);
+					LogManager.getLogger().warn("Server sent bad inventory sync response data (null item stack)");
+					return;
 				}
+				itemStacks[index] = itemStack;
 			}
-		}
-	}
 
-	private static ItemStack cloneItemStack(@Nullable ItemStack itemStack)
-	{
-		return itemStack != null ? new ItemStack(itemStack.getId(), itemStack.getAmount(), itemStack.getNbt() != null ? itemStack.getNbt().clone() : null) : null;
-	}
-
-	private void transferJavaInventorySlotToGenoa(@NotNull ItemStack itemStack, int slotIndex)
-	{
-		if (slotIndex < JAVA_MAIN_INVENTORY_OFFSET || slotIndex >= JAVA_MAIN_INVENTORY_OFFSET + 36 || (slotIndex >= JAVA_HOTBAR_OFFSET && slotIndex < JAVA_HOTBAR_OFFSET + this.javaPlayerHotbar.length))
-		{
-			throw new IllegalArgumentException();
-		}
-
-		slotIndex = slotIndex - JAVA_MAIN_INVENTORY_OFFSET;
-		if (slotIndex >= 27)
-		{
-			this.sendCommand("item replace entity @s hotbar." + (slotIndex - 27) + " with minecraft:air");
-		}
-		else
-		{
-			this.sendCommand("item replace entity @s inventory." + slotIndex + " with minecraft:air");
-		}
-
-		this.genoaInventory.addItem(itemStack);
-	}
-
-	private void updateJavaHotbar(@NotNull String[] hotbar)
-	{
-		if (hotbar.length != 7)
-		{
-			throw new IllegalArgumentException();
-		}
-
-		this.sendCommand("clear @s");
-		int index = 0;
-		for (String item : hotbar)
-		{
-			this.sendCommand("item replace entity @s hotbar." + index + " with " + item);
-			index++;
-		}
-	}
-
-	public void sendHotbar()
-	{
-		InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-		inventoryContentPacket.setContainerId(0);
-		inventoryContentPacket.setContents(Arrays.stream(this.javaPlayerHotbar).map(itemStack ->
-		{
-			if (itemStack == null)
+			ItemStack[] hotbar = new ItemStack[7];
+			for (int index = 0; index < 7; index++)
 			{
-				return ItemData.builder().build();
+				ItemStack itemStack = minecraftCodecHelper.readItemStack(buf);
+				hotbar[index] = itemStack;
 			}
-			else
-			{
-				return ItemTranslator.translateJavaToBedrock(itemStack);
-			}
-		}).toList());
-		this.sendBedrockPacket(inventoryContentPacket);
+
+			this.inventoryManager.onInventorySyncResponse(itemStacks, hotbar);
+		}
+		catch (IOException exception)
+		{
+			LogManager.getLogger().warn("Server sent bad inventory sync response data", exception);
+		}
 	}
 
-	public void sendGenoaInventory()
+	public void onJavaSetHotbarResponse(byte[] data)
 	{
-		GenoaInventoryDataPacket genoaInventoryDataPacket = new GenoaInventoryDataPacket();
-		genoaInventoryDataPacket.setJson(this.genoaInventory.getJSONString(this.javaPlayerHotbar));
-		this.sendBedrockPacket(genoaInventoryDataPacket);
+		ByteBuf buf = Unpooled.wrappedBuffer(data);
+		MinecraftCodecHelper minecraftCodecHelper = (MinecraftCodecHelper) this.java.getCodecHelper();
+		boolean success = buf.readBoolean();
+		this.inventoryManager.onSetHotbarResponse(success);
 	}
 
 	public void sendItemParticle(int bedrockItemId, int bedrockItemDataValue, @NotNull Vector3f fromPosition, long pickedUpByRuntimeEntityId)
@@ -990,11 +934,5 @@ public final class PlayerSession
 	public void sendJavaPacket(@NotNull MinecraftPacket packet)
 	{
 		this.java.send(packet);
-	}
-
-	public void sendCommand(@NotNull String command)
-	{
-		ServerboundChatCommandPacket serverboundChatCommandPacket = new ServerboundChatCommandPacket(command, System.currentTimeMillis(), 0, Collections.emptyList(), 0, new BitSet());
-		this.sendJavaPacket(serverboundChatCommandPacket);
 	}
 }

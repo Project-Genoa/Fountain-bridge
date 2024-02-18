@@ -18,8 +18,6 @@ Your Minecraft server must be running in offline mode and spawn protection must 
 
 Once your Minecraft Java edition server is set up and running, run the `fountain-<version>-jar-with-dependencies.jar` JAR file from the build output directory (see above). The `/data` directory from the source tree must be present when Fountain is run - run the JAR file from the project root directory or copy the JAR file and the `data` directory into the same directory.
 
-Currently, you will need to give your player operator/admin privileges on the Minecraft server in order for Fountain to function correctly. Use `/op <player name>` in the server console after your player has connected for the first time.
-
 ## Tips
 
 Set your game mode to creative if you are playing on a buildplate, and survival if you are playing an adventure. (The Fountain Fabric mod will take care of applying the appropriate Earth-specific behavior in each mode, such as allowing you to pick up blocks into your inventory in creative mode.)

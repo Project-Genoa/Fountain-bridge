@@ -1,6 +1,6 @@
 package micheal65536.fountain.utils;
 
-import com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent;
+import com.github.steveice10.mc.protocol.data.game.level.event.BreakBlockEventData;
 import com.github.steveice10.mc.protocol.data.game.level.event.LevelEventData;
 import com.github.steveice10.mc.protocol.data.game.level.particle.Particle;
 import com.github.steveice10.mc.protocol.data.game.level.sound.BuiltinSound;
@@ -9,6 +9,7 @@ import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.cloudburstmc.protocol.bedrock.data.LevelEvent;
 import org.cloudburstmc.protocol.bedrock.data.LevelEventType;
 import org.cloudburstmc.protocol.bedrock.data.SoundEvent;
 import org.cloudburstmc.protocol.bedrock.packet.LevelEventPacket;
@@ -18,6 +19,7 @@ import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.PlayerSession;
 import micheal65536.fountain.mappings.DirectSounds;
+import micheal65536.fountain.registry.JavaBlocks;
 
 // this groups level events, particle events, and sound events together and dispatches each event in the appropriate way for Bedrock
 public class EffectManager
@@ -29,9 +31,32 @@ public class EffectManager
 		this.playerSession = playerSession;
 	}
 
-	public boolean handleLevelEvent(@NotNull Vector3i position, @NotNull LevelEvent event, @NotNull LevelEventData eventData)
+	public boolean handleLevelEvent(@NotNull Vector3i position, @NotNull com.github.steveice10.mc.protocol.data.game.level.event.LevelEvent event, @NotNull LevelEventData eventData)
 	{
-		return false;
+		if (!(event instanceof com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType))
+		{
+			return false;
+		}
+
+		switch ((com.github.steveice10.mc.protocol.data.game.level.event.LevelEventType) event)
+		{
+			case BREAK_BLOCK ->
+			{
+				int javaId = ((BreakBlockEventData) eventData).getBlockState();
+				JavaBlocks.BedrockMapping bedrockMapping = JavaBlocks.getBedrockMapping(javaId);
+				if (bedrockMapping == null)
+				{
+					LogManager.getLogger().warn("Break block level event for block with no mapping {}", JavaBlocks.getName(javaId));
+					return true;
+				}
+				this.sendLevelEvent(LevelEvent.PARTICLE_DESTROY_BLOCK, bedrockMapping.id, position.toFloat());
+				return true;
+			}
+			default ->
+			{
+				return false;
+			}
+		}
 	}
 
 	public boolean handleParticleEvent(@NotNull Particle particle, @NotNull Vector3f position, @NotNull Vector4f offset, int amount, boolean longDistance)

@@ -131,6 +131,8 @@ public class JavaBlocks
 			throw new BedrockMappingFailException("Cannot find Bedrock block with provided name and state");
 		}
 
+		boolean waterlogged = bedrockMappingObject.has("waterlogged") ? bedrockMappingObject.get("waterlogged").getAsBoolean() : false;
+
 		BedrockMapping.BlockEntity blockEntity = null;
 		if (bedrockMappingObject.has("block_entity"))
 		{
@@ -206,9 +208,23 @@ public class JavaBlocks
 			}
 		}
 
-		boolean waterlogged = bedrockMappingObject.has("waterlogged") ? bedrockMappingObject.get("waterlogged").getAsBoolean() : false;
+		BedrockMapping.ExtraData extraData = null;
+		if (bedrockMappingObject.has("extra_data"))
+		{
+			JsonObject extraDataObject = bedrockMappingObject.get("extra_data").getAsJsonObject();
+			String type = extraDataObject.get("type").getAsString();
+			switch (type)
+			{
+				case "note_block":
+				{
+					int pitch = extraDataObject.get("pitch").getAsInt();
+					extraData = new BedrockMapping.NoteBlockExtraData(pitch);
+				}
+				break;
+			}
+		}
 
-		return new BedrockMapping(id, blockEntity, waterlogged);
+		return new BedrockMapping(id, waterlogged, blockEntity, extraData);
 	}
 
 	private static class BedrockMappingFailException extends Exception
@@ -272,15 +288,18 @@ public class JavaBlocks
 	public static final class BedrockMapping
 	{
 		public final int id;
+		public final boolean waterlogged;
 		@Nullable
 		public final BlockEntity blockEntity;
-		public final boolean waterlogged;
+		@Nullable
+		public final ExtraData extraData;
 
-		private BedrockMapping(int id, @Nullable BlockEntity blockEntity, boolean waterlogged)
+		private BedrockMapping(int id, boolean waterlogged, @Nullable BlockEntity blockEntity, @Nullable ExtraData extraData)
 		{
 			this.id = id;
-			this.blockEntity = blockEntity;
 			this.waterlogged = waterlogged;
+			this.blockEntity = blockEntity;
+			this.extraData = extraData;
 		}
 
 		public static class BlockEntity
@@ -328,6 +347,24 @@ public class JavaBlocks
 				super(type);
 				this.sticky = sticky;
 				this.extended = extended;
+			}
+		}
+
+		public static abstract class ExtraData
+		{
+			private ExtraData()
+			{
+				// empty
+			}
+		}
+
+		public static class NoteBlockExtraData extends ExtraData
+		{
+			public final int pitch;
+
+			private NoteBlockExtraData(int pitch)
+			{
+				this.pitch = pitch;
 			}
 		}
 	}

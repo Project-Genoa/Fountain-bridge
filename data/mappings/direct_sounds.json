@@ -28,6 +28,14 @@
       "place": "dig.wood",
       "step": "step.ladder"
     },
+    "note_block": {
+      "basedrum": "note.bd",
+      "bass": "note.bass",
+      "harp": "note.harp",
+      "hat": "note.hat",
+      "pling": "note.pling",
+      "snare": "note.snare"
+    },
     "sand": {
       "break": "dig.sand",
       "fall": "fall.sand",

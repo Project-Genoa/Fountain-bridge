@@ -9,6 +9,7 @@ import com.github.steveice10.mc.protocol.data.game.level.block.BlockChangeEntry;
 import com.github.steveice10.mc.protocol.data.game.level.block.BlockEntityInfo;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValue;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.BlockValueType;
+import com.github.steveice10.mc.protocol.data.game.level.block.value.NoteBlockValue;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValue;
 import com.github.steveice10.mc.protocol.data.game.level.block.value.PistonValueType;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
@@ -24,6 +25,7 @@ import org.cloudburstmc.nbt.NBTOutputStream;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtUtils;
 import org.cloudburstmc.protocol.bedrock.packet.BlockEntityDataPacket;
+import org.cloudburstmc.protocol.bedrock.packet.BlockEventPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateBlockPacket;
 import org.cloudburstmc.protocol.common.util.VarInts;
@@ -250,6 +252,8 @@ public class ChunkManager
 					JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = bedrockMapping != null && bedrockMapping.blockEntity != null ? bedrockMapping.blockEntity : null;
 					NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, null) : null;
 					bedrockChunk.setBlockEntity(x, y, z, blockEntityMapping, bedrockBlockEntityData);
+
+					bedrockChunk.setExtraData(x, y, z, bedrockMapping != null ? bedrockMapping.extraData : null);
 				}
 
 				Palette javaBiomePalette = chunkSection.getBiomeData().getPalette();
@@ -382,6 +386,8 @@ public class ChunkManager
 			this.sendBlockUpdate(position, 1, chunk.getBlock(blockX, blockY, blockZ, 1));
 		}
 
+		chunk.setExtraData(blockX, blockY, blockZ, bedrockMapping != null ? bedrockMapping.extraData : null);
+
 		if (bedrockChanged)    // required for pistons
 		{
 			JavaBlocks.BedrockMapping.BlockEntity blockEntityMapping = bedrockMapping != null && bedrockMapping.blockEntity != null ? bedrockMapping.blockEntity : null;
@@ -434,7 +440,12 @@ public class ChunkManager
 		BlockValue blockValue = clientboundBlockEventPacket.getValue();
 		BlockValueType blockValueType = clientboundBlockEventPacket.getType();
 
-		if (blockValue instanceof PistonValue)
+		if (blockValue instanceof NoteBlockValue)
+		{
+			JavaBlocks.BedrockMapping.NoteBlockExtraData noteBlockExtraData = (JavaBlocks.BedrockMapping.NoteBlockExtraData) chunk.getExtraData(blockX, blockY, blockZ);
+			this.sendBlockEvent(position, 1, noteBlockExtraData.pitch);
+		}
+		else if (blockValue instanceof PistonValue)
 		{
 			NbtMap bedrockBlockEntityData = chunk.getBlockEntity(blockX, blockY, blockZ);
 			if (bedrockBlockEntityData != null)
@@ -483,6 +494,7 @@ public class ChunkManager
 						{
 							this.sendBlockUpdate(headPosition, 0, BedrockBlocks.AIR);
 						}
+						chunk.setExtraData(blockX, blockY, blockZ, null);
 					}
 				}
 			}
@@ -566,6 +578,15 @@ public class ChunkManager
 		this.playerSession.sendBedrockPacket(blockEntityDataPacket);
 	}
 
+	private void sendBlockEvent(Vector3i position, int eventType, int eventData)
+	{
+		BlockEventPacket blockEventPacket = new BlockEventPacket();
+		blockEventPacket.setBlockPosition(position);
+		blockEventPacket.setEventType(eventType);
+		blockEventPacket.setEventData(eventData);
+		this.playerSession.sendBedrockPacket(blockEventPacket);
+	}
+
 	private boolean isOutOfBounds(int x, int y, int z)
 	{
 		return y < 0 || y >= 256 || x < -this.chunkRadius * 16 || x >= this.chunkRadius * 16 || z < -this.chunkRadius * 16 || z >= this.chunkRadius * 16;
@@ -596,6 +617,7 @@ public class ChunkManager
 		private final int[] biomes = new int[16 * 16];
 		private final NbtMap[] blockEntities = new NbtMap[16 * 16 * 256];
 		private final JavaBlocks.BedrockMapping.BlockEntity[] blockEntityMappings = new JavaBlocks.BedrockMapping.BlockEntity[16 * 16 * 256];
+		private final JavaBlocks.BedrockMapping.ExtraData[] extraDatas = new JavaBlocks.BedrockMapping.ExtraData[16 * 16 * 256];
 
 		public Chunk(int chunkX, int chunkZ)
 		{
@@ -690,6 +712,17 @@ public class ChunkManager
 		public NbtMap[] getBlockEntities()
 		{
 			return Arrays.stream(this.blockEntities).filter(blockEntity -> blockEntity != null).toArray(NbtMap[]::new);
+		}
+
+		@Nullable
+		public JavaBlocks.BedrockMapping.ExtraData getExtraData(int x, int y, int z)
+		{
+			return this.extraDatas[(x * 16 + z) * 256 + y];
+		}
+
+		public void setExtraData(int x, int y, int z, @Nullable JavaBlocks.BedrockMapping.ExtraData extraData)
+		{
+			this.extraDatas[(x * 16 + z) * 256 + y] = extraData;
 		}
 
 		public int getBiome(int x, int z)

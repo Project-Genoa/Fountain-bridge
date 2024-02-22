@@ -1,4 +1,4 @@
-# Fountain
+# Fountain-bridge
 
 Bridge server to connect Minecraft Earth to a Minecraft Java edition server, inspired by Geyser.
 

@@ -10,12 +10,16 @@ import org.jetbrains.annotations.Nullable;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Locale;
 
 public class LoginUtils
 {
 	@Nullable
-	public static String getUsername(@NotNull LoginPacket loginPacket)
+	public static LoginInfo getLoginInfo(@NotNull LoginPacket loginPacket)
 	{
+		String uuid = null;
+		String username = null;
+
 		for (String token : loginPacket.getChain())
 		{
 			String[] parts = token.split("\\.");
@@ -38,10 +42,18 @@ public class LoginUtils
 			try
 			{
 				JsonElement root = JsonParser.parseReader(new StringReader(data));
-				String displayName = root.getAsJsonObject().get("extraData").getAsJsonObject().get("displayName").getAsString();
-				if (displayName != null)
+
+				if (root.getAsJsonObject().has("extraData"))
 				{
-					return displayName;
+					if (uuid == null && root.getAsJsonObject().get("extraData").getAsJsonObject().has("XUID"))
+					{
+						uuid = root.getAsJsonObject().get("extraData").getAsJsonObject().get("XUID").getAsString().toLowerCase(Locale.ROOT);
+					}
+
+					if (username == null && root.getAsJsonObject().get("extraData").getAsJsonObject().has("displayName"))
+					{
+						username = root.getAsJsonObject().get("extraData").getAsJsonObject().get("displayName").getAsString();
+					}
 				}
 			}
 			catch (JsonParseException | UnsupportedOperationException | IllegalStateException | NullPointerException exception)
@@ -49,6 +61,26 @@ public class LoginUtils
 				continue;
 			}
 		}
-		return null;
+
+		if (uuid == null || username == null)
+		{
+			return null;
+		}
+
+		return new LoginInfo(uuid, username);
+	}
+
+	public static final class LoginInfo
+	{
+		@NotNull
+		public final String uuid;
+		@NotNull
+		public final String username;
+
+		private LoginInfo(@NotNull String uuid, @NotNull String username)
+		{
+			this.uuid = uuid;
+			this.username = username;
+		}
 	}
 }

@@ -3,7 +3,6 @@ package micheal65536.fountain;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundMovePlayerPosRotPacket;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.math.vector.Vector3f;
-import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.data.PlayerActionType;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
@@ -14,7 +13,6 @@ import org.cloudburstmc.protocol.bedrock.packet.GenoaItemPickupPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaNetworkTransformPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaOpenInventoryPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
-import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MovePlayerPacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayerActionPacket;
@@ -23,13 +21,11 @@ import org.jetbrains.annotations.NotNull;
 
 public final class ClientPacketHandler implements BedrockPacketHandler
 {
-	private final BedrockSession bedrockSession;
+	private final PlayerSession playerSession;
 
-	private PlayerSession playerSession = null;
-
-	public ClientPacketHandler(@NotNull BedrockSession bedrockSession)
+	public ClientPacketHandler(@NotNull PlayerSession playerSession)
 	{
-		this.bedrockSession = bedrockSession;
+		this.playerSession = playerSession;
 	}
 
 	@Override
@@ -37,10 +33,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	{
 		try
 		{
-			if (this.playerSession != null)
-			{
-				this.playerSession.mutex.lock();
-			}
+			this.playerSession.mutex.lock();
 
 			PacketSignal packetSignal = BedrockPacketHandler.super.handlePacket(packet);
 			if (packetSignal != PacketSignal.HANDLED)
@@ -53,13 +46,6 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 		{
 			this.playerSession.mutex.unlock();
 		}
-	}
-
-	@Override
-	public PacketSignal handle(LoginPacket packet)
-	{
-		this.playerSession = new PlayerSession(this.bedrockSession, packet);
-		return PacketSignal.HANDLED;
 	}
 
 	@Override
@@ -162,7 +148,7 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 			this.playerSession.mutex.lock();
 
 			LogManager.getLogger().info("Client has disconnected: {}", reason);
-			this.playerSession.disconnectForced();
+			this.playerSession.disconnect(false);
 		}
 		finally
 		{

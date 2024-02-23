@@ -324,7 +324,7 @@ public final class ServerPacketHandler extends SessionAdapter
 			this.playerSession.mutex.lock();
 
 			LogManager.getLogger().info("Server has disconnected: {}", event != null ? PlainTextComponentSerializer.plainText().serialize(event.getReason()) : "null");
-			this.playerSession.disconnectForced();
+			this.playerSession.disconnect(true);
 		}
 		finally
 		{

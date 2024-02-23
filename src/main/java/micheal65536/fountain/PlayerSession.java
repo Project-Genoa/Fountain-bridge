@@ -1,6 +1,5 @@
 package micheal65536.fountain;
 
-import com.github.steveice10.mc.protocol.MinecraftProtocol;
 import com.github.steveice10.mc.protocol.codec.MinecraftCodecHelper;
 import com.github.steveice10.mc.protocol.codec.MinecraftPacket;
 import com.github.steveice10.mc.protocol.data.game.ClientCommand;
@@ -73,7 +72,6 @@ import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaItemParticlePacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryTransactionPacket;
 import org.cloudburstmc.protocol.bedrock.packet.LevelChunkPacket;
-import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.bedrock.packet.MobEquipmentPacket;
 import org.cloudburstmc.protocol.bedrock.packet.NetworkChunkPublisherUpdatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.PlayStatusPacket;
@@ -93,7 +91,6 @@ import micheal65536.fountain.utils.EntityTranslator;
 import micheal65536.fountain.utils.FabricRegistryManager;
 import micheal65536.fountain.utils.InventoryManager;
 import micheal65536.fountain.utils.ItemTranslator;
-import micheal65536.fountain.utils.LoginUtils;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 
 import java.io.IOException;
@@ -101,6 +98,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Consumer;
 
 public final class PlayerSession
 {
@@ -129,34 +127,15 @@ public final class PlayerSession
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
 	private float javaPlayerHealth = 20.0f;
 
+	private final Consumer<PlayerSession> disconnectCallback;
+
 	final ReentrantLock mutex = new ReentrantLock(true);
 
-	// TODO: clean up initialisation
-	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull LoginPacket loginPacket)
+	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull TcpClientSession javaSession, @NotNull Consumer<PlayerSession> disconnectCallback)
 	{
-		this.mutex.lock();
-
 		this.bedrock = bedrockSession;
-
-		String username = LoginUtils.getUsername(loginPacket);
-		if (username == null)
-		{
-			LogManager.getLogger().warn("Could not get username from login packet");
-			this.java = null;
-			this.fabricRegistryManager = null;
-			this.inventoryManager = null;
-			this.chunkManager = null;
-			this.entityManager = null;
-			this.effectManager = null;
-			this.tickThread = null;
-			this.bedrock.disconnect();
-			return;
-		}
-
-		MinecraftProtocol javaProtocol = new MinecraftProtocol(username);
-		this.java = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
-		this.java.addListener(new ServerPacketHandler(this));
-		this.java.connect(true);
+		this.java = javaSession;
+		this.disconnectCallback = disconnectCallback;
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
 		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
@@ -191,10 +170,8 @@ public final class PlayerSession
 		this.tickThread.start();
 	}
 
-	public void disconnectForced()
+	public void disconnect(boolean fromServer)
 	{
-		// TODO
-
 		this.tickThread.interrupt();
 		while (this.tickThread.isAlive())
 		{
@@ -208,15 +185,23 @@ public final class PlayerSession
 			}
 		}
 
-		try
+		if (this.bedrock.isConnected())
 		{
+			if (fromServer)
+			{
+				// TODO: send Genoa disconnect packets
+			}
+			else
+			{
+				LogManager.getLogger().debug("Session disconnect with Bedrock session still connected and fromServer = false???");
+			}
+
 			this.bedrock.disconnect();
 		}
-		catch (IllegalStateException exception)
-		{
-			LogManager.getLogger().debug("Disconnect with Bedrock session already closed (this is usually normal)");
-		}
+
 		this.java.disconnect("");
+
+		this.disconnectCallback.accept(this);
 	}
 
 	private void tick()

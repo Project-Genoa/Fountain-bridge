@@ -5,12 +5,16 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
+import org.apache.commons.cli.CommandLine;
+import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
+import org.apache.commons.cli.Options;
+import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.config.Configurator;
 import org.cloudburstmc.netty.channel.raknet.RakChannelFactory;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
-import org.cloudburstmc.protocol.bedrock.codec.v425_genoa.Bedrock_v425_Genoa;
 import org.cloudburstmc.protocol.bedrock.data.definitions.BlockDefinition;
 import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitializer;
@@ -27,6 +31,7 @@ import micheal65536.fountain.registry.JavaItems;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.function.IntFunction;
 
 public class Main
@@ -89,6 +94,45 @@ public class Main
 			}
 		}
 
+		Options options = new Options();
+		options.addOption(Option.builder()
+				.option("hostPlayerUUID")
+				.hasArg()
+				.argName("uuid")
+				.desc("UUID of the player who is \"hosting\" the buildplate.")
+				.build());
+		options.addOption(Option.builder()
+				.option("shutdownMode")
+				.hasArg()
+				.argName("mode")
+				.desc("Specifies the shutdown mode of the server. One of HOST, LAST, or NONE.")
+				.build());
+		CommandLine commandLine;
+		try
+		{
+			commandLine = new DefaultParser().parse(options, args);
+		}
+		catch (ParseException exception)
+		{
+			LogManager.getLogger().fatal(exception);
+			System.exit(1);
+			return;
+		}
+
+		String hostPlayerUUID = commandLine.getOptionValue("hostPlayerUUID", "").toLowerCase(Locale.ROOT);
+		ShutdownMode shutdownMode;
+		try
+		{
+			shutdownMode = ShutdownMode.valueOf(commandLine.getOptionValue("shutdownMode", "NONE"));
+		}
+		catch (IllegalArgumentException exception)
+		{
+			LogManager.getLogger().fatal("Invalid shutdown mode {}", commandLine.getOptionValue("shutdownMode", "NONE"));
+			System.exit(1);
+			return;
+		}
+
+		SessionsManager sessionsManager = new SessionsManager(hostPlayerUUID, shutdownMode);
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))
 				.group(new NioEventLoopGroup())
@@ -97,12 +141,7 @@ public class Main
 					@Override
 					protected void initSession(BedrockServerSession session)
 					{
-						LogManager.getLogger().info("New connection from {}", session.getPeer().getSocketAddress());
-
-						session.setCodec(Bedrock_v425_Genoa.CODEC);
-						session.setPacketHandler(new ClientPacketHandler(session));
-						session.getPeer().getCodecHelper().setBlockDefinitions(BLOCK_DEFINITION_REGISTRY);
-						session.getPeer().getCodecHelper().setItemDefinitions(ITEM_DEFINITION_REGISTRY);
+						sessionsManager.newClientConnection(session);
 					}
 				})
 				.bind(new InetSocketAddress("0.0.0.0", 19132))

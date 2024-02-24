@@ -14,7 +14,7 @@ To build Fountain, run `mvn package` from the project root directory. The build 
 
 Using Fountain requires a Minecraft 1.20.4 server with the Fountain Fabric mod installed. Follow the instructions here to install the Fountain Fabric mod: https://github.com/Project-Genoa/Fountain-fabric.
 
-Your Minecraft server must be running in offline mode and spawn protection must be disabled. Set `online-mode=false` and `spawn-protection=0` in the `server.properties` file.
+Your Minecraft server must be running in offline mode. Set `online-mode=false` and `enforce-secure-profile=false` in the `server.properties` file. Disable spawn protection by setting `spawn-protection=0` in the `server.properties` file.
 
 Once your Minecraft Java edition server is set up and running, run the `fountain-<version>-jar-with-dependencies.jar` JAR file from the build output directory (see above). The `/data` directory from the source tree must be present when Fountain is run - run the JAR file from the project root directory or copy the JAR file and the `data` directory into the same directory.
 

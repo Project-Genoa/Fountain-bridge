@@ -156,7 +156,7 @@ public final class GenoaInventory
 				{
 					jsonWriter.name("instance_data").beginObject();
 					jsonWriter.name("id").value(item.instanceId);
-					jsonWriter.name("health").value(Math.round(((float) (itemInfo.maxWear - item.wear) / (float) itemInfo.maxWear) * 100.0f));
+					jsonWriter.name("health").value(((float) (itemInfo.maxWear - item.wear) / (float) itemInfo.maxWear) * 100.0f);
 					jsonWriter.endObject();
 				}
 
@@ -225,7 +225,7 @@ public final class GenoaInventory
 
 					jsonWriter.name("instance_data").beginObject();
 					jsonWriter.name("id").value(instanceId);
-					jsonWriter.name("health").value(Math.round(((float) (itemInfo.maxWear - wear) / (float) itemInfo.maxWear) * 100.0f));
+					jsonWriter.name("health").value(((float) (itemInfo.maxWear - wear) / (float) itemInfo.maxWear) * 100.0f);
 					jsonWriter.endObject();
 
 					jsonWriter.name("category").beginObject();

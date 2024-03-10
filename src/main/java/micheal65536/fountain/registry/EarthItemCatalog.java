@@ -27,9 +27,27 @@ public class EarthItemCatalog
 				int aux = item.get("aux").getAsInt();
 				boolean stackable = element.getAsJsonObject().get("stacks").getAsBoolean();
 				int maxWear = item.has("health") && !item.get("health").isJsonNull() ? item.get("health").getAsInt() : 0;
-				// TODO: category and rarity
+				ItemInfo.Category category = switch (element.getAsJsonObject().get("category").getAsString())
+				{
+					case "Mobs" -> ItemInfo.Category.MOBS;
+					case "Construction" -> ItemInfo.Category.CONSTRUCTION;
+					case "Nature" -> ItemInfo.Category.NATURE;
+					case "Equipment" -> ItemInfo.Category.EQUIPMENT;
+					case "Items" -> ItemInfo.Category.ITEMS;
+					default -> ItemInfo.Category.INVALID;
+				};
+				ItemInfo.Rarity rarity = switch (element.getAsJsonObject().get("rarity").getAsString())
+				{
+					case "Common" -> ItemInfo.Rarity.COMMON;
+					case "Uncommon" -> ItemInfo.Rarity.UNCOMMON;
+					case "Rare" -> ItemInfo.Rarity.RARE;
+					case "Epic" -> ItemInfo.Rarity.EPIC;
+					case "Legendary" -> ItemInfo.Rarity.LEGENDARY;
+					case "oobe" -> ItemInfo.Rarity.OOBE;
+					default -> ItemInfo.Rarity.INVALID;
+				};
 
-				itemInfoMap.put(uuid, new ItemInfo(stackable, maxWear));
+				itemInfoMap.put(uuid, new ItemInfo(stackable, maxWear, category, rarity));
 				itemUUIDMap.put(new NameAndAux(name, aux), uuid);
 				itemNameMap.put(uuid, new NameAndAux(name, aux));
 			}
@@ -95,13 +113,58 @@ public class EarthItemCatalog
 	{
 		public final boolean stackable; // in Earth, stackable appears to directly correlate with whether the item has wear or not (stackable = no wear, non-stackable = requires wear)
 		public final int maxWear;
-		// TODO: category
-		// TODO: rarity
+		@NotNull
+		public final Category category;
+		@NotNull
+		public final Rarity rarity;
 
-		private ItemInfo(boolean stackable, int maxWear)
+		private ItemInfo(boolean stackable, int maxWear, @NotNull Category category, @NotNull Rarity rarity)
 		{
 			this.stackable = stackable;
 			this.maxWear = maxWear;
+			this.category = category;
+			this.rarity = rarity;
+		}
+
+		public enum Category
+		{
+			MOBS("inventory.category.mobs", 1),
+			CONSTRUCTION("inventory.category.construction", 2),
+			NATURE("inventory.category.nature", 3),
+			EQUIPMENT("inventory.category.equipment", 4),
+			ITEMS("inventory.category.items", 5),
+			INVALID("inventory.category.invalid", 6);
+
+			@NotNull
+			public final String loc;
+			public final int value;
+
+			Category(@NotNull String loc, int value)
+			{
+				this.loc = loc;
+				this.value = value;
+			}
+		}
+
+		public enum Rarity
+		{
+			COMMON("inventory.rarity.common", 0),
+			UNCOMMON("inventory.rarity.uncommon", 1),
+			RARE("inventory.rarity.rare", 2),
+			EPIC("inventory.rarity.epic", 3),
+			LEGENDARY("inventory.rarity.legendary", 4),
+			OOBE("inventory.rarity.oobe", 5),
+			INVALID("inventory.rarity.invalid", 6);
+
+			@NotNull
+			public final String loc;
+			public final int value;
+
+			Rarity(@NotNull String loc, int value)
+			{
+				this.loc = loc;
+				this.value = value;
+			}
 		}
 	}
 }

@@ -144,6 +144,8 @@ public final class GenoaInventory
 			jsonWriter.name("hotbar").beginArray();
 			for (Item item : this.hotbar)
 			{
+				EarthItemCatalog.ItemInfo itemInfo = item != null ? EarthItemCatalog.getItemInfo(item.uuid) : null;
+
 				jsonWriter.beginObject();
 
 				jsonWriter.name("guid").value(item != null ? item.uuid : "00000000-0000-0000-0000-000000000000");
@@ -152,14 +154,20 @@ public final class GenoaInventory
 
 				if (item != null && item.instanceId != null)
 				{
-					EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
 					jsonWriter.name("instance_data").beginObject();
 					jsonWriter.name("id").value(item.instanceId);
 					jsonWriter.name("health").value(Math.round(((float) (itemInfo.maxWear - item.wear) / (float) itemInfo.maxWear) * 100.0f));
 					jsonWriter.endObject();
 				}
 
-				// TODO: category and rarity
+				jsonWriter.name("category").beginObject();
+				jsonWriter.name("loc").value(itemInfo != null ? itemInfo.category.loc : EarthItemCatalog.ItemInfo.Category.INVALID.loc);
+				jsonWriter.name("value").value(itemInfo != null ? itemInfo.category.value : EarthItemCatalog.ItemInfo.Category.INVALID.value);
+				jsonWriter.endObject();
+				jsonWriter.name("rarity").beginObject();
+				jsonWriter.name("loc").value(itemInfo != null ? itemInfo.rarity.loc : EarthItemCatalog.ItemInfo.Rarity.INVALID.loc);
+				jsonWriter.name("value").value(itemInfo != null ? itemInfo.rarity.value : EarthItemCatalog.ItemInfo.Rarity.INVALID.value);
+				jsonWriter.endObject();
 
 				jsonWriter.endObject();
 			}
@@ -175,6 +183,7 @@ public final class GenoaInventory
 				{
 					continue;
 				}
+				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
 
 				jsonWriter.beginObject();
 
@@ -182,7 +191,14 @@ public final class GenoaInventory
 				jsonWriter.name("count").value(count);
 				jsonWriter.name("owned").value(true);
 
-				// TODO: category and rarity
+				jsonWriter.name("category").beginObject();
+				jsonWriter.name("loc").value(itemInfo.category.loc);
+				jsonWriter.name("value").value(itemInfo.category.value);
+				jsonWriter.endObject();
+				jsonWriter.name("rarity").beginObject();
+				jsonWriter.name("loc").value(itemInfo.rarity.loc);
+				jsonWriter.name("value").value(itemInfo.rarity.value);
+				jsonWriter.endObject();
 
 				jsonWriter.endObject();
 			}
@@ -190,6 +206,10 @@ public final class GenoaInventory
 			{
 				String uuid = entry.getKey();
 				HashMap<String, Integer> instances = entry.getValue();
+				if (instances.isEmpty())
+				{
+					continue;
+				}
 				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
 
 				for (Map.Entry<String, Integer> instance : instances.entrySet())
@@ -208,20 +228,36 @@ public final class GenoaInventory
 					jsonWriter.name("health").value(Math.round(((float) (itemInfo.maxWear - wear) / (float) itemInfo.maxWear) * 100.0f));
 					jsonWriter.endObject();
 
-					// TODO: category and rarity
+					jsonWriter.name("category").beginObject();
+					jsonWriter.name("loc").value(itemInfo.category.loc);
+					jsonWriter.name("value").value(itemInfo.category.value);
+					jsonWriter.endObject();
+					jsonWriter.name("rarity").beginObject();
+					jsonWriter.name("loc").value(itemInfo.rarity.loc);
+					jsonWriter.name("value").value(itemInfo.rarity.value);
+					jsonWriter.endObject();
 
 					jsonWriter.endObject();
 				}
 			}
 			for (Item item : Arrays.stream(this.hotbar).filter(item -> item != null && item.count > 0 && this.stackableItems.getOrDefault(item.uuid, 0) == 0 && this.nonStackableItems.getOrDefault(item.uuid, new HashMap<>()).isEmpty()).toArray(Item[]::new))
 			{
+				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
+
 				jsonWriter.beginObject();
 
 				jsonWriter.name("guid").value(item.uuid);
 				jsonWriter.name("count").value(0);
 				jsonWriter.name("owned").value(true);
 
-				// TODO: category and rarity
+				jsonWriter.name("category").beginObject();
+				jsonWriter.name("loc").value(itemInfo.category.loc);
+				jsonWriter.name("value").value(itemInfo.category.value);
+				jsonWriter.endObject();
+				jsonWriter.name("rarity").beginObject();
+				jsonWriter.name("loc").value(itemInfo.rarity.loc);
+				jsonWriter.name("value").value(itemInfo.rarity.value);
+				jsonWriter.endObject();
 
 				jsonWriter.endObject();
 			}

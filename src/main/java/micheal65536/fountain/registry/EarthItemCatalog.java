@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import micheal65536.fountain.DataFile;
 
 import java.util.HashMap;
+import java.util.Locale;
 
 public class EarthItemCatalog
 {
@@ -21,31 +22,14 @@ public class EarthItemCatalog
 		{
 			for (JsonElement element : root.getAsJsonArray())
 			{
-				String uuid = element.getAsJsonObject().get("id").getAsString();
-				JsonObject item = element.getAsJsonObject().get("item").getAsJsonObject();
-				String name = "minecraft:" + item.get("name").getAsString();
-				int aux = item.get("aux").getAsInt();
-				boolean stackable = element.getAsJsonObject().get("stacks").getAsBoolean();
-				int maxWear = item.has("health") && !item.get("health").isJsonNull() ? item.get("health").getAsInt() : 0;
-				ItemInfo.Category category = switch (element.getAsJsonObject().get("category").getAsString())
-				{
-					case "Mobs" -> ItemInfo.Category.MOBS;
-					case "Construction" -> ItemInfo.Category.CONSTRUCTION;
-					case "Nature" -> ItemInfo.Category.NATURE;
-					case "Equipment" -> ItemInfo.Category.EQUIPMENT;
-					case "Items" -> ItemInfo.Category.ITEMS;
-					default -> ItemInfo.Category.INVALID;
-				};
-				ItemInfo.Rarity rarity = switch (element.getAsJsonObject().get("rarity").getAsString())
-				{
-					case "Common" -> ItemInfo.Rarity.COMMON;
-					case "Uncommon" -> ItemInfo.Rarity.UNCOMMON;
-					case "Rare" -> ItemInfo.Rarity.RARE;
-					case "Epic" -> ItemInfo.Rarity.EPIC;
-					case "Legendary" -> ItemInfo.Rarity.LEGENDARY;
-					case "oobe" -> ItemInfo.Rarity.OOBE;
-					default -> ItemInfo.Rarity.INVALID;
-				};
+				JsonObject object = element.getAsJsonObject();
+				String uuid = object.get("uuid").getAsString();
+				String name = object.get("name").getAsString();
+				int aux = object.get("aux").getAsInt();
+				boolean stackable = object.get("stackable").getAsBoolean();
+				int maxWear = !stackable ? object.get("maxWear").getAsInt() : 0;
+				ItemInfo.Category category = ItemInfo.Category.valueOf(object.get("category").getAsString().toUpperCase(Locale.ROOT));
+				ItemInfo.Rarity rarity = ItemInfo.Rarity.valueOf(object.get("rarity").getAsString().toUpperCase(Locale.ROOT));
 
 				itemInfoMap.put(uuid, new ItemInfo(stackable, maxWear, category, rarity));
 				itemUUIDMap.put(new NameAndAux(name, aux), uuid);

@@ -16,7 +16,7 @@ Using Fountain requires a Minecraft 1.20.4 server with the Fountain Fabric mod i
 
 Your Minecraft server must be running in offline mode. Set `online-mode=false` and `enforce-secure-profile=false` in the `server.properties` file. Disable spawn protection by setting `spawn-protection=0` in the `server.properties` file.
 
-Once your Minecraft Java edition server is set up and running, run the `fountain-<version>-jar-with-dependencies.jar` JAR file from the build output directory (see above). The `/data` directory from the source tree must be present when Fountain is run - run the JAR file from the project root directory or copy the JAR file and the `data` directory into the same directory.
+Once your Minecraft Java edition server is set up and running, run the `fountain-<version>-jar-with-dependencies.jar` JAR file from the build output directory (see above).
 
 ## Tips
 

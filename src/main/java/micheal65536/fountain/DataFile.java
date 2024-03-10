@@ -6,22 +6,23 @@ import com.google.gson.JsonParser;
 import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.function.Consumer;
 
 public final class DataFile
 {
-	public static void load(@NotNull String filename, @NotNull Consumer<JsonElement> consumer)
+	public static void load(@NotNull String name, @NotNull Consumer<JsonElement> consumer)
 	{
-		try (FileReader fileReader = new FileReader("data/" + filename))
+		try (InputStream inputStream = DataFile.class.getClassLoader().getResourceAsStream(name); InputStreamReader inputStreamReader = new InputStreamReader(inputStream))
 		{
-			JsonElement root = JsonParser.parseReader(fileReader);
+			JsonElement root = JsonParser.parseReader(inputStreamReader);
 			consumer.accept(root);
 		}
 		catch (IOException | JsonParseException | UnsupportedOperationException | NullPointerException exception)
 		{
-			LogManager.getLogger().fatal("Cannot read data file %s".formatted(filename), exception);
+			LogManager.getLogger().fatal("Cannot read resource %s".formatted(name), exception);
 			System.exit(1);
 		}
 	}

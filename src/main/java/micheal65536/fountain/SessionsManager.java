@@ -21,18 +21,14 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionsManager
 {
-	private final String hostPlayerUUID;
-	private final ShutdownMode shutdownMode;
-
 	private final ReentrantLock lock = new ReentrantLock(true);
 
 	private final HashSet<LoginBedrockPacketHandler> pendingSessions = new HashSet<>();
 	private final HashMap<String, PlayerSession> activeSessions = new HashMap<>();
 
-	public SessionsManager(@NotNull String hostPlayerUUID, @NotNull ShutdownMode shutdownMode)
+	public SessionsManager()
 	{
-		this.hostPlayerUUID = hostPlayerUUID;
-		this.shutdownMode = shutdownMode;
+		// empty
 	}
 
 	public void newClientConnection(@NotNull BedrockServerSession bedrockServerSession)
@@ -72,7 +68,7 @@ public class SessionsManager
 			return;
 		}
 		this.pendingSessions.remove(loginBedrockPacketHandler);
-		LogManager.getLogger().info("Player logged in {} {} {}", loginInfo.username, loginInfo.uuid, loginInfo.uuid.equals(this.hostPlayerUUID) ? "(is host player)" : "(is not host player)");
+		LogManager.getLogger().info("Player logged in {} {}", loginInfo.username, loginInfo.uuid);
 
 		MinecraftProtocol javaProtocol = new MinecraftProtocol(loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
@@ -85,8 +81,6 @@ public class SessionsManager
 		tcpClientSession.addListener(new ServerPacketHandler(playerSession));
 		tcpClientSession.connect(true);
 		playerSession.mutex.unlock();
-
-		this.checkShutdown();    // this is necessary because e.g. the bridge might be in HOST shutdown mode and the player that just connected might not be the host player so we should shut down if they're the only player
 
 		this.lock.unlock();
 	}
@@ -109,7 +103,6 @@ public class SessionsManager
 			{
 				throw new AssertionError(noSuchElementException);
 			}
-			this.checkShutdown();
 		}
 		this.lock.unlock();
 	}
@@ -128,57 +121,32 @@ public class SessionsManager
 			{
 				// empty
 			}
-			this.checkShutdown();
 		}
 		this.lock.unlock();
 	}
 
-	private void checkShutdown()
+	public void shutdown()
 	{
 		this.lock.lock();
 
-		boolean shutdown = false;
-		if (this.shutdownMode != ShutdownMode.NONE)
+		LogManager.getLogger().info("Shutting down");
+
+		LoginBedrockPacketHandler[] pendingSessions = this.pendingSessions.toArray(new LoginBedrockPacketHandler[0]);
+		this.pendingSessions.clear();
+		LogManager.getLogger().info("Disconnecting {} remaining pending sessions", pendingSessions.length);
+		for (LoginBedrockPacketHandler loginBedrockPacketHandler : pendingSessions)
 		{
-			if (this.pendingSessions.isEmpty() && this.activeSessions.isEmpty())
-			{
-				shutdown = true;
-			}
-			else
-			{
-				if (this.shutdownMode == ShutdownMode.HOST)
-				{
-					if (!this.activeSessions.containsKey(this.hostPlayerUUID) && this.pendingSessions.isEmpty())
-					{
-						shutdown = true;
-					}
-				}
-			}
+			loginBedrockPacketHandler.bedrockServerSession.disconnect("", true);
 		}
 
-		if (shutdown)
+		PlayerSession[] activeSessions = this.activeSessions.values().toArray(new PlayerSession[0]);
+		this.activeSessions.clear();
+		LogManager.getLogger().info("Disconnecting {} remaining active sessions", activeSessions.length);
+		for (PlayerSession playerSession : activeSessions)
 		{
-			LogManager.getLogger().info("Shutting down");
-
-			LoginBedrockPacketHandler[] pendingSessions = this.pendingSessions.toArray(new LoginBedrockPacketHandler[0]);
-			this.pendingSessions.clear();
-			LogManager.getLogger().info("Disconnecting {} remaining pending sessions", pendingSessions.length);
-			for (LoginBedrockPacketHandler loginBedrockPacketHandler : pendingSessions)
-			{
-				loginBedrockPacketHandler.bedrockServerSession.disconnect("", true);
-			}
-
-			PlayerSession[] activeSessions = this.activeSessions.values().toArray(new PlayerSession[0]);
-			this.activeSessions.clear();
-			LogManager.getLogger().info("Disconnecting {} remaining active sessions", activeSessions.length);
-			for (PlayerSession playerSession : activeSessions)
-			{
-				playerSession.mutex.lock();
-				playerSession.disconnect(true);
-				playerSession.mutex.unlock();
-			}
-
-			System.exit(0);
+			playerSession.mutex.lock();
+			playerSession.disconnect(true);
+			playerSession.mutex.unlock();
 		}
 
 		this.lock.unlock();

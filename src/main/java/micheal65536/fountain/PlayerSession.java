@@ -128,6 +128,7 @@ public final class PlayerSession
 	private float javaPlayerHealth = 20.0f;
 
 	private final Consumer<PlayerSession> disconnectCallback;
+	private boolean disconnected = false;
 
 	final ReentrantLock mutex = new ReentrantLock(true);
 
@@ -172,6 +173,12 @@ public final class PlayerSession
 
 	public void disconnect(boolean fromServer)
 	{
+		if (this.disconnected)
+		{
+			return;
+		}
+		this.disconnected = true;
+
 		this.tickThread.interrupt();
 		while (this.tickThread.isAlive())
 		{

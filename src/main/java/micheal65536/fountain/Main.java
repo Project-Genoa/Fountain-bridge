@@ -7,7 +7,6 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
-import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.Level;
@@ -31,7 +30,6 @@ import micheal65536.fountain.registry.JavaItems;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;
-import java.util.Locale;
 import java.util.function.IntFunction;
 
 public class Main
@@ -70,6 +68,7 @@ public class Main
 
 	public static void main(String[] args)
 	{
+		System.setProperty("log4j.shutdownHookEnabled", "false");
 		Configurator.setRootLevel(Level.DEBUG);
 		InternalLoggerFactory.setDefaultFactory(Log4J2LoggerFactory.INSTANCE);
 
@@ -95,18 +94,6 @@ public class Main
 		}
 
 		Options options = new Options();
-		options.addOption(Option.builder()
-				.option("hostPlayerUUID")
-				.hasArg()
-				.argName("uuid")
-				.desc("UUID of the player who is \"hosting\" the buildplate.")
-				.build());
-		options.addOption(Option.builder()
-				.option("shutdownMode")
-				.hasArg()
-				.argName("mode")
-				.desc("Specifies the shutdown mode of the server. One of HOST, LAST, or NONE.")
-				.build());
 		CommandLine commandLine;
 		try
 		{
@@ -119,20 +106,11 @@ public class Main
 			return;
 		}
 
-		String hostPlayerUUID = commandLine.getOptionValue("hostPlayerUUID", "").toLowerCase(Locale.ROOT);
-		ShutdownMode shutdownMode;
-		try
+		SessionsManager sessionsManager = new SessionsManager();
+		Runtime.getRuntime().addShutdownHook(new Thread(() ->
 		{
-			shutdownMode = ShutdownMode.valueOf(commandLine.getOptionValue("shutdownMode", "NONE"));
-		}
-		catch (IllegalArgumentException exception)
-		{
-			LogManager.getLogger().fatal("Invalid shutdown mode {}", commandLine.getOptionValue("shutdownMode", "NONE"));
-			System.exit(1);
-			return;
-		}
-
-		SessionsManager sessionsManager = new SessionsManager(hostPlayerUUID, shutdownMode);
+			sessionsManager.shutdown();
+		}));
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))
 				.group(new NioEventLoopGroup())

@@ -5,7 +5,6 @@ import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
 import com.github.steveice10.opennbt.tag.builtin.IntTag;
 import com.github.steveice10.opennbt.tag.builtin.StringTag;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import org.apache.logging.log4j.LogManager;
@@ -21,8 +20,9 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
+import java.util.HashSet;
 import java.util.UUID;
+import java.util.stream.IntStream;
 
 public final class GenoaInventory
 {
@@ -35,7 +35,7 @@ public final class GenoaInventory
 		this.hotbar = new Item[7];
 	}
 
-	public void addItem(@NotNull ItemStack itemStack)
+	public void addItemFromJavaServer(@NotNull ItemStack itemStack)
 	{
 		Item item = this.toGenoaItem(itemStack);
 		if (item == null)
@@ -45,13 +45,62 @@ public final class GenoaInventory
 		this.addItem(item);
 	}
 
-	public void setHotbarItem(int slot, @Nullable ItemStack itemStack)
+	public void setHotbarFromJavaServer(ItemStack[] itemStacks)
 	{
-		Item item = itemStack != null ? this.toGenoaItem(itemStack) : null;
-		this.hotbar[slot] = item;
+		Item[] newHotbar = Arrays.stream(itemStacks).map(itemStack -> itemStack != null ? this.toGenoaItem(itemStack) : null).toArray(Item[]::new);
+
+		int[] changedIndexes = IntStream.range(0, 7).filter(index ->
+		{
+			Item currentItem = this.hotbar[index];
+			Item newItem = newHotbar[index];
+			if (currentItem == null && newItem == null)
+			{
+				return false;
+			}
+			else if (currentItem != null && newItem != null)
+			{
+				if (newItem.uuid.equals(currentItem.uuid))
+				{
+					if (currentItem.instanceId != null && newItem.instanceId != null && newItem.instanceId.equals(currentItem.instanceId) && newItem.wear == currentItem.wear)
+					{
+						return false;
+					}
+					else if (currentItem.instanceId == null && newItem.instanceId == null && newItem.count == currentItem.count)
+					{
+						return false;
+					}
+				}
+			}
+			return true;
+		}).toArray();
+
+		for (int index : changedIndexes)
+		{
+			if (this.hotbar[index] != null)
+			{
+				if (!this.takeItem(this.hotbar[index]))
+				{
+					throw new AssertionError();
+				}
+			}
+		}
+
+		for (int index : changedIndexes)
+		{
+			if (newHotbar[index] != null)
+			{
+				this.addItem(newHotbar[index]);
+			}
+			this.hotbar[index] = newHotbar[index];
+		}
 	}
 
-	public boolean update(@NotNull String jsonString)
+	public void clearHotbar()
+	{
+		Arrays.fill(this.hotbar, null);
+	}
+
+	public boolean updateHotbarFromClient(@NotNull String jsonString)
 	{
 		Item[] newHotbarItems = new Item[7];
 		try
@@ -77,29 +126,54 @@ public final class GenoaInventory
 				index++;
 			}
 		}
-		catch (JsonParseException | UnsupportedOperationException | NullPointerException | ArrayIndexOutOfBoundsException exception)
+		catch (Exception exception)
 		{
-			LogManager.getLogger().warn("Invalid JSON in updateHotbar");
+			LogManager.getLogger().warn("Invalid JSON in updateHotbarFromClient");
 			return false;
 		}
 
-		for (Item item : this.hotbar)
+		HashMap<String, Integer> hotbarItemCounts = new HashMap<>();
+		HashMap<String, HashSet<String>> hotbarItemInstances = new HashMap<>();
+		for (Item item : newHotbarItems)
 		{
 			if (item != null)
 			{
-				this.addItem(item);
+				boolean have;
+				if (item.instanceId == null)
+				{
+					int count = hotbarItemCounts.getOrDefault(item.uuid, 0) + item.count;
+					hotbarItemCounts.put(item.uuid, count);
+					have = this.stackableItems.getOrDefault(item.uuid, 0) >= count;
+				}
+				else
+				{
+					HashSet<String> hotbarInstances = hotbarItemInstances.computeIfAbsent(item.uuid, uuid -> new HashSet<>());
+					if (!hotbarInstances.add(item.instanceId))
+					{
+						have = false;
+					}
+					else
+					{
+						HashMap<String, Integer> instances = this.nonStackableItems.getOrDefault(item.uuid, null);
+						have = instances != null && instances.containsKey(item.instanceId);
+					}
+				}
+				if (!have)
+				{
+					LogManager.getLogger().warn("Client tried to set hotbar with item that is not in inventory");
+					return false;
+				}
 			}
 		}
+
 		for (int index = 0; index < 7; index++)
 		{
-			Item item = newHotbarItems[index];
-			this.hotbar[index] = item != null ? this.takeItem(item) : null;
+			this.hotbar[index] = newHotbarItems[index];
 		}
-
 		return true;
 	}
 
-	public ItemStack[] getHotbar()
+	public ItemStack[] getHotbarForJavaServer()
 	{
 		return Arrays.stream(this.hotbar).map(item ->
 		{
@@ -132,7 +206,7 @@ public final class GenoaInventory
 		}).toArray(ItemStack[]::new);
 	}
 
-	public String getJSONString()
+	public String getGenoaInventoryResponseJSON()
 	{
 		try
 		{
@@ -173,60 +247,43 @@ public final class GenoaInventory
 			}
 			jsonWriter.endArray();
 
+			HashSet<String> itemIds = new HashSet<>();
+			HashMap<String, Integer> hotbarItemCounts = new HashMap<>();
+			HashSet<String> hotbarItemInstances = new HashSet<>();
+			itemIds.addAll(this.stackableItems.keySet());
+			itemIds.addAll(this.nonStackableItems.keySet());
+			for (Item item : this.hotbar)
+			{
+				if (item != null)
+				{
+					itemIds.add(item.uuid);
+					hotbarItemCounts.put(item.uuid, hotbarItemCounts.getOrDefault(item.uuid, 0) + item.count);
+					if (item.instanceId != null)
+					{
+						hotbarItemInstances.add(item.instanceId);
+					}
+				}
+			}
+
 			// TODO: item unlocked timestamp, and include unlocked items which aren't owned
 			jsonWriter.name("inventory").beginArray();
-			for (Map.Entry<String, Integer> entry : this.stackableItems.entrySet())
+			for (String uuid : itemIds)
 			{
-				String uuid = entry.getKey();
-				int count = entry.getValue();
-				if (count == 0)
-				{
-					continue;
-				}
 				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
 
-				jsonWriter.beginObject();
-
-				jsonWriter.name("guid").value(uuid);
-				jsonWriter.name("count").value(count);
-				jsonWriter.name("owned").value(true);
-
-				jsonWriter.name("category").beginObject();
-				jsonWriter.name("loc").value(itemInfo.category.loc);
-				jsonWriter.name("value").value(itemInfo.category.value);
-				jsonWriter.endObject();
-				jsonWriter.name("rarity").beginObject();
-				jsonWriter.name("loc").value(itemInfo.rarity.loc);
-				jsonWriter.name("value").value(itemInfo.rarity.value);
-				jsonWriter.endObject();
-
-				jsonWriter.endObject();
-			}
-			for (Map.Entry<String, HashMap<String, Integer>> entry : this.nonStackableItems.entrySet())
-			{
-				String uuid = entry.getKey();
-				HashMap<String, Integer> instances = entry.getValue();
-				if (instances.isEmpty())
+				if (itemInfo.stackable)
 				{
-					continue;
-				}
-				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(uuid);
-
-				for (Map.Entry<String, Integer> instance : instances.entrySet())
-				{
-					String instanceId = instance.getKey();
-					int wear = instance.getValue();
+					int count = this.stackableItems.getOrDefault(uuid, 0) - hotbarItemCounts.getOrDefault(uuid, 0);
+					if (count < 0)
+					{
+						throw new AssertionError();
+					}
 
 					jsonWriter.beginObject();
 
 					jsonWriter.name("guid").value(uuid);
-					jsonWriter.name("count").value(1);
+					jsonWriter.name("count").value(count);
 					jsonWriter.name("owned").value(true);
-
-					jsonWriter.name("instance_data").beginObject();
-					jsonWriter.name("id").value(instanceId);
-					jsonWriter.name("health").value(((float) (itemInfo.maxWear - wear) / (float) itemInfo.maxWear) * 100.0f);
-					jsonWriter.endObject();
 
 					jsonWriter.name("category").beginObject();
 					jsonWriter.name("loc").value(itemInfo.category.loc);
@@ -239,27 +296,65 @@ public final class GenoaInventory
 
 					jsonWriter.endObject();
 				}
-			}
-			for (Item item : Arrays.stream(this.hotbar).filter(item -> item != null && item.count > 0 && this.stackableItems.getOrDefault(item.uuid, 0) == 0 && this.nonStackableItems.getOrDefault(item.uuid, new HashMap<>()).isEmpty()).toArray(Item[]::new))
-			{
-				EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
+				else
+				{
+					HashMap<String, Integer> instances = this.nonStackableItems.getOrDefault(uuid, new HashMap<>());
+					HashSet<String> instanceIds = new HashSet<>(instances.keySet());
+					instanceIds.removeAll(hotbarItemInstances);
 
-				jsonWriter.beginObject();
+					if (!instanceIds.isEmpty())
+					{
+						for (String instanceId : instanceIds)
+						{
+							int wear = instances.getOrDefault(instanceId, -1);
+							if (wear < 0)
+							{
+								throw new AssertionError();
+							}
 
-				jsonWriter.name("guid").value(item.uuid);
-				jsonWriter.name("count").value(0);
-				jsonWriter.name("owned").value(true);
+							jsonWriter.beginObject();
 
-				jsonWriter.name("category").beginObject();
-				jsonWriter.name("loc").value(itemInfo.category.loc);
-				jsonWriter.name("value").value(itemInfo.category.value);
-				jsonWriter.endObject();
-				jsonWriter.name("rarity").beginObject();
-				jsonWriter.name("loc").value(itemInfo.rarity.loc);
-				jsonWriter.name("value").value(itemInfo.rarity.value);
-				jsonWriter.endObject();
+							jsonWriter.name("guid").value(uuid);
+							jsonWriter.name("count").value(1);
+							jsonWriter.name("owned").value(true);
 
-				jsonWriter.endObject();
+							jsonWriter.name("instance_data").beginObject();
+							jsonWriter.name("id").value(instanceId);
+							jsonWriter.name("health").value(((float) (itemInfo.maxWear - wear) / (float) itemInfo.maxWear) * 100.0f);
+							jsonWriter.endObject();
+
+							jsonWriter.name("category").beginObject();
+							jsonWriter.name("loc").value(itemInfo.category.loc);
+							jsonWriter.name("value").value(itemInfo.category.value);
+							jsonWriter.endObject();
+							jsonWriter.name("rarity").beginObject();
+							jsonWriter.name("loc").value(itemInfo.rarity.loc);
+							jsonWriter.name("value").value(itemInfo.rarity.value);
+							jsonWriter.endObject();
+
+							jsonWriter.endObject();
+						}
+					}
+					else
+					{
+						jsonWriter.beginObject();
+
+						jsonWriter.name("guid").value(uuid);
+						jsonWriter.name("count").value(0);
+						jsonWriter.name("owned").value(true);
+
+						jsonWriter.name("category").beginObject();
+						jsonWriter.name("loc").value(itemInfo.category.loc);
+						jsonWriter.name("value").value(itemInfo.category.value);
+						jsonWriter.endObject();
+						jsonWriter.name("rarity").beginObject();
+						jsonWriter.name("loc").value(itemInfo.rarity.loc);
+						jsonWriter.name("value").value(itemInfo.rarity.value);
+						jsonWriter.endObject();
+
+						jsonWriter.endObject();
+					}
+				}
 			}
 			jsonWriter.endArray();
 
@@ -286,60 +381,53 @@ public final class GenoaInventory
 		}
 	}
 
-	@Nullable
-	private Item takeItem(@NotNull Item item)
+	private boolean takeItem(@NotNull Item item)
 	{
 		if (item.count == 0)
 		{
-			return null;
+			return true;
 		}
 
 		EarthItemCatalog.NameAndAux nameAndAux = EarthItemCatalog.getNameAndAux(item.uuid);
 		if (nameAndAux == null)
 		{
 			LogManager.getLogger().warn("Cannot find item with UUID {}", item.uuid);
-			return null;
+			return false;
 		}
 		EarthItemCatalog.ItemInfo itemInfo = EarthItemCatalog.getItemInfo(item.uuid);
 
 		if (itemInfo.stackable)
 		{
-			int takeCount = Math.min(item.count, this.stackableItems.getOrDefault(item.uuid, 0));
-			if (takeCount == 0)
+			if (this.stackableItems.getOrDefault(item.uuid, 0) < item.count)
 			{
-				return null;
+				return false;
 			}
 
-			if (takeCount > 64)    // TODO: determine the actual maximum count for the item (e.g. eggs can only stack up to 16 items)
-			{
-				takeCount = 64;
-			}
+			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) - item.count);
 
-			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) - takeCount);
-
-			return new Item(item.uuid, takeCount);
+			return true;
 		}
 		else
 		{
 			if (item.instanceId == null)
 			{
 				LogManager.getLogger().warn("Non-stackable item with no instance ID");
-				return null;
+				return false;
 			}
 
 			HashMap<String, Integer> instances = this.nonStackableItems.getOrDefault(item.uuid, null);
 			if (instances == null)
 			{
-				return null;
+				return false;
 			}
 
 			if (!instances.containsKey(item.instanceId))
 			{
-				return null;
+				return false;
 			}
 			int wear = instances.remove(item.instanceId);
 
-			return new Item(item.uuid, item.instanceId, wear);
+			return true;
 		}
 	}
 

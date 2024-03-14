@@ -46,7 +46,7 @@ public class InventoryManager
 	{
 		if (!this.initialiseSent)
 		{
-			this.sendInitialSetHotbarRequest(this.genoaInventory.getHotbar());
+			this.sendInitialSetHotbarRequest(this.genoaInventory.getHotbarForJavaServer());
 		}
 	}
 
@@ -68,7 +68,7 @@ public class InventoryManager
 		}
 	}
 
-	public void onGenoaInventoryChange(@NotNull String json)
+	public void onGenoaHotbarChange(@NotNull String json)
 	{
 		this.updatePending = true;
 		this.pendingUpdateJSON = json;
@@ -85,34 +85,24 @@ public class InventoryManager
 
 		for (ItemStack itemStack : itemStacks)
 		{
-			this.genoaInventory.addItem(itemStack);
+			this.genoaInventory.addItemFromJavaServer(itemStack);
 		}
 
 		if (this.sentInventorySyncRequestClearHotbar)
 		{
-			for (int index = 0; index < 7; index++)
-			{
-				if (hotbar[index] != null)
-				{
-					this.genoaInventory.addItem(hotbar[index]);
-				}
-				this.genoaInventory.setHotbarItem(index, null);
-			}
+			this.genoaInventory.setHotbarFromJavaServer(hotbar);
 
 			if (!this.updatePending)
 			{
 				throw new AssertionError();
 			}
-			this.genoaInventory.update(this.pendingUpdateJSON);
+			this.genoaInventory.updateHotbarFromClient(this.pendingUpdateJSON);
 
-			this.sendSetHotbarRequest(this.genoaInventory.getHotbar());
+			this.sendSetHotbarRequest(this.genoaInventory.getHotbarForJavaServer());
 		}
 		else
 		{
-			for (int index = 0; index < 7; index++)
-			{
-				this.genoaInventory.setHotbarItem(index, hotbar[index]);
-			}
+			this.genoaInventory.setHotbarFromJavaServer(hotbar);
 
 			this.sendClientHotbar();
 
@@ -146,6 +136,7 @@ public class InventoryManager
 		}
 		else
 		{
+			this.genoaInventory.clearHotbar();
 			this.syncInventory(true);
 			this.sendQueuedInventorySyncRequest();
 		}
@@ -155,7 +146,7 @@ public class InventoryManager
 	{
 		InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
 		inventoryContentPacket.setContainerId(0);
-		inventoryContentPacket.setContents(Arrays.stream(this.genoaInventory.getHotbar()).map(itemStack ->
+		inventoryContentPacket.setContents(Arrays.stream(this.genoaInventory.getHotbarForJavaServer()).map(itemStack ->
 		{
 			if (itemStack == null || itemStack.getAmount() == 0)
 			{
@@ -172,7 +163,7 @@ public class InventoryManager
 	public void sendClientGenoaInventory()
 	{
 		GenoaInventoryDataPacket genoaInventoryDataPacket = new GenoaInventoryDataPacket();
-		genoaInventoryDataPacket.setJson(this.genoaInventory.getJSONString());
+		genoaInventoryDataPacket.setJson(this.genoaInventory.getGenoaInventoryResponseJSON());
 		this.playerSession.sendBedrockPacket(genoaInventoryDataPacket);
 	}
 

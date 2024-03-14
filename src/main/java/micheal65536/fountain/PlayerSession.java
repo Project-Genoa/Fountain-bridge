@@ -803,7 +803,7 @@ public final class PlayerSession
 
 	public void onGenoaInventoryChange(@NotNull GenoaInventoryDataPacket genoaInventoryDataPacket)
 	{
-		this.inventoryManager.onGenoaInventoryChange(genoaInventoryDataPacket.json);
+		this.inventoryManager.onGenoaHotbarChange(genoaInventoryDataPacket.json);
 	}
 
 	public void onJavaItemPickupParticle(byte[] data)

@@ -12,6 +12,7 @@ import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.PlayerSession;
+import micheal65536.fountain.connector.plugin.Inventory;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,12 +35,19 @@ public class InventoryManager
 	private String pendingUpdateJSON;
 	private boolean setHotbarRequestSent = false;
 
-	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull MinecraftCodecHelper minecraftCodecHelper)
+	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull MinecraftCodecHelper minecraftCodecHelper, @NotNull Inventory initialInventory)
 	{
 		this.playerSession = playerSession;
 		this.minecraftCodecHelper = minecraftCodecHelper;
 
-		this.genoaInventory = new GenoaInventory(); // TODO: initialise from API server
+		this.genoaInventory = new GenoaInventory();
+		this.genoaInventory.loadInitialInventory(initialInventory);
+	}
+
+	@NotNull
+	public Inventory getInventoryForConnectorPlugin()
+	{
+		return this.genoaInventory.toConnectorPluginInventory();
 	}
 
 	public void initialiseServerInventory()

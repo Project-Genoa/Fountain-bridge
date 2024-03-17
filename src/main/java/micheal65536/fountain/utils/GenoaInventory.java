@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.registry.BedrockItems;
 import micheal65536.fountain.registry.EarthItemCatalog;
 import micheal65536.fountain.registry.JavaItems;
@@ -33,6 +34,48 @@ public final class GenoaInventory
 	public GenoaInventory()
 	{
 		this.hotbar = new Item[7];
+	}
+
+	public void loadInitialInventory(@NotNull Inventory inventory)
+	{
+		for (Inventory.StackableItem stackableItem : inventory.getStackableItems())
+		{
+			this.stackableItems.put(stackableItem.uuid, stackableItem.count);
+		}
+		for (Inventory.NonStackableItem nonStackableItem : inventory.getNonStackableItems())
+		{
+			this.nonStackableItems.computeIfAbsent(nonStackableItem.uuid, uuid -> new HashMap<>()).put(nonStackableItem.instanceId, nonStackableItem.wear);
+		}
+		Inventory.HotbarItem[] hotbar = inventory.getHotbar();
+		for (int index = 0; index < 7; index++)
+		{
+			Inventory.HotbarItem hotbarItem = hotbar[index];
+			if (hotbarItem == null)
+			{
+				this.hotbar[index] = null;
+			}
+			else
+			{
+				if (hotbarItem.instanceId != null)
+				{
+					this.hotbar[index] = new Item(hotbarItem.uuid, hotbarItem.instanceId, -1);
+				}
+				else
+				{
+					this.hotbar[index] = new Item(hotbarItem.uuid, hotbarItem.count);
+				}
+			}
+		}
+	}
+
+	@NotNull
+	public Inventory toConnectorPluginInventory()
+	{
+		return new Inventory(
+				this.stackableItems.entrySet().stream().filter(entry -> entry.getValue() > 0).map(entry -> new Inventory.StackableItem(entry.getKey(), entry.getValue())).toArray(Inventory.StackableItem[]::new),
+				this.nonStackableItems.entrySet().stream().flatMap(entry -> entry.getValue().entrySet().stream().map(entry1 -> new Inventory.NonStackableItem(entry.getKey(), entry1.getKey(), entry1.getValue()))).toArray(Inventory.NonStackableItem[]::new),
+				Arrays.stream(this.hotbar).map(item -> item != null && item.count > 0 ? (item.instanceId != null ? new Inventory.HotbarItem(item.uuid, item.instanceId) : new Inventory.HotbarItem(item.uuid, item.count)) : null).toArray(Inventory.HotbarItem[]::new)
+		);
 	}
 
 	public void addItemFromJavaServer(@NotNull ItemStack itemStack)

@@ -83,6 +83,10 @@ import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
+import micheal65536.fountain.connector.plugin.ConnectorPlugin;
+import micheal65536.fountain.connector.plugin.DisconnectResponse;
+import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.ChunkManager;
 import micheal65536.fountain.utils.EffectManager;
@@ -127,19 +131,21 @@ public final class PlayerSession
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
 	private float javaPlayerHealth = 20.0f;
 
+	private final PlayerConnectorPluginWrapper playerConnectorPluginWrapper;
 	private final Consumer<PlayerSession> disconnectCallback;
 	private boolean disconnected = false;
 
 	final ReentrantLock mutex = new ReentrantLock(true);
 
-	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull TcpClientSession javaSession, @NotNull Consumer<PlayerSession> disconnectCallback)
+	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull TcpClientSession javaSession, @NotNull Inventory initialInventory, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper, @NotNull Consumer<PlayerSession> disconnectCallback)
 	{
 		this.bedrock = bedrockSession;
 		this.java = javaSession;
+		this.playerConnectorPluginWrapper = playerConnectorPluginWrapper;
 		this.disconnectCallback = disconnectCallback;
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
-		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
+		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory);
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);
@@ -190,6 +196,17 @@ public final class PlayerSession
 			{
 				// empty
 			}
+		}
+
+		DisconnectResponse disconnectResponse;
+		try
+		{
+			disconnectResponse = this.playerConnectorPluginWrapper.playerDisconnected(this.inventoryManager.getInventoryForConnectorPlugin());
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().error("Connector plugin threw exception when handling player disconnect", exception);
+			disconnectResponse = null;
 		}
 
 		if (this.bedrock.isConnected())

@@ -11,6 +11,10 @@ import org.cloudburstmc.protocol.bedrock.packet.LoginPacket;
 import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 
+import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
+import micheal65536.fountain.connector.plugin.ConnectorPlugin;
+import micheal65536.fountain.connector.plugin.Inventory;
+import micheal65536.fountain.connector.plugin.PlayerLoginInfo;
 import micheal65536.fountain.utils.LoginUtils;
 
 import java.util.HashMap;
@@ -21,14 +25,16 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionsManager
 {
+	private final ConnectorPlugin connectorPlugin;
+
 	private final ReentrantLock lock = new ReentrantLock(true);
 
 	private final HashSet<LoginBedrockPacketHandler> pendingSessions = new HashSet<>();
 	private final HashMap<String, PlayerSession> activeSessions = new HashMap<>();
 
-	public SessionsManager()
+	public SessionsManager(@NotNull ConnectorPlugin connectorPlugin)
 	{
-		// empty
+		this.connectorPlugin = connectorPlugin;
 	}
 
 	public void newClientConnection(@NotNull BedrockServerSession bedrockServerSession)
@@ -67,13 +73,32 @@ public class SessionsManager
 			this.lock.unlock();
 			return;
 		}
+		Inventory initialInventory;
+		try
+		{
+			initialInventory = this.connectorPlugin.playerConnected(new PlayerLoginInfo(loginInfo.uuid));
+			if (initialInventory == null)
+			{
+				LogManager.getLogger().warn("Connector plugin rejected player login for {} {}", loginInfo.username, loginInfo.uuid);
+				this.disconnectPending(loginBedrockPacketHandler);
+				this.lock.unlock();
+				return;
+			}
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().warn("Connector plugin threw exception when handling player login for {} {}", loginInfo.username, loginInfo.uuid, exception);
+			this.disconnectPending(loginBedrockPacketHandler);
+			this.lock.unlock();
+			return;
+		}
 		this.pendingSessions.remove(loginBedrockPacketHandler);
 		LogManager.getLogger().info("Player logged in {} {}", loginInfo.username, loginInfo.uuid);
 
 		MinecraftProtocol javaProtocol = new MinecraftProtocol(loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
 
-		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, this::onSessionDisconnected);
+		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, initialInventory, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
 		this.activeSessions.put(loginInfo.uuid, playerSession);
 
 		playerSession.mutex.lock();

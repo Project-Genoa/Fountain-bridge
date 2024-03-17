@@ -7,6 +7,7 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Log4J2LoggerFactory;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
+import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.logging.log4j.Level;
@@ -19,7 +20,11 @@ import org.cloudburstmc.protocol.bedrock.data.definitions.ItemDefinition;
 import org.cloudburstmc.protocol.bedrock.netty.initializer.BedrockServerInitializer;
 import org.cloudburstmc.protocol.common.Definition;
 import org.cloudburstmc.protocol.common.DefinitionRegistry;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.connector.DefaultConnectorPlugin;
+import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.mappings.DirectSounds;
 import micheal65536.fountain.registry.BedrockBiomes;
 import micheal65536.fountain.registry.BedrockBlocks;
@@ -28,7 +33,12 @@ import micheal65536.fountain.registry.EarthItemCatalog;
 import micheal65536.fountain.registry.JavaBlocks;
 import micheal65536.fountain.registry.JavaItems;
 
+import java.io.File;
+import java.lang.reflect.Constructor;
 import java.net.InetSocketAddress;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.function.IntFunction;
 
@@ -94,6 +104,24 @@ public class Main
 		}
 
 		Options options = new Options();
+		options.addOption(Option.builder()
+				.option("connectorPluginJar")
+				.hasArg()
+				.argName("jar")
+				.desc("JAR file containing the connector plugin")
+				.build());
+		options.addOption(Option.builder()
+				.option("connectorPluginClass")
+				.hasArg()
+				.argName("name")
+				.desc("Class name of the connector plugin")
+				.build());
+		options.addOption(Option.builder()
+				.option("connectorPluginArg")
+				.hasArg()
+				.argName("arg")
+				.desc("Argument for the connector plugin")
+				.build());
 		CommandLine commandLine;
 		try
 		{
@@ -106,7 +134,12 @@ public class Main
 			return;
 		}
 
-		SessionsManager sessionsManager = new SessionsManager();
+		String connectorPluginJarFilename = commandLine.getOptionValue("connectorPluginJar", null);
+		String connectorPluginClassName = commandLine.getOptionValue("connectorPluginClass", DefaultConnectorPlugin.class.getCanonicalName());
+		String connectorPluginArg = commandLine.getOptionValue("connectorPluginArg", "");
+		ConnectorPlugin connectorPlugin = loadConnectorPlugin(connectorPluginJarFilename, connectorPluginClassName, connectorPluginArg);
+
+		SessionsManager sessionsManager = new SessionsManager(connectorPlugin);
 		Runtime.getRuntime().addShutdownHook(new Thread(() ->
 		{
 			sessionsManager.shutdown();
@@ -124,6 +157,77 @@ public class Main
 				})
 				.bind(new InetSocketAddress("0.0.0.0", 19132))
 				.syncUninterruptibly();
+	}
+
+	@NotNull
+	private static ConnectorPlugin loadConnectorPlugin(@Nullable String jarFilename, @NotNull String className, @NotNull String arg)
+	{
+		ClassLoader classLoader;
+		if (jarFilename != null)
+		{
+			try
+			{
+				classLoader = new URLClassLoader(new URL[]{new File(jarFilename).toURI().toURL()}, Main.class.getClassLoader());
+			}
+			catch (MalformedURLException exception)
+			{
+				throw new AssertionError(exception);
+			}
+		}
+		else
+		{
+			classLoader = Main.class.getClassLoader();
+		}
+
+		ConnectorPlugin connectorPlugin;
+		try
+		{
+			Class<?> aClass = classLoader.loadClass(className);
+			if (!ConnectorPlugin.class.isAssignableFrom(aClass))
+			{
+				LogManager.getLogger().fatal("Connector plugin class does not implement connector plugin interface");
+				System.exit(1);
+			}
+			Class<ConnectorPlugin> connectorPluginClass = (Class<ConnectorPlugin>) aClass;
+
+			Constructor<ConnectorPlugin> connectorPluginConstructor = connectorPluginClass.getDeclaredConstructor();
+			connectorPlugin = connectorPluginConstructor.newInstance();
+		}
+		catch (NoClassDefFoundError | ClassNotFoundException exception)
+		{
+			LogManager.getLogger().fatal("Connector plugin class was not found or could not be loaded", exception);
+			System.exit(1);
+			throw new AssertionError();
+		}
+		catch (NoSuchMethodException exception)
+		{
+			LogManager.getLogger().fatal("Connector plugin class does not provide a suitable constructor");
+			System.exit(1);
+			throw new AssertionError();
+		}
+		catch (ReflectiveOperationException exception)
+		{
+			LogManager.getLogger().fatal("Could not create connector plugin instance", exception);
+			System.exit(1);
+			throw new AssertionError();
+		}
+
+		try
+		{
+			connectorPlugin.init(arg, LogManager.getLogger("Connector plugin"));
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().error("Connector plugin failed to initialise", exception);
+			System.exit(1);
+			throw new AssertionError();
+		}
+		if (!(connectorPlugin instanceof DefaultConnectorPlugin))
+		{
+			LogManager.getLogger().info("Connector plugin is initialised");
+		}
+
+		return connectorPlugin;
 	}
 
 	private static final class CachingDefinitionRegistry<T extends Definition> implements DefinitionRegistry<T>

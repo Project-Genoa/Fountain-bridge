@@ -18,8 +18,8 @@ public final class PlayerConnectorPluginWrapper
 	}
 
 	@NotNull
-	public DisconnectResponse playerDisconnected(@NotNull Inventory inventory) throws ConnectorPlugin.ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected(@NotNull Inventory inventory) throws ConnectorPlugin.ConnectorPluginException
 	{
-		return this.connectorPlugin.playerDisconnected(this.uuid, inventory);
+		return this.connectorPlugin.onPlayerDisconnected(this.uuid, inventory);
 	}
 }

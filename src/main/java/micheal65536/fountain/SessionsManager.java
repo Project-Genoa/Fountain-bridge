@@ -76,7 +76,7 @@ public class SessionsManager
 		Inventory initialInventory;
 		try
 		{
-			initialInventory = this.connectorPlugin.playerConnected(new PlayerLoginInfo(loginInfo.uuid));
+			initialInventory = this.connectorPlugin.onPlayerConnected(new PlayerLoginInfo(loginInfo.uuid));
 			if (initialInventory == null)
 			{
 				LogManager.getLogger().warn("Connector plugin rejected player login for {} {}", loginInfo.username, loginInfo.uuid);

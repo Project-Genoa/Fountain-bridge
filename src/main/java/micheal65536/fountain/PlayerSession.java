@@ -201,7 +201,7 @@ public final class PlayerSession
 		DisconnectResponse disconnectResponse;
 		try
 		{
-			disconnectResponse = this.playerConnectorPluginWrapper.playerDisconnected(this.inventoryManager.getInventoryForConnectorPlugin());
+			disconnectResponse = this.playerConnectorPluginWrapper.onPlayerDisconnected(this.inventoryManager.getInventoryForConnectorPlugin());
 		}
 		catch (ConnectorPlugin.ConnectorPluginException exception)
 		{

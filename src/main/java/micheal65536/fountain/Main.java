@@ -23,6 +23,7 @@ import org.cloudburstmc.protocol.common.DefinitionRegistry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.connector.ConnectorPluginLogger;
 import micheal65536.fountain.connector.DefaultConnectorPlugin;
 import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.mappings.DirectSounds;
@@ -143,6 +144,19 @@ public class Main
 		Runtime.getRuntime().addShutdownHook(new Thread(() ->
 		{
 			sessionsManager.shutdown();
+
+			if (!(connectorPlugin instanceof DefaultConnectorPlugin))
+			{
+				LogManager.getLogger().info("Shutting down connector plugin");
+			}
+			try
+			{
+				connectorPlugin.shutdown();
+			}
+			catch (ConnectorPlugin.ConnectorPluginException exception)
+			{
+				LogManager.getLogger().warn("Connector plugin threw exception while shutting down", exception);
+			}
 		}));
 		new ServerBootstrap()
 				.channelFactory(RakChannelFactory.server(NioDatagramChannel.class))
@@ -214,7 +228,7 @@ public class Main
 
 		try
 		{
-			connectorPlugin.init(arg, LogManager.getLogger("Connector plugin"));
+			connectorPlugin.init(arg, new ConnectorPluginLogger(LogManager.getLogger("Connector plugin")));
 		}
 		catch (ConnectorPlugin.ConnectorPluginException exception)
 		{

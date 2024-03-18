@@ -8,6 +8,8 @@ This project uses the Maven build system. You will need to have Maven installed 
 
 Fountain uses a fork of the Cloudburst Protocol library that includes support for the Minecraft Earth protocol. You must first download this from https://github.com/Project-Genoa/Protocol and build and install it to your local Maven repository by running `./gradlew publishToMavenLocal`.
 
+Fountain provides a plugin interface which is published as a separate library. Before building Fountain, you must download this from https://github.com/Project-Genoa/Fountain-connector-plugin-base and build and install it to your local Maven repository by running `./mvnw install` from the root directory of the Fountain-connector-plugin-base repository.
+
 To build Fountain, run `./mvnw package` from the project root directory. The build output will be in `/target`.
 
 ## Usage

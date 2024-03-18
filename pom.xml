@@ -69,6 +69,12 @@
 
     <dependencies>
         <dependency>
+            <groupId>micheal65536.fountain</groupId>
+            <artifactId>connector-plugin-base</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.cloudburstmc.protocol</groupId>
             <artifactId>bedrock-connection</artifactId>
             <version>3.0.0.Beta1-SNAPSHOT</version>

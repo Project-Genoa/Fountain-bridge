@@ -345,7 +345,8 @@ public final class GenoaInventory
 					LogManager.getLogger().warn("Non-stackable item with no instance ID");
 					return null;
 				}
-				return toItemStack(nameAndAux.name, nameAndAux.aux, item.instanceId, item.wear);
+				int wear = this.nonStackableItems.get(item.uuid).get(item.instanceId);
+				return toItemStack(nameAndAux.name, nameAndAux.aux, item.instanceId, wear);
 			}
 		}).toArray(ItemStack[]::new);
 	}

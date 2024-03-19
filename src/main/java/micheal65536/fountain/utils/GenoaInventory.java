@@ -11,6 +11,8 @@ import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
+import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.registry.BedrockItems;
 import micheal65536.fountain.registry.EarthItemCatalog;
@@ -31,9 +33,12 @@ public final class GenoaInventory
 	private final HashMap<String, HashMap<String, Integer>> nonStackableItems = new HashMap<>();
 	private final Item[] hotbar;
 
-	public GenoaInventory()
+	private final PlayerConnectorPluginWrapper playerConnectorPluginWrapper;
+
+	public GenoaInventory(@NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
 	{
 		this.hotbar = new Item[7];
+		this.playerConnectorPluginWrapper = playerConnectorPluginWrapper;
 	}
 
 	public void loadInitialInventory(@NotNull Inventory inventory)
@@ -116,26 +121,119 @@ public final class GenoaInventory
 			}
 			return true;
 		}).toArray();
+		if (changedIndexes.length == 0)
+		{
+			return;
+		}
 
+		HashMap<String, Integer> stackableItemCountChanges = new HashMap<>();
+		HashMap<String, HashMap<String, Integer>> addedNonStackableItems = new HashMap<>();
+		HashMap<String, HashSet<String>> removedNonStackableItems = new HashMap<>();
+		HashMap<String, HashMap<String, Integer>> updatedNonStackableItems = new HashMap<>();
 		for (int index : changedIndexes)
 		{
-			if (this.hotbar[index] != null)
+			Item item = this.hotbar[index];
+			if (item != null)
 			{
-				if (!this.takeItem(this.hotbar[index]))
+				if (item.instanceId == null)
 				{
-					throw new AssertionError();
+					stackableItemCountChanges.put(item.uuid, stackableItemCountChanges.getOrDefault(item.uuid, 0) - item.count);
+				}
+				else
+				{
+					if (!removedNonStackableItems.computeIfAbsent(item.uuid, uuid -> new HashSet<>()).add(item.instanceId))
+					{
+						throw new AssertionError();
+					}
+				}
+			}
+		}
+		for (int index : changedIndexes)
+		{
+			Item item = newHotbar[index];
+			if (item != null)
+			{
+				if (item.instanceId == null)
+				{
+					stackableItemCountChanges.put(item.uuid, stackableItemCountChanges.getOrDefault(item.uuid, 0) + item.count);
+				}
+				else
+				{
+					if (addedNonStackableItems.computeIfAbsent(item.uuid, uuid -> new HashMap<>()).put(item.instanceId, item.wear) != null)
+					{
+						throw new AssertionError();
+					}
 				}
 			}
 		}
 
+		for (String uuid : removedNonStackableItems.keySet())
+		{
+			HashSet<String> removedInstances = removedNonStackableItems.get(uuid);
+			HashMap<String, Integer> addedInstances = addedNonStackableItems.getOrDefault(uuid, null);
+			if (addedInstances == null)
+			{
+				continue;
+			}
+			for (String instanceId : removedInstances.toArray(String[]::new))
+			{
+				if (addedInstances.containsKey(instanceId))
+				{
+					int wear = addedInstances.get(instanceId);
+					updatedNonStackableItems.computeIfAbsent(uuid, uuid1 -> new HashMap<>()).put(instanceId, wear);
+					removedInstances.remove(instanceId);
+					addedInstances.remove(instanceId);
+				}
+			}
+		}
+
+		stackableItemCountChanges.forEach((uuid, count) ->
+		{
+			if (count > 0)
+			{
+				this.addItem(new Item(uuid, count));
+			}
+			else if (count < 0)
+			{
+				if (!this.takeItem(new Item(uuid, -count)))
+				{
+					throw new AssertionError();
+				}
+			}
+		});
+		addedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach((instanceId, wear) ->
+			{
+				this.addItem(new Item(uuid, instanceId, wear));
+			});
+		});
+		removedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach(instanceId ->
+			{
+				if (!this.takeItem(new Item(uuid, instanceId, -1)))
+				{
+					throw new AssertionError();
+				}
+			});
+		});
+		updatedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach((instanceId, wear) ->
+			{
+				if (!this.updateItemWear(new Item(uuid, instanceId, wear)))
+				{
+					throw new AssertionError();
+				}
+			});
+		});
+
 		for (int index : changedIndexes)
 		{
-			if (newHotbar[index] != null)
-			{
-				this.addItem(newHotbar[index]);
-			}
 			this.hotbar[index] = newHotbar[index];
 		}
+		this.sendHotbarToConnectorPlugin();
 	}
 
 	public void clearHotbar()
@@ -213,6 +311,9 @@ public final class GenoaInventory
 		{
 			this.hotbar[index] = newHotbarItems[index];
 		}
+
+		this.sendHotbarToConnectorPlugin();
+
 		return true;
 	}
 
@@ -417,20 +518,40 @@ public final class GenoaInventory
 		if (itemInfo.stackable)
 		{
 			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) + item.count);
+
+			try
+			{
+				this.playerConnectorPluginWrapper.onPlayerInventoryAddItem(item.uuid, item.count);
+			}
+			catch (ConnectorPlugin.ConnectorPluginException exception)
+			{
+				LogManager.getLogger().error("Connector plugin threw exception when handling inventory item added {} {}", item.uuid, item.count, exception);
+			}
 		}
 		else
 		{
+
+			if (item.instanceId == null)
+			{
+				LogManager.getLogger().warn("Non-stackable item with no instance ID");
+				return;
+			}
+
 			this.nonStackableItems.computeIfAbsent(item.uuid, key -> new HashMap<>()).put(item.instanceId, item.wear);
+
+			try
+			{
+				this.playerConnectorPluginWrapper.onPlayerInventoryAddItem(item.uuid, item.instanceId, item.wear);
+			}
+			catch (ConnectorPlugin.ConnectorPluginException exception)
+			{
+				LogManager.getLogger().error("Connector plugin threw exception when handling inventory item added {} {}", item.uuid, item.instanceId, exception);
+			}
 		}
 	}
 
 	private boolean takeItem(@NotNull Item item)
 	{
-		if (item.count == 0)
-		{
-			return true;
-		}
-
 		EarthItemCatalog.NameAndAux nameAndAux = EarthItemCatalog.getNameAndAux(item.uuid);
 		if (nameAndAux == null)
 		{
@@ -447,6 +568,15 @@ public final class GenoaInventory
 			}
 
 			this.stackableItems.put(item.uuid, this.stackableItems.getOrDefault(item.uuid, 0) - item.count);
+
+			try
+			{
+				this.playerConnectorPluginWrapper.onPlayerInventoryRemoveItem(item.uuid, item.count);
+			}
+			catch (ConnectorPlugin.ConnectorPluginException exception)
+			{
+				LogManager.getLogger().error("Connector plugin threw exception when handling inventory item removed {} {}", item.uuid, item.count, exception);
+			}
 
 			return true;
 		}
@@ -470,7 +600,62 @@ public final class GenoaInventory
 			}
 			int wear = instances.remove(item.instanceId);
 
+			try
+			{
+				this.playerConnectorPluginWrapper.onPlayerInventoryRemoveItem(item.uuid, item.instanceId);
+			}
+			catch (ConnectorPlugin.ConnectorPluginException exception)
+			{
+				LogManager.getLogger().error("Connector plugin threw exception when handling inventory item removed {} {}", item.uuid, item.instanceId, exception);
+			}
+
 			return true;
+		}
+	}
+
+	private boolean updateItemWear(@NotNull Item item)
+	{
+		if (item.instanceId == null)
+		{
+			throw new IllegalArgumentException();
+		}
+		if (item.count != 1)
+		{
+			throw new AssertionError();
+		}
+
+		HashMap<String, Integer> instances = this.nonStackableItems.getOrDefault(item.uuid, null);
+		if (instances == null)
+		{
+			return false;
+		}
+		if (!instances.containsKey(item.instanceId))
+		{
+			return false;
+		}
+		instances.put(item.instanceId, item.wear);
+
+		try
+		{
+			this.playerConnectorPluginWrapper.onPlayerInventoryUpdateItemWear(item.uuid, item.instanceId, item.wear);
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().error("Connector plugin threw exception when handling inventory item wear updated {} {}", item.uuid, item.instanceId, exception);
+		}
+
+		return true;
+	}
+
+	private void sendHotbarToConnectorPlugin()
+	{
+		try
+		{
+			this.playerConnectorPluginWrapper.onPlayerInventorySetHotbar(Arrays.stream(this.hotbar).map(item -> item != null && item.count > 0 ? (item.instanceId != null ? new Inventory.HotbarItem(item.uuid, item.instanceId) : new Inventory.HotbarItem(item.uuid, item.count)) : null).toArray(Inventory.HotbarItem[]::new));
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().error("Connector plugin threw exception when handling hotbar change", exception);
 		}
 	}
 
@@ -564,6 +749,10 @@ public final class GenoaInventory
 
 		private Item(@NotNull String uuid, int count)
 		{
+			if (count <= 0)
+			{
+				throw new IllegalArgumentException();
+			}
 			this.uuid = uuid;
 			this.instanceId = null;
 			this.wear = 0;

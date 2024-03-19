@@ -50,8 +50,44 @@ public final class DefaultConnectorPlugin implements ConnectorPlugin
 
 	@Override
 	@NotNull
-	public DisconnectResponse onPlayerDisconnected(@NotNull String uuid, @NotNull Inventory inventory) throws ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected(@NotNull String playerId, @NotNull Inventory inventory) throws ConnectorPluginException
 	{
 		return new DisconnectResponse();
+	}
+
+	@Override
+	public void onPlayerInventoryAddItem(@NotNull String playerId, @NotNull String itemId, int count) throws ConnectorPluginException
+	{
+		// empty
+	}
+
+	@Override
+	public void onPlayerInventoryAddItem(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId, int wear) throws ConnectorPluginException
+	{
+		// empty
+	}
+
+	@Override
+	public void onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, int count) throws ConnectorPluginException
+	{
+		// empty
+	}
+
+	@Override
+	public void onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId) throws ConnectorPluginException
+	{
+		// empty
+	}
+
+	@Override
+	public void onPlayerInventoryUpdateItemWear(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId, int wear) throws ConnectorPluginException
+	{
+		// empty
+	}
+
+	@Override
+	public void onPlayerInventorySetHotbar(@NotNull String playerId, Inventory.HotbarItem[] hotbar) throws ConnectorPluginException
+	{
+		// empty
 	}
 }

@@ -145,7 +145,7 @@ public final class PlayerSession
 		this.disconnectCallback = disconnectCallback;
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
-		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory);
+		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory, this.playerConnectorPluginWrapper);
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);

@@ -106,6 +106,26 @@ public class Main
 
 		Options options = new Options();
 		options.addOption(Option.builder()
+				.option("port")
+				.hasArg()
+				.argName("port")
+				.type(Number.class)
+				.desc("Port to listen on, defaults to 19132")
+				.build());
+		options.addOption(Option.builder()
+				.option("serverAddress")
+				.hasArg()
+				.argName("address")
+				.desc("Server address to connect to, defaults to 127.0.0.1")
+				.build());
+		options.addOption(Option.builder()
+				.option("serverPort")
+				.hasArg()
+				.argName("port")
+				.type(Number.class)
+				.desc("Server port to connect to, defaults to 25565")
+				.build());
+		options.addOption(Option.builder()
 				.option("connectorPluginJar")
 				.hasArg()
 				.argName("jar")
@@ -124,9 +144,21 @@ public class Main
 				.desc("Argument for the connector plugin")
 				.build());
 		CommandLine commandLine;
+		int port;
+		String serverAddress;
+		int serverPort;
+		String connectorPluginJarFilename;
+		String connectorPluginClassName;
+		String connectorPluginArg;
 		try
 		{
 			commandLine = new DefaultParser().parse(options, args);
+			port = commandLine.hasOption("port") ? (int) (long) commandLine.getParsedOptionValue("port") : 19132;
+			serverAddress = commandLine.hasOption("serverAddress") ? commandLine.getOptionValue("serverAddress") : "127.0.0.1";
+			serverPort = commandLine.hasOption("serverPort") ? (int) (long) commandLine.getParsedOptionValue("serverPort") : 25565;
+			connectorPluginJarFilename = commandLine.getOptionValue("connectorPluginJar", null);
+			connectorPluginClassName = commandLine.getOptionValue("connectorPluginClass", DefaultConnectorPlugin.class.getCanonicalName());
+			connectorPluginArg = commandLine.getOptionValue("connectorPluginArg", "");
 		}
 		catch (ParseException exception)
 		{
@@ -135,12 +167,8 @@ public class Main
 			return;
 		}
 
-		String connectorPluginJarFilename = commandLine.getOptionValue("connectorPluginJar", null);
-		String connectorPluginClassName = commandLine.getOptionValue("connectorPluginClass", DefaultConnectorPlugin.class.getCanonicalName());
-		String connectorPluginArg = commandLine.getOptionValue("connectorPluginArg", "");
 		ConnectorPlugin connectorPlugin = loadConnectorPlugin(connectorPluginJarFilename, connectorPluginClassName, connectorPluginArg);
-
-		SessionsManager sessionsManager = new SessionsManager(connectorPlugin);
+		SessionsManager sessionsManager = new SessionsManager(serverAddress, serverPort, connectorPlugin);
 		Runtime.getRuntime().addShutdownHook(new Thread(() ->
 		{
 			sessionsManager.shutdown();
@@ -169,7 +197,7 @@ public class Main
 						sessionsManager.newClientConnection(session);
 					}
 				})
-				.bind(new InetSocketAddress("0.0.0.0", 19132))
+				.bind(new InetSocketAddress("0.0.0.0", port))
 				.syncUninterruptibly();
 	}
 

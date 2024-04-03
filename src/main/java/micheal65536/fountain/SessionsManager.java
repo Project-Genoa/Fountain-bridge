@@ -25,6 +25,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionsManager
 {
+	private final String serverAddress;
+	private final int serverPort;
 	private final ConnectorPlugin connectorPlugin;
 
 	private final ReentrantLock lock = new ReentrantLock(true);
@@ -32,8 +34,10 @@ public class SessionsManager
 	private final HashSet<LoginBedrockPacketHandler> pendingSessions = new HashSet<>();
 	private final HashMap<String, PlayerSession> activeSessions = new HashMap<>();
 
-	public SessionsManager(@NotNull ConnectorPlugin connectorPlugin)
+	public SessionsManager(@NotNull String serverAddress, int serverPort, @NotNull ConnectorPlugin connectorPlugin)
 	{
+		this.serverAddress = serverAddress;
+		this.serverPort = serverPort;
 		this.connectorPlugin = connectorPlugin;
 	}
 
@@ -96,7 +100,7 @@ public class SessionsManager
 		LogManager.getLogger().info("Player logged in {} {}", loginInfo.username, loginInfo.uuid);
 
 		MinecraftProtocol javaProtocol = new MinecraftProtocol(loginInfo.username);
-		TcpClientSession tcpClientSession = new TcpClientSession("127.0.0.1", 25565, javaProtocol);
+		TcpClientSession tcpClientSession = new TcpClientSession(this.serverAddress, this.serverPort, javaProtocol);
 
 		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, initialInventory, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
 		this.activeSessions.put(loginInfo.uuid, playerSession);

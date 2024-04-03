@@ -4192,7 +4192,7 @@
   {
     "name": "minecraft:carpet",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 534
   },
@@ -5655,7 +5655,7 @@
   {
     "name": "minecraft:concrete",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 729
   },
@@ -5767,7 +5767,7 @@
   {
     "name": "minecraft:concretePowder",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 745
   },
@@ -11513,7 +11513,7 @@
   {
     "name": "minecraft:hard_stained_glass",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 1531
   },
@@ -11625,7 +11625,7 @@
   {
     "name": "minecraft:hard_stained_glass_pane",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 1547
   },
@@ -19054,7 +19054,7 @@
   {
     "name": "minecraft:shulker_box",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 2524
   },
@@ -19108,56 +19108,56 @@
     "id": 2531
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 0
     },
     "id": 2532
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 1
     },
     "id": 2533
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 2
     },
     "id": 2534
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 3
     },
     "id": 2535
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 4
     },
     "id": 2536
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 5
     },
     "id": 2537
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 6
     },
     "id": 2538
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "state": {
       "facing_direction": 7
     },
@@ -20685,7 +20685,7 @@
   {
     "name": "minecraft:stained_glass",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 2731
   },
@@ -20797,7 +20797,7 @@
   {
     "name": "minecraft:stained_glass_pane",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 2747
   },
@@ -20909,7 +20909,7 @@
   {
     "name": "minecraft:stained_hardened_clay",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 2763
   },
@@ -24885,7 +24885,7 @@
   {
     "name": "minecraft:wool",
     "state": {
-      "color": "silver"
+      "color": "light_gray"
     },
     "id": 3279
   },

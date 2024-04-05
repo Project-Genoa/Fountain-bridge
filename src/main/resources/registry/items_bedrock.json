@@ -16,6 +16,10 @@
     "id": -150
   },
   {
+    "name": "minecraft:acacia_sign",
+    "id": 475
+  },
+  {
     "name": "minecraft:acacia_stairs",
     "id": 163
   },
@@ -52,6 +56,10 @@
     "id": 260
   },
   {
+    "name": "minecraft:armor_stand",
+    "id": 425
+  },
+  {
     "name": "minecraft:arrow",
     "id": 262
   },
@@ -66,6 +74,10 @@
   {
     "name": "minecraft:bamboo_sapling",
     "id": -164
+  },
+  {
+    "name": "minecraft:banner_pattern",
+    "id": 434
   },
   {
     "name": "minecraft:barrel",
@@ -122,6 +134,10 @@
   {
     "name": "minecraft:birch_pressure_plate",
     "id": -151
+  },
+  {
+    "name": "minecraft:birch_sign",
+    "id": 473
   },
   {
     "name": "minecraft:birch_stairs",
@@ -256,6 +272,10 @@
     "id": 391
   },
   {
+    "name": "minecraft:carrotonastick",
+    "id": 398
+  },
+  {
     "name": "minecraft:carrots",
     "id": 141
   },
@@ -380,6 +400,10 @@
     "id": 236
   },
   {
+    "name": "minecraft:concretePowder",
+    "id": 237
+  },
+  {
     "name": "minecraft:conduit",
     "id": -157
   },
@@ -444,6 +468,10 @@
     "id": 58
   },
   {
+    "name": "minecraft:crossbow",
+    "id": 471
+  },
+  {
     "name": "minecraft:cyan_glazed_terracotta",
     "id": 229
   },
@@ -474,6 +502,10 @@
   {
     "name": "minecraft:dark_prismarine_stairs",
     "id": -3
+  },
+  {
+    "name": "minecraft:darkoak_sign",
+    "id": 476
   },
   {
     "name": "minecraft:darkoak_standing_sign",
@@ -565,19 +597,19 @@
   },
   {
     "name": "minecraft:double_stone_slab",
-    "id": 44
+    "id": 43
   },
   {
     "name": "minecraft:double_stone_slab2",
-    "id": 182
+    "id": 181
   },
   {
     "name": "minecraft:double_stone_slab3",
-    "id": -162
+    "id": -167
   },
   {
     "name": "minecraft:double_stone_slab4",
-    "id": -166
+    "id": -168
   },
   {
     "name": "minecraft:double_wooden_slab",
@@ -972,6 +1004,10 @@
     "id": 308
   },
   {
+    "name": "minecraft:iron_nugget",
+    "id": 452
+  },
+  {
     "name": "minecraft:iron_ore",
     "id": 15
   },
@@ -1014,6 +1050,10 @@
   {
     "name": "minecraft:jungle_pressure_plate",
     "id": -153
+  },
+  {
+    "name": "minecraft:jungle_sign",
+    "id": 474
   },
   {
     "name": "minecraft:jungle_stairs",
@@ -1264,6 +1304,10 @@
     "id": 247
   },
   {
+    "name": "minecraft:netherstar",
+    "id": 399
+  },
+  {
     "name": "minecraft:normal_stone_stairs",
     "id": -180
   },
@@ -1509,7 +1553,7 @@
   },
   {
     "name": "minecraft:reeds",
-    "id": 338
+    "id": 83
   },
   {
     "name": "minecraft:repeater",
@@ -1572,11 +1616,15 @@
     "id": 218
   },
   {
+    "name": "minecraft:shulker_shell",
+    "id": 445
+  },
+  {
     "name": "minecraft:sign",
     "id": 323
   },
   {
-    "name": "minecraft:silver_glazed_terracotta",
+    "name": "minecraft:light_gray_glazed_terracotta",
     "id": 228
   },
   {
@@ -1668,6 +1716,10 @@
     "id": -154
   },
   {
+    "name": "minecraft:spruce_sign",
+    "id": 472
+  },
+  {
     "name": "minecraft:spruce_stairs",
     "id": 134
   },
@@ -1738,6 +1790,22 @@
   {
     "name": "minecraft:stone_pressure_plate",
     "id": 70
+  },
+  {
+    "name": "minecraft:stone_slab",
+    "id": 44
+  },
+  {
+    "name": "minecraft:stone_slab2",
+    "id": 182
+  },
+  {
+    "name": "minecraft:stone_slab3",
+    "id": -162
+  },
+  {
+    "name": "minecraft:stone_slab4",
+    "id": -166
   },
   {
     "name": "minecraft:stone_shovel",
@@ -1850,6 +1918,10 @@
   {
     "name": "minecraft:turtle_helmet",
     "id": 469
+  },
+  {
+    "name": "minecraft:turtle_shell_piece",
+    "id": 468
   },
   {
     "name": "minecraft:undyed_shulker_box",

@@ -37,7 +37,6 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.Clientb
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.ServerboundClientCommandPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundPlayerActionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSetCarriedItemPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundSwingPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemOnPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.serverbound.player.ServerboundUseItemPacket;
 import com.github.steveice10.opennbt.tag.builtin.CompoundTag;
@@ -703,7 +702,9 @@ public final class PlayerSession
 
 		if (animatePacket.getAction() == AnimatePacket.Action.SWING_ARM)
 		{
-			this.sendJavaPacket(new ServerboundSwingPacket(Hand.MAIN_HAND));
+			// TODO: breaks attack cooldown
+			LogManager.getLogger().debug("Ignoring SWING_ARM AnimatePacket because it breaks the attack cooldown");
+			//this.sendJavaPacket(new ServerboundSwingPacket(Hand.MAIN_HAND));
 		}
 		else
 		{

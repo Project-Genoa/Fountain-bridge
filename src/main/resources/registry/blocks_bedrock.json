@@ -131,8 +131,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 16
@@ -141,8 +142,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 17
@@ -151,8 +153,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 18
@@ -161,8 +164,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 19
@@ -171,8 +175,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 20
@@ -181,8 +186,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 21
@@ -191,8 +197,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 22
@@ -201,8 +208,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 23
@@ -211,8 +219,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 24
@@ -220,9 +229,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 25
@@ -230,9 +240,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 26
@@ -240,9 +251,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 27
@@ -251,8 +263,9 @@
     "name": "minecraft:acacia_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 28
@@ -260,9 +273,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 29
@@ -270,9 +284,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 30
@@ -280,9 +295,10 @@
   {
     "name": "minecraft:acacia_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 31
@@ -2464,8 +2480,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 309
@@ -2474,8 +2491,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 310
@@ -2484,8 +2502,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 311
@@ -2494,8 +2513,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 312
@@ -2504,8 +2524,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 313
@@ -2514,8 +2535,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 314
@@ -2524,8 +2546,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 315
@@ -2534,8 +2557,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 316
@@ -2544,8 +2568,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 317
@@ -2553,9 +2578,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 318
@@ -2563,9 +2589,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 319
@@ -2573,9 +2600,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 320
@@ -2584,8 +2612,9 @@
     "name": "minecraft:birch_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 321
@@ -2593,9 +2622,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 322
@@ -2603,9 +2633,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 323
@@ -2613,9 +2644,10 @@
   {
     "name": "minecraft:birch_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 324
@@ -6890,8 +6922,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 883
@@ -6900,8 +6933,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 884
@@ -6910,8 +6944,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 885
@@ -6920,8 +6955,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 886
@@ -6930,8 +6966,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 887
@@ -6940,8 +6977,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 888
@@ -6950,8 +6988,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 889
@@ -6960,8 +6999,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 890
@@ -6970,8 +7010,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 891
@@ -6979,9 +7020,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 892
@@ -6989,9 +7031,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 893
@@ -6999,9 +7042,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 894
@@ -7010,8 +7054,9 @@
     "name": "minecraft:dark_oak_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 895
@@ -7019,9 +7064,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 896
@@ -7029,9 +7075,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 897
@@ -7039,9 +7086,10 @@
   {
     "name": "minecraft:dark_oak_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 898
@@ -12090,8 +12138,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1611
@@ -12100,8 +12149,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1612
@@ -12110,8 +12160,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1613
@@ -12120,8 +12171,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1614
@@ -12130,8 +12182,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1615
@@ -12140,8 +12193,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1616
@@ -12150,8 +12204,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1617
@@ -12160,8 +12215,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1618
@@ -12170,8 +12226,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1619
@@ -12179,9 +12236,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1620
@@ -12189,9 +12247,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1621
@@ -12199,9 +12258,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1622
@@ -12210,8 +12270,9 @@
     "name": "minecraft:iron_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1623
@@ -12219,9 +12280,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1624
@@ -12229,9 +12291,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1625
@@ -12239,9 +12302,10 @@
   {
     "name": "minecraft:iron_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1626
@@ -12588,8 +12652,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1669
@@ -12598,8 +12663,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1670
@@ -12608,8 +12674,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1671
@@ -12618,8 +12685,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1672
@@ -12628,8 +12696,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1673
@@ -12638,8 +12707,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1674
@@ -12648,8 +12718,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1675
@@ -12658,8 +12729,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 1676
@@ -12668,8 +12740,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1677
@@ -12677,9 +12750,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1678
@@ -12687,9 +12761,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1679
@@ -12697,9 +12772,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1680
@@ -12708,8 +12784,9 @@
     "name": "minecraft:jungle_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1681
@@ -12717,9 +12794,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 1682
@@ -12727,9 +12805,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1683
@@ -12737,9 +12816,10 @@
   {
     "name": "minecraft:jungle_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 1684
@@ -19838,8 +19918,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2627
@@ -19848,8 +19929,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2628
@@ -19858,8 +19940,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2629
@@ -19868,8 +19951,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2630
@@ -19878,8 +19962,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2631
@@ -19888,8 +19973,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2632
@@ -19898,8 +19984,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2633
@@ -19908,8 +19995,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 2634
@@ -19918,8 +20006,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 2635
@@ -19927,9 +20016,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 2636
@@ -19937,9 +20027,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 2637
@@ -19947,9 +20038,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 2638
@@ -19958,8 +20050,9 @@
     "name": "minecraft:spruce_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 2639
@@ -19967,9 +20060,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 2640
@@ -19977,9 +20071,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 2641
@@ -19987,9 +20082,10 @@
   {
     "name": "minecraft:spruce_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 2642
@@ -24430,8 +24526,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3223
@@ -24440,8 +24537,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3224
@@ -24450,8 +24548,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3225
@@ -24460,8 +24559,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3226
@@ -24470,8 +24570,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3227
@@ -24480,8 +24581,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 1,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3228
@@ -24490,8 +24592,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 2,
-      "door_hinge_bit": 0,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3229
@@ -24500,8 +24603,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 3,
-      "door_hinge_bit": 1,
       "open_bit": 1,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 0
     },
     "id": 3230
@@ -24510,8 +24614,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 0,
-      "door_hinge_bit": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 3231
@@ -24519,9 +24624,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 1,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 3232
@@ -24529,9 +24635,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 2,
-      "door_hinge_bit": 0,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 0,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 3233
@@ -24539,9 +24646,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 3,
-      "door_hinge_bit": 1,
+      "direction": 0,
       "open_bit": 0,
+      "door_hinge_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 3234
@@ -24550,8 +24658,9 @@
     "name": "minecraft:wooden_door",
     "state": {
       "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 3235
@@ -24559,9 +24668,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 1,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 0,
       "upper_block_bit": 1
     },
     "id": 3236
@@ -24569,9 +24679,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 2,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 0,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 3237
@@ -24579,9 +24690,10 @@
   {
     "name": "minecraft:wooden_door",
     "state": {
-      "direction": 3,
+      "direction": 0,
+      "open_bit": 0,
       "door_hinge_bit": 1,
-      "open_bit": 1,
+      "powered_bit": 1,
       "upper_block_bit": 1
     },
     "id": 3238

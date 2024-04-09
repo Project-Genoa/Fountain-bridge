@@ -162,14 +162,17 @@ public class SessionsManager
 
 		LoginBedrockPacketHandler[] pendingSessions = this.pendingSessions.toArray(new LoginBedrockPacketHandler[0]);
 		this.pendingSessions.clear();
+		PlayerSession[] activeSessions = this.activeSessions.values().toArray(new PlayerSession[0]);
+		this.activeSessions.clear();
+
+		this.lock.unlock();
+
 		LogManager.getLogger().info("Disconnecting {} remaining pending sessions", pendingSessions.length);
 		for (LoginBedrockPacketHandler loginBedrockPacketHandler : pendingSessions)
 		{
 			loginBedrockPacketHandler.bedrockServerSession.disconnect("", true);
 		}
 
-		PlayerSession[] activeSessions = this.activeSessions.values().toArray(new PlayerSession[0]);
-		this.activeSessions.clear();
 		LogManager.getLogger().info("Disconnecting {} remaining active sessions", activeSessions.length);
 		for (PlayerSession playerSession : activeSessions)
 		{
@@ -177,8 +180,6 @@ public class SessionsManager
 			playerSession.disconnect(true);
 			playerSession.mutex.unlock();
 		}
-
-		this.lock.unlock();
 	}
 
 	private class LoginBedrockPacketHandler implements BedrockPacketHandler

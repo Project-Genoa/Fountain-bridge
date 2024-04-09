@@ -341,7 +341,7 @@ public class ChunkManager
 				{
 					LogManager.getLogger().debug("Ignoring block entity of type {}", blockEntityInfo.getType());
 				}
-				NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, null) : null;
+				NbtMap bedrockBlockEntityData = blockEntityMapping != null ? BlockEntityTranslator.translateBlockEntity(blockEntityMapping, blockEntityInfo) : null;
 				bedrockChunk.setBlockEntity(x, y, z, blockEntityMapping, bedrockBlockEntityData);
 			}
 		}

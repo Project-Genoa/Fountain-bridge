@@ -22,6 +22,7 @@ public class JavaBlocks
 	private static final HashMap<String, LinkedList<String>> nonVanillaStatesList = new HashMap<>();
 
 	private static final HashMap<Integer, BedrockMapping> bedrockMap = new HashMap<>();
+	private static final HashMap<String, BedrockMapping> bedrockMapByName = new HashMap<>();
 	private static final HashMap<String, BedrockMapping> bedrockNonVanillaMap = new HashMap<>();
 
 	static
@@ -46,6 +47,7 @@ public class JavaBlocks
 						continue;
 					}
 					bedrockMap.put(id, bedrockMapping);
+					bedrockMapByName.put(name, bedrockMapping);
 				}
 				catch (BedrockMappingFailException exception)
 				{
@@ -281,6 +283,17 @@ public class JavaBlocks
 			{
 				bedrockMapping = bedrockNonVanillaMap.getOrDefault(fabricName, null);
 			}
+		}
+		return bedrockMapping;
+	}
+
+	@Nullable
+	public static BedrockMapping getBedrockMapping(@NotNull String javaName)
+	{
+		BedrockMapping bedrockMapping = bedrockMapByName.getOrDefault(javaName, null);
+		if (bedrockMapping == null)
+		{
+			bedrockMapping = bedrockNonVanillaMap.getOrDefault(javaName, null);
 		}
 		return bedrockMapping;
 	}

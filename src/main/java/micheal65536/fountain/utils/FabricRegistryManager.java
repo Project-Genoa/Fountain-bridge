@@ -22,6 +22,8 @@ public class FabricRegistryManager
 	private final MinecraftCodecHelper minecraftCodecHelper;
 
 	private final HashMap<Integer, String> fabricBlocks = new HashMap<>();
+	private final HashMap<Integer, String> fabricItems = new HashMap<>();
+	private final HashMap<Integer, String> fabricEntities = new HashMap<>();
 
 	private ByteBuf registryDataBuf = null;
 
@@ -72,6 +74,34 @@ public class FabricRegistryManager
 								{
 									this.fabricBlocks.put(maxVanillaBlockId + this.fabricBlocks.size() + 1, name + state);
 								}
+							}
+						});
+					}
+					else if (registryType.equals("minecraft:item"))
+					{
+						this.readRegistry((id, name) ->
+						{
+							if (name.startsWith("minecraft:"))
+							{
+								return;
+							}
+							else
+							{
+								this.fabricItems.put(id, name);
+							}
+						});
+					}
+					else if (registryType.equals("minecraft:entity_type"))
+					{
+						this.readRegistry((id, name) ->
+						{
+							if (name.startsWith("minecraft:"))
+							{
+								return;
+							}
+							else
+							{
+								this.fabricEntities.put(id, name);
 							}
 						});
 					}
@@ -132,5 +162,17 @@ public class FabricRegistryManager
 	public String getBlockName(int id)
 	{
 		return this.fabricBlocks.getOrDefault(id, null);
+	}
+
+	@Nullable
+	public String getItemName(int id)
+	{
+		return this.fabricItems.getOrDefault(id, null);
+	}
+
+	@Nullable
+	public String getEntityName(int id)
+	{
+		return this.fabricEntities.getOrDefault(id, null);
 	}
 }

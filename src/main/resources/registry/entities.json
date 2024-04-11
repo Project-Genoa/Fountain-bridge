@@ -1,0 +1,1199 @@
+[
+  {
+    "id": "minecraft:chicken",
+    "bid": "minecraft:chicken",
+    "rid": 10,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:cow",
+    "bid": ":",
+    "rid": 11,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:pig",
+    "bid": "minecraft:pig",
+    "rid": 12,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:sheep",
+    "bid": "minecraft:sheep",
+    "rid": 13,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:wolf",
+    "bid": "minecraft:wolf",
+    "rid": 14,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:villager",
+    "bid": "minecraft:villager",
+    "rid": 15,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:mooshroom",
+    "bid": "minecraft:mooshroom",
+    "rid": 16,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:squid",
+    "bid": "minecraft:squid",
+    "rid": 17,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 18,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:bat",
+    "bid": "minecraft:bat",
+    "rid": 19,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:iron_golem",
+    "bid": "minecraft:iron_golem",
+    "rid": 20,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:snow_golem",
+    "bid": "minecraft:snow_golem",
+    "rid": 21,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:ocelot",
+    "bid": "minecraft:ocelot",
+    "rid": 22,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:horse",
+    "bid": "minecraft:horse",
+    "rid": 23,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:donkey",
+    "bid": "minecraft:donkey",
+    "rid": 24,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:mule",
+    "bid": "minecraft:mule",
+    "rid": 25,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:skeleton_horse",
+    "bid": "minecraft:skeleton_horse",
+    "rid": 26,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:zombie_horse",
+    "bid": "minecraft:zombie_horse",
+    "rid": 27,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:polar_bear",
+    "bid": "minecraft:polar_bear",
+    "rid": 28,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:llama",
+    "bid": "minecraft:llama",
+    "rid": 29,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:parrot",
+    "bid": "minecraft:parrot",
+    "rid": 30,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:dolphin",
+    "bid": "minecraft:dolphin",
+    "rid": 31,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:zombie",
+    "bid": "minecraft:zombie",
+    "rid": 32,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:creeper",
+    "bid": "minecraft:creeper",
+    "rid": 33,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:skeleton",
+    "bid": "minecraft:skeleton",
+    "rid": 34,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:spider",
+    "bid": "minecraft:spider",
+    "rid": 35,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:zombie_pigman",
+    "bid": "minecraft:zombie_pigman",
+    "rid": 36,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:slime",
+    "bid": "minecraft:slime",
+    "rid": 37,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:enderman",
+    "bid": "minecraft:enderman",
+    "rid": 38,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:silverfish",
+    "bid": "minecraft:silverfish",
+    "rid": 39,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:cave_spider",
+    "bid": "minecraft:cave_spider",
+    "rid": 40,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:ghast",
+    "bid": "minecraft:ghast",
+    "rid": 41,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:magma_cube",
+    "bid": "minecraft:magma_cube",
+    "rid": 42,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:blaze",
+    "bid": "minecraft:blaze",
+    "rid": 43,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:zombie_villager",
+    "bid": "minecraft:zombie_villager",
+    "rid": 44,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:witch",
+    "bid": "minecraft:witch",
+    "rid": 45,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:stray",
+    "bid": "minecraft:stray",
+    "rid": 46,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:husk",
+    "bid": "minecraft:husk",
+    "rid": 47,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:wither_skeleton",
+    "bid": "minecraft:wither_skeleton",
+    "rid": 48,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:guardian",
+    "bid": "minecraft:guardian",
+    "rid": 49,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:elder_guardian",
+    "bid": "minecraft:elder_guardian",
+    "rid": 50,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:wither",
+    "bid": "minecraft:wither",
+    "rid": 52,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:ender_dragon",
+    "bid": "minecraft:ender_dragon",
+    "rid": 53,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:shulker",
+    "bid": "minecraft:shulker",
+    "rid": 54,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:endermite",
+    "bid": "minecraft:endermite",
+    "rid": 55,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:agent",
+    "bid": "minecraft:agent",
+    "rid": 56,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:vindicator",
+    "bid": "minecraft:vindicator",
+    "rid": 57,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:phantom",
+    "bid": "minecraft:phantom",
+    "rid": 58,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:ravager",
+    "bid": "minecraft:ravager",
+    "rid": 59,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:armor_stand",
+    "bid": "minecraft:armor_stand",
+    "rid": 61,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:item",
+    "bid": "minecraft:item",
+    "rid": 64,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:tnt",
+    "bid": "minecraft:tnt",
+    "rid": 65,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:falling_block",
+    "bid": "minecraft:falling_block",
+    "rid": 66,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:xp_bottle",
+    "bid": "minecraft:xp_bottle",
+    "rid": 68,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:unknown",
+    "bid": "minecraft:unknown",
+    "rid": 69,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:eye_of_ender_signal",
+    "bid": "minecraft:eye_of_ender_signal",
+    "rid": 70,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:ender_crystal",
+    "bid": "minecraft:ender_crystal",
+    "rid": 71,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:fireworks_rocket",
+    "bid": "minecraft:fireworks_rocket",
+    "rid": 72,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:thrown_trident",
+    "bid": "minecraft:thrown_trident",
+    "rid": 73,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:turtle",
+    "bid": "minecraft:turtle",
+    "rid": 74,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:cat",
+    "bid": "minecraft:cat",
+    "rid": 75,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:shulker_bullet",
+    "bid": "minecraft:shulker_bullet",
+    "rid": 76,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:fishing_hook",
+    "bid": "minecraft:fishing_hook",
+    "rid": 77,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:dragon_fireball",
+    "bid": "minecraft:dragon_fireball",
+    "rid": 79,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:arrow",
+    "bid": "minecraft:arrow",
+    "rid": 80,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:snowball",
+    "bid": "minecraft:snowball",
+    "rid": 81,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:egg",
+    "bid": "minecraft:egg",
+    "rid": 82,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:painting",
+    "bid": "minecraft:painting",
+    "rid": 83,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:minecart",
+    "bid": "minecraft:minecart",
+    "rid": 84,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:fireball",
+    "bid": "minecraft:fireball",
+    "rid": 85,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:splash_potion",
+    "bid": "minecraft:splash_potion",
+    "rid": 86,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:ender_pearl",
+    "bid": "minecraft:ender_pearl",
+    "rid": 87,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:leash_knot",
+    "bid": "minecraft:leash_knot",
+    "rid": 88,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:wither_skull",
+    "bid": "minecraft:wither_skull",
+    "rid": 89,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:boat",
+    "bid": "minecraft:boat",
+    "rid": 90,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:wither_skull_dangerous",
+    "bid": "minecraft:wither_skull_dangerous",
+    "rid": 91,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:lightning_bolt",
+    "bid": "minecraft:lightning_bolt",
+    "rid": 93,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:small_fireball",
+    "bid": "minecraft:small_fireball",
+    "rid": 94,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:area_effect_cloud",
+    "bid": "minecraft:area_effect_cloud",
+    "rid": 95,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:hopper_minecart",
+    "bid": "minecraft:hopper_minecart",
+    "rid": 96,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:tnt_minecart",
+    "bid": "minecraft:tnt_minecart",
+    "rid": 97,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:chest_minecart",
+    "bid": "minecraft:chest_minecart",
+    "rid": 98,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:command_block_minecart",
+    "bid": "minecraft:command_block_minecart",
+    "rid": 100,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:lingering_potion",
+    "bid": "minecraft:lingering_potion",
+    "rid": 101,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:llama_spit",
+    "bid": "minecraft:llama_spit",
+    "rid": 102,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:evocation_fang",
+    "bid": "minecraft:evocation_fang",
+    "rid": 103,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:evocation_illager",
+    "bid": "minecraft:evocation_illager",
+    "rid": 104,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:vex",
+    "bid": "minecraft:vex",
+    "rid": 105,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:ice_bomb",
+    "bid": "minecraft:ice_bomb",
+    "rid": 106,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:balloon",
+    "bid": "minecraft:balloon",
+    "rid": 107,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:pufferfish",
+    "bid": "minecraft:pufferfish",
+    "rid": 108,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:salmon",
+    "bid": "minecraft:salmon",
+    "rid": 109,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:drowned",
+    "bid": "minecraft:drowned",
+    "rid": 110,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:tropicalfish",
+    "bid": "minecraft:tropicalfish",
+    "rid": 111,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:cod",
+    "bid": "minecraft:cod",
+    "rid": 112,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:panda",
+    "bid": "minecraft:panda",
+    "rid": 113,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:pillager",
+    "bid": "minecraft:pillager",
+    "rid": 114,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:villager_v2",
+    "bid": "minecraft:villager_v2",
+    "rid": 115,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:zombie_villager_v2",
+    "bid": "minecraft:zombie_villager_v2",
+    "rid": 116,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:wandering_trader",
+    "bid": ":",
+    "rid": 118,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:base_projectile",
+    "bid": "minecraft:base_projectile",
+    "rid": 166,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:persona_mob",
+    "bid": "minecraft:persona_mob",
+    "rid": 250,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:desert_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 256,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "minecraft:npc",
+    "bid": "minecraft:",
+    "rid": 257,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:tripod_camera",
+    "bid": "minecraft:",
+    "rid": 258,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "minecraft:player",
+    "bid": "minecraft:",
+    "rid": 259,
+    "summonable": false,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "genoa:bone_shard",
+    "bid": "minecraft:base_projectile",
+    "rid": 2560,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "genoa:melon_seed_projectile",
+    "bid": "minecraft:baseprojectile",
+    "rid": 2561,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "genoa:rotten_flesh_projectile",
+    "bid": "minecraft:base_projectile",
+    "rid": 2562,
+    "summonable": true,
+    "hasSpawnEgg": false
+  },
+  {
+    "id": "genoa:mud_pig",
+    "bid": "minecraft:",
+    "rid": 5000,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:cluck_shroom",
+    "bid": "minecraft:chicken",
+    "rid": 5001,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:moo_bloom",
+    "bid": "minecraft:",
+    "rid": 5002,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:horned_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5003,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:jumbo_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5004,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:wooly_cow",
+    "bid": "minecraft:",
+    "rid": 5005,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:bone_spider",
+    "bid": "minecraft:spider",
+    "rid": 5006,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:jolly_llama",
+    "bid": "minecraft:",
+    "rid": 5007,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:glow_squid",
+    "bid": "minecraft:squid",
+    "rid": 5008,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:skeleton_wolf",
+    "bid": "minecraft:wolf",
+    "rid": 5009,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:moolip",
+    "bid": "minecraft:",
+    "rid": 5010,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:furnace_golem",
+    "bid": "minecraft:iron_golem",
+    "rid": 5011,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:melon_golem",
+    "bid": "minecraft:snow_golem",
+    "rid": 5012,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:tropical_slime",
+    "bid": "minecraft:slime",
+    "rid": 5013,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:albino_cow",
+    "bid": "minecraft:cow",
+    "rid": 5014,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:ashen_cow",
+    "bid": "minecraft:cow",
+    "rid": 5015,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:cream_cow",
+    "bid": "minecraft:cow",
+    "rid": 5016,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:cookie_cow",
+    "bid": "minecraft:cow",
+    "rid": 5017,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:dairy_cow",
+    "bid": "minecraft:cow",
+    "rid": 5018,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:pinto_cow",
+    "bid": "minecraft:cow",
+    "rid": 5019,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:sunset_cow",
+    "bid": "minecraft:cow",
+    "rid": 5020,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:mottled_pig",
+    "bid": "minecraft:pig",
+    "rid": 5021,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:pale_pig",
+    "bid": "minecraft:pig",
+    "rid": 5022,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:piebald_pig",
+    "bid": "minecraft:pig",
+    "rid": 5023,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:pink_footed_pig",
+    "bid": "minecraft:pig",
+    "rid": 5024,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:sooty_pig",
+    "bid": "minecraft:pig",
+    "rid": 5025,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:spotted_pig",
+    "bid": "minecraft:pig",
+    "rid": 5026,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:rainbow_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5027,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:amber_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5028,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:bronzed_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5029,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:gold_crested_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5030,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:midnight_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5031,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:skewbald_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5032,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:stormy_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5033,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:umbra_cow",
+    "bid": "minecraft:",
+    "rid": 5034,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:dusky_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5035,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:sable_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5036,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:albino_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5037,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:blotched_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5038,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:salt_and_pepper_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5039,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:rocky_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5040,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:flecked_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5041,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:inky_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5042,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:patched_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5043,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:fuzzy_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5044,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:long_nosed_sheep",
+    "bid": "minecraft:sheep",
+    "rid": 5045,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:freckled_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5046,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:muddy_foot_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5047,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:violet_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5048,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:vested_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5049,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:harelequin_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5050,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:bold_striped_rabbit",
+    "bid": "minecraft:rabbit",
+    "rid": 5051,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:fancy_chicken",
+    "bid": "minecraft:chicken",
+    "rid": 5055,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:viler_witch",
+    "bid": "minecraft:witch",
+    "rid": 5057,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:lobber_zombie",
+    "bid": "minecraft:zombie",
+    "rid": 5058,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:bouldering_zombie",
+    "bid": "minecraft:zombie",
+    "rid": 5059,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:neutral_dummy",
+    "bid": "minecraft:",
+    "rid": 5060,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:hostile_dummy",
+    "bid": "minecraft:",
+    "rid": 5061,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:oobe_skeleton",
+    "bid": "minecraft:",
+    "rid": 5062,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:genoa_slime_quarter",
+    "bid": "minecraft:slime",
+    "rid": 5063,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:genoa_slime_half",
+    "bid": "minecraft:slime",
+    "rid": 5064,
+    "summonable": true,
+    "hasSpawnEgg": true
+  },
+  {
+    "id": "genoa:genoa_slime",
+    "bid": "minecraft:slime",
+    "rid": 5065,
+    "summonable": true,
+    "hasSpawnEgg": true
+  }
+]

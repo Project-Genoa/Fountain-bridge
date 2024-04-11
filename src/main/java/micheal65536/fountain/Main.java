@@ -30,6 +30,7 @@ import micheal65536.fountain.mappings.DirectSounds;
 import micheal65536.fountain.registry.BedrockBiomes;
 import micheal65536.fountain.registry.BedrockBlocks;
 import micheal65536.fountain.registry.BedrockItems;
+import micheal65536.fountain.registry.EarthEntitiesRegistry;
 import micheal65536.fountain.registry.EarthItemCatalog;
 import micheal65536.fountain.registry.JavaBlocks;
 import micheal65536.fountain.registry.JavaItems;
@@ -90,6 +91,7 @@ public class Main
 				JavaItems.class,
 				EarthItemCatalog.class,
 				BedrockBiomes.class,
+				EarthEntitiesRegistry.class,
 
 				DirectSounds.class
 		})

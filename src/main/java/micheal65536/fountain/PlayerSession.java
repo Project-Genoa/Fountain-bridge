@@ -28,7 +28,6 @@ import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCl
 import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCustomPayloadPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.ClientboundLoginPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
-import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetContentPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.inventory.ClientboundContainerSetSlotPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.level.ClientboundBlockEntityDataPacket;
@@ -54,6 +53,8 @@ import org.cloudburstmc.math.vector.Vector3d;
 import org.cloudburstmc.math.vector.Vector3f;
 import org.cloudburstmc.math.vector.Vector3i;
 import org.cloudburstmc.math.vector.Vector4f;
+import org.cloudburstmc.nbt.NbtMap;
+import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
 import org.cloudburstmc.protocol.bedrock.data.AttributeData;
 import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting;
@@ -63,6 +64,7 @@ import org.cloudburstmc.protocol.bedrock.data.PlayerPermission;
 import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTransactionType;
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
+import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
@@ -86,6 +88,7 @@ import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
 import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.connector.plugin.DisconnectResponse;
 import micheal65536.fountain.connector.plugin.Inventory;
+import micheal65536.fountain.registry.EarthEntitiesRegistry;
 import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.ChunkManager;
 import micheal65536.fountain.utils.EffectManager;
@@ -293,6 +296,18 @@ public final class PlayerSession
 		genoaGameplaySettingsPacket.setOwnerRuntimeId(this.bedrockPlayerEntityId);
 		this.sendBedrockPacket(genoaGameplaySettingsPacket);
 
+		AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
+		availableEntityIdentifiersPacket.setIdentifiers(NbtMap.builder().putList("idlist", NbtType.COMPOUND, Arrays.stream(EarthEntitiesRegistry.getEntities()).map(entityInfo -> NbtMap.builder()
+				.putInt("rid", entityInfo.rid)
+				.putString("id", entityInfo.id)
+				.putString("bid", entityInfo.bid)
+				.putBoolean("summonable", entityInfo.summonable)
+				.putBoolean("hasspawnegg", entityInfo.hasSpawnEgg)
+				.putBoolean("experimental", false)
+				.build()
+		).toList()).build());
+		this.sendBedrockPacket(availableEntityIdentifiersPacket);
+
 		playStatusPacket = new PlayStatusPacket();
 		playStatusPacket.setStatus(PlayStatusPacket.Status.PLAYER_SPAWN);
 		this.sendBedrockPacket(playStatusPacket);
@@ -412,14 +427,34 @@ public final class PlayerSession
 		this.chunkManager.onJavaBlockEvent(clientboundBlockEventPacket);
 	}
 
-	public void onJavaEntityAdd(@NotNull ClientboundAddEntityPacket clientboundAddEntityPacket)
+	public void onJavaEntityAdd(@NotNull ClientboundAddEntityCustomPacket clientboundAddEntityPacket)
 	{
-		EntityManager.JavaEntityInstance entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData());
-		if (entityInstance == null)
+		EntityManager.JavaEntityInstance entityInstance;
+		if (clientboundAddEntityPacket.getType() != null)
 		{
-			LogManager.getLogger().warn("Ignoring Java entity with type {}", clientboundAddEntityPacket.getType().name());
-			return;
+			entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData());
+			if (entityInstance == null)
+			{
+				LogManager.getLogger().warn("Ignoring Java entity with type {}", clientboundAddEntityPacket.getType().name());
+				return;
+			}
 		}
+		else
+		{
+			String name = this.fabricRegistryManager.getEntityName(clientboundAddEntityPacket.typeId);
+			if (name == null)
+			{
+				LogManager.getLogger().warn("Add entity packet with unknown type ID");
+				return;
+			}
+			entityInstance = EntityTranslator.createEntityInstance(name, clientboundAddEntityPacket.getData());
+			if (entityInstance == null)
+			{
+				LogManager.getLogger().warn("Ignoring Java entity with type {}", name);
+				return;
+			}
+		}
+
 		entityInstance.setInitialPosition(
 				Vector3f.from(clientboundAddEntityPacket.getX(), clientboundAddEntityPacket.getY(), clientboundAddEntityPacket.getZ()),
 				Vector3f.from(clientboundAddEntityPacket.getMotionX(), clientboundAddEntityPacket.getMotionY(), clientboundAddEntityPacket.getMotionZ()),

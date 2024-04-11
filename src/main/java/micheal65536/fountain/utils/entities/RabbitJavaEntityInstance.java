@@ -16,10 +16,6 @@ public class RabbitJavaEntityInstance<T extends RabbitBedrockEntityInstance> ext
 	protected void onMetadataFieldChanged(@NotNull EntityMetadata<?, ? extends MetadataType<?>> metadata)
 	{
 		super.onMetadataFieldChanged(metadata);
-		getMetadataField(metadata, 17, MetadataType.INT, value ->
-		{
-			this.bedrockEntityInstance.variant = value;
-		});
 	}
 
 	@Override

@@ -211,9 +211,9 @@ public final class ServerPacketHandler extends SessionAdapter
 				this.playerSession.onJavaSoundEvent(((ClientboundSoundPacket) packet).getSound(), Vector3f.from(((ClientboundSoundPacket) packet).getX(), ((ClientboundSoundPacket) packet).getY(), ((ClientboundSoundPacket) packet).getZ()), ((ClientboundSoundPacket) packet).getPitch(), ((ClientboundSoundPacket) packet).getVolume());
 			}
 
-			else if (packet instanceof ClientboundAddEntityPacket)
+			else if (packet instanceof ClientboundAddEntityCustomPacket)
 			{
-				this.playerSession.onJavaEntityAdd((ClientboundAddEntityPacket) packet);
+				this.playerSession.onJavaEntityAdd((ClientboundAddEntityCustomPacket) packet);
 			}
 			else if (packet instanceof ClientboundRemoveEntitiesPacket)
 			{

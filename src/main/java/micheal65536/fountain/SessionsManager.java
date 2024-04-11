@@ -1,7 +1,17 @@
 package micheal65536.fountain;
 
 import com.github.steveice10.mc.protocol.MinecraftProtocol;
+import com.github.steveice10.mc.protocol.codec.MinecraftCodec;
+import com.github.steveice10.mc.protocol.codec.MinecraftPacketSerializer;
+import com.github.steveice10.mc.protocol.codec.PacketCodec;
+import com.github.steveice10.mc.protocol.codec.PacketStateCodec;
+import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
+import com.github.steveice10.packetlib.codec.PacketDefinition;
+import com.github.steveice10.packetlib.packet.Packet;
+import com.github.steveice10.packetlib.packet.PacketProtocol;
 import com.github.steveice10.packetlib.tcp.TcpClientSession;
+import it.unimi.dsi.fastutil.ints.Int2ObjectMap;
 import org.apache.logging.log4j.LogManager;
 import org.cloudburstmc.protocol.bedrock.BedrockServerSession;
 import org.cloudburstmc.protocol.bedrock.codec.v425_genoa.Bedrock_v425_Genoa;
@@ -17,6 +27,8 @@ import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.connector.plugin.PlayerLoginInfo;
 import micheal65536.fountain.utils.LoginUtils;
 
+import java.lang.reflect.Field;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,6 +37,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionsManager
 {
+	private static final PacketCodec MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT = createCustomCodec();
+
 	private final String serverAddress;
 	private final int serverPort;
 	private final ConnectorPlugin connectorPlugin;
@@ -99,7 +113,7 @@ public class SessionsManager
 		this.pendingSessions.remove(loginBedrockPacketHandler);
 		LogManager.getLogger().info("Player logged in {} {}", loginInfo.username, loginInfo.uuid);
 
-		MinecraftProtocol javaProtocol = new MinecraftProtocol(loginInfo.username);
+		MinecraftProtocol javaProtocol = new MinecraftProtocol(MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT, loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession(this.serverAddress, this.serverPort, javaProtocol);
 
 		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, initialInventory, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
@@ -211,6 +225,36 @@ public class SessionsManager
 		{
 			LogManager.getLogger().info("Client disconnected during login phase: {}", reason);
 			SessionsManager.this.disconnectPending(this);
+		}
+	}
+
+	private static PacketCodec createCustomCodec()
+	{
+		// this ugly mess is to replace the ClientboundAddEntityPacket with our custom subclass that allows for non-vanilla entity IDs
+		try
+		{
+			PacketCodec.Builder packetCodecBuilder = MinecraftCodec.CODEC.toBuilder();
+
+			Field stateProtocolsField = PacketCodec.Builder.class.getDeclaredField("stateProtocols");
+			stateProtocolsField.setAccessible(true);
+			EnumMap<ProtocolState, PacketStateCodec> stateProtocols = (EnumMap<ProtocolState, PacketStateCodec>) stateProtocolsField.get(packetCodecBuilder);
+			PacketStateCodec packetStateCodec = stateProtocols.get(ProtocolState.GAME);
+			Field clientboundField = PacketProtocol.class.getDeclaredField("clientbound");
+			Field clientboundIdsField = PacketProtocol.class.getDeclaredField("clientboundIds");
+			clientboundField.setAccessible(true);
+			clientboundIdsField.setAccessible(true);
+			Int2ObjectMap<PacketDefinition<? extends Packet, ?>> clientbound = (Int2ObjectMap<PacketDefinition<? extends Packet, ?>>) clientboundField.get(packetStateCodec);
+			Map<Class<? extends Packet>, Integer> clientboundIds = (Map<Class<? extends Packet>, Integer>) clientboundIdsField.get(packetStateCodec);
+
+			int id = clientboundIds.get(ClientboundAddEntityPacket.class);
+			clientbound.put(id, new PacketDefinition<>(id, ClientboundAddEntityCustomPacket.class, new MinecraftPacketSerializer<>(ClientboundAddEntityCustomPacket::read)));
+			clientboundIds.put(ClientboundAddEntityCustomPacket.class, id);
+
+			return packetCodecBuilder.build();
+		}
+		catch (Exception exception)
+		{
+			throw new AssertionError(exception);
 		}
 	}
 }

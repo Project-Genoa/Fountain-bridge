@@ -46,9 +46,12 @@ public class EntityTranslator
 
 			case CHICKEN -> new AgeableJavaEntityInstance<>("minecraft:chicken", new AgeableBedrockEntityInstance());
 			case COW -> new AgeableJavaEntityInstance<>("minecraft:cow", new AgeableBedrockEntityInstance());
-			case PIG -> new AgeableJavaEntityInstance<>("minecraft:pig", new AgeableBedrockEntityInstance());
+			case PIG -> new AgeableJavaEntityInstance<>("minecraft:pig", new AgeableBedrockEntityInstance());    // TODO: saddle
 			case SHEEP -> new SheepJavaEntityInstance<>("minecraft:sheep", new SheepBedrockEntityInstance());
-			case RABBIT -> new RabbitJavaEntityInstance<>("minecraft:rabbit", new RabbitBedrockEntityInstance());    // TODO: variants don't work
+			case RABBIT -> new RabbitJavaEntityInstance<>("minecraft:rabbit", new RabbitBedrockEntityInstance());
+			// TODO: ocelot
+			// TODO: parrot
+			// TODO: polar bear
 
 			case SQUID -> new MobJavaEntityInstance<>("minecraft:squid", new MobBedrockEntityInstance());    // TODO: squid rotation
 			case SALMON -> new MobJavaEntityInstance<>("minecraft:salmon", new MobBedrockEntityInstance());
@@ -93,6 +96,51 @@ public class EntityTranslator
 					entityFlags.add(EntityFlag.IGNITED);
 				}
 			});
+
+			default -> null;
+		};
+	}
+
+	@Nullable
+	public static EntityManager.JavaEntityInstance createEntityInstance(@NotNull String customEntityName, ObjectData data)
+	{
+		// TODO: this list is incomplete, these are just the ones that have been implemented in the Fabric mod so far
+		// TODO: it would be nice if this list could be combined with the list of "vanilla" mobs above
+		return switch (customEntityName)
+		{
+			case "genoa:amber_chicken" -> new AgeableJavaEntityInstance<>("genoa:amber_chicken", new AgeableBedrockEntityInstance());
+			case "genoa:bronzed_chicken" -> new AgeableJavaEntityInstance<>("genoa:bronzed_chicken", new AgeableBedrockEntityInstance());
+			case "genoa:gold_crested_chicken" -> new AgeableJavaEntityInstance<>("genoa:gold_crested_chicken", new AgeableBedrockEntityInstance());
+			case "genoa:midnight_chicken" -> new AgeableJavaEntityInstance<>("genoa:midnight_chicken", new AgeableBedrockEntityInstance());
+			case "genoa:skewbald_chicken" -> new AgeableJavaEntityInstance<>("genoa:skewbald_chicken", new AgeableBedrockEntityInstance());
+			case "genoa:stormy_chicken" -> new AgeableJavaEntityInstance<>("genoa:stormy_chicken", new AgeableBedrockEntityInstance());
+
+			case "genoa:albino_cow" -> new AgeableJavaEntityInstance<>("genoa:albino_cow", new AgeableBedrockEntityInstance());
+			case "genoa:ashen_cow" -> new AgeableJavaEntityInstance<>("genoa:ashen_cow", new AgeableBedrockEntityInstance());
+			case "genoa:cookie_cow" -> new AgeableJavaEntityInstance<>("genoa:cookie_cow", new AgeableBedrockEntityInstance());
+			case "genoa:cream_cow" -> new AgeableJavaEntityInstance<>("genoa:cream_cow", new AgeableBedrockEntityInstance());
+			case "genoa:dairy_cow" -> new AgeableJavaEntityInstance<>("genoa:dairy_cow", new AgeableBedrockEntityInstance());
+			case "genoa:pinto_cow" -> new AgeableJavaEntityInstance<>("genoa:pinto_cow", new AgeableBedrockEntityInstance());
+			case "genoa:sunset_cow" -> new AgeableJavaEntityInstance<>("genoa:sunset_cow", new AgeableBedrockEntityInstance());
+
+			case "genoa:mottled_pig" -> new AgeableJavaEntityInstance<>("genoa:mottled_pig", new AgeableBedrockEntityInstance());
+			case "genoa:pale_pig" -> new AgeableJavaEntityInstance<>("genoa:pale_pig", new AgeableBedrockEntityInstance());
+			case "genoa:piebald_pig" -> new AgeableJavaEntityInstance<>("genoa:piebald_pig", new AgeableBedrockEntityInstance());
+			case "genoa:pink_footed_pig" -> new AgeableJavaEntityInstance<>("genoa:pink_footed_pig", new AgeableBedrockEntityInstance());
+			case "genoa:sooty_pig" -> new AgeableJavaEntityInstance<>("genoa:sooty_pig", new AgeableBedrockEntityInstance());
+			case "genoa:spotted_pig" -> new AgeableJavaEntityInstance<>("genoa:spotted_pig", new AgeableBedrockEntityInstance());
+
+			case "genoa:bold_striped_rabbit" -> new RabbitJavaEntityInstance<>("genoa:bold_striped_rabbit", new RabbitBedrockEntityInstance());
+			case "genoa:freckled_rabbit" -> new RabbitJavaEntityInstance<>("genoa:freckled_rabbit", new RabbitBedrockEntityInstance());
+			case "genoa:harelequin_rabbit" -> new RabbitJavaEntityInstance<>("genoa:harelequin_rabbit", new RabbitBedrockEntityInstance());
+			case "genoa:muddy_foot_rabbit" -> new RabbitJavaEntityInstance<>("genoa:muddy_foot_rabbit", new RabbitBedrockEntityInstance());
+			case "genoa:vested_rabbit" -> new RabbitJavaEntityInstance<>("genoa:vested_rabbit", new RabbitBedrockEntityInstance());
+
+			case "genoa:flecked_sheep" -> new SheepJavaEntityInstance<>("genoa:flecked_sheep", new SheepBedrockEntityInstance());
+			case "genoa:inky_sheep" -> new SheepJavaEntityInstance<>("genoa:inky_sheep", new SheepBedrockEntityInstance());
+			case "genoa:long_nosed_sheep" -> new SheepJavaEntityInstance<>("genoa:long_nosed_sheep", new SheepBedrockEntityInstance());
+			case "genoa:patched_sheep" -> new SheepJavaEntityInstance<>("genoa:patched_sheep", new SheepBedrockEntityInstance());
+			case "genoa:rocky_sheep" -> new SheepJavaEntityInstance<>("genoa:rocky_sheep", new SheepBedrockEntityInstance());
 
 			default -> null;
 		};

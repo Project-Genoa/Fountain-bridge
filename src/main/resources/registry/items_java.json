@@ -456,7 +456,8 @@
     "name": "minecraft:bat_spawn_egg",
     "id": 1007,
     "bedrock": {
-      "name": "minecraft:bat_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 19
     }
   },
   {
@@ -825,7 +826,8 @@
     "name": "minecraft:blaze_spawn_egg",
     "id": 1009,
     "bedrock": {
-      "name": "minecraft:blaze_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 43
     }
   },
   {
@@ -1031,7 +1033,7 @@
     "name": "minecraft:breeze_spawn_egg",
     "id": 1010,
     "bedrock": {
-      "name": "minecraft:breeze_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -1342,7 +1344,8 @@
     "name": "minecraft:cat_spawn_egg",
     "id": 1011,
     "bedrock": {
-      "name": "minecraft:cat_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 75
     }
   },
   {
@@ -1357,7 +1360,8 @@
     "name": "minecraft:cave_spider_spawn_egg",
     "id": 1013,
     "bedrock": {
-      "name": "minecraft:cave_spider_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 40
     }
   },
   {
@@ -1554,7 +1558,8 @@
     "name": "minecraft:chicken_spawn_egg",
     "id": 1014,
     "bedrock": {
-      "name": "minecraft:chicken_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 10
     }
   },
   {
@@ -1815,7 +1820,8 @@
     "name": "minecraft:cod_spawn_egg",
     "id": 1015,
     "bedrock": {
-      "name": "minecraft:cod_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 112
     }
   },
   {
@@ -1977,7 +1983,8 @@
     "name": "minecraft:cow_spawn_egg",
     "id": 1016,
     "bedrock": {
-      "name": "minecraft:cow_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 11
     }
   },
   {
@@ -2049,7 +2056,8 @@
     "name": "minecraft:creeper_spawn_egg",
     "id": 1017,
     "bedrock": {
-      "name": "minecraft:creeper_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 33
     }
   },
   {
@@ -2932,14 +2940,16 @@
     "name": "minecraft:dolphin_spawn_egg",
     "id": 1018,
     "bedrock": {
-      "name": "minecraft:dolphin_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 31
     }
   },
   {
     "name": "minecraft:donkey_spawn_egg",
     "id": 1019,
     "bedrock": {
-      "name": "minecraft:donkey_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 24
     }
   },
   {
@@ -2995,7 +3005,8 @@
     "name": "minecraft:drowned_spawn_egg",
     "id": 1020,
     "bedrock": {
-      "name": "minecraft:drowned_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 110
     }
   },
   {
@@ -3023,7 +3034,8 @@
     "name": "minecraft:elder_guardian_spawn_egg",
     "id": 1021,
     "bedrock": {
-      "name": "minecraft:elder_guardian_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 50
     }
   },
   {
@@ -3144,7 +3156,7 @@
     "name": "minecraft:ender_dragon_spawn_egg",
     "id": 1022,
     "bedrock": {
-      "name": "minecraft:ender_dragon_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -3165,21 +3177,24 @@
     "name": "minecraft:enderman_spawn_egg",
     "id": 1023,
     "bedrock": {
-      "name": "minecraft:enderman_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 38
     }
   },
   {
     "name": "minecraft:endermite_spawn_egg",
     "id": 1024,
     "bedrock": {
-      "name": "minecraft:endermite_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 55
     }
   },
   {
     "name": "minecraft:evoker_spawn_egg",
     "id": 1025,
     "bedrock": {
-      "name": "minecraft:evoker_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 104
     }
   },
   {
@@ -3410,7 +3425,7 @@
     "name": "minecraft:fox_spawn_egg",
     "id": 1026,
     "bedrock": {
-      "name": "minecraft:fox_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -3452,7 +3467,8 @@
     "name": "minecraft:ghast_spawn_egg",
     "id": 1028,
     "bedrock": {
-      "name": "minecraft:ghast_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 41
     }
   },
   {
@@ -3536,7 +3552,8 @@
     "name": "minecraft:glow_squid_spawn_egg",
     "id": 1029,
     "bedrock": {
-      "name": "minecraft:glow_squid_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 5008
     }
   },
   {
@@ -3944,7 +3961,8 @@
     "name": "minecraft:guardian_spawn_egg",
     "id": 1031,
     "bedrock": {
-      "name": "minecraft:guardian_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 49
     }
   },
   {
@@ -4073,7 +4091,8 @@
     "name": "minecraft:horse_spawn_egg",
     "id": 1033,
     "bedrock": {
-      "name": "minecraft:horse_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 23
     }
   },
   {
@@ -4094,7 +4113,8 @@
     "name": "minecraft:husk_spawn_egg",
     "id": 1034,
     "bedrock": {
-      "name": "minecraft:husk_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 47
     }
   },
   {
@@ -4214,7 +4234,7 @@
     "name": "minecraft:iron_golem_spawn_egg",
     "id": 1035,
     "bedrock": {
-      "name": "minecraft:iron_golem_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -4949,7 +4969,8 @@
     "name": "minecraft:llama_spawn_egg",
     "id": 1036,
     "bedrock": {
-      "name": "minecraft:llama_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 29
     }
   },
   {
@@ -5086,7 +5107,8 @@
     "name": "minecraft:magma_cube_spawn_egg",
     "id": 1037,
     "bedrock": {
-      "name": "minecraft:magma_cube_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 42
     }
   },
   {
@@ -5284,7 +5306,8 @@
     "name": "minecraft:mooshroom_spawn_egg",
     "id": 1038,
     "bedrock": {
-      "name": "minecraft:mooshroom_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 16
     }
   },
   {
@@ -5415,7 +5438,8 @@
     "name": "minecraft:mule_spawn_egg",
     "id": 1039,
     "bedrock": {
-      "name": "minecraft:mule_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 25
     }
   },
   {
@@ -5908,7 +5932,8 @@
     "name": "minecraft:ocelot_spawn_egg",
     "id": 1040,
     "bedrock": {
-      "name": "minecraft:ocelot_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 22
     }
   },
   {
@@ -6124,7 +6149,8 @@
     "name": "minecraft:panda_spawn_egg",
     "id": 1041,
     "bedrock": {
-      "name": "minecraft:panda_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 113
     }
   },
   {
@@ -6138,7 +6164,8 @@
     "name": "minecraft:parrot_spawn_egg",
     "id": 1042,
     "bedrock": {
-      "name": "minecraft:parrot_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 30
     }
   },
   {
@@ -6175,14 +6202,16 @@
     "name": "minecraft:phantom_spawn_egg",
     "id": 1043,
     "bedrock": {
-      "name": "minecraft:phantom_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 58
     }
   },
   {
     "name": "minecraft:pig_spawn_egg",
     "id": 1044,
     "bedrock": {
-      "name": "minecraft:pig_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 12
     }
   },
   {
@@ -6217,7 +6246,8 @@
     "name": "minecraft:pillager_spawn_egg",
     "id": 1047,
     "bedrock": {
-      "name": "minecraft:pillager_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 114
     }
   },
   {
@@ -6397,7 +6427,8 @@
     "name": "minecraft:polar_bear_spawn_egg",
     "id": 1048,
     "bedrock": {
-      "name": "minecraft:polar_bear_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 28
     }
   },
   {
@@ -6746,7 +6777,8 @@
     "name": "minecraft:pufferfish_spawn_egg",
     "id": 1049,
     "bedrock": {
-      "name": "minecraft:pufferfish_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 108
     }
   },
   {
@@ -6974,7 +7006,8 @@
     "name": "minecraft:rabbit_spawn_egg",
     "id": 1050,
     "bedrock": {
-      "name": "minecraft:rabbit_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 18
     }
   },
   {
@@ -7002,7 +7035,8 @@
     "name": "minecraft:ravager_spawn_egg",
     "id": 1051,
     "bedrock": {
-      "name": "minecraft:ravager_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 59
     }
   },
   {
@@ -7365,7 +7399,8 @@
     "name": "minecraft:salmon_spawn_egg",
     "id": 1052,
     "bedrock": {
-      "name": "minecraft:salmon_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 109
     }
   },
   {
@@ -7511,7 +7546,8 @@
     "name": "minecraft:sheep_spawn_egg",
     "id": 1053,
     "bedrock": {
-      "name": "minecraft:sheep_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 13
     }
   },
   {
@@ -7561,7 +7597,8 @@
     "name": "minecraft:shulker_spawn_egg",
     "id": 1054,
     "bedrock": {
-      "name": "minecraft:shulker_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 54
     }
   },
   {
@@ -7575,14 +7612,16 @@
     "name": "minecraft:silverfish_spawn_egg",
     "id": 1055,
     "bedrock": {
-      "name": "minecraft:silverfish_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 39
     }
   },
   {
     "name": "minecraft:skeleton_horse_spawn_egg",
     "id": 1057,
     "bedrock": {
-      "name": "minecraft:skeleton_horse_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 26
     }
   },
   {
@@ -7596,7 +7635,8 @@
     "name": "minecraft:skeleton_spawn_egg",
     "id": 1056,
     "bedrock": {
-      "name": "minecraft:skeleton_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 34
     }
   },
   {
@@ -7632,7 +7672,8 @@
     "name": "minecraft:slime_spawn_egg",
     "id": 1058,
     "bedrock": {
-      "name": "minecraft:slime_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 37
     }
   },
   {
@@ -7800,7 +7841,7 @@
     "name": "minecraft:snow_golem_spawn_egg",
     "id": 1060,
     "bedrock": {
-      "name": "minecraft:snow_golem_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -7870,7 +7911,8 @@
     "name": "minecraft:spider_spawn_egg",
     "id": 1061,
     "bedrock": {
-      "name": "minecraft:spider_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 35
     }
   },
   {
@@ -8039,7 +8081,8 @@
     "name": "minecraft:squid_spawn_egg",
     "id": 1062,
     "bedrock": {
-      "name": "minecraft:squid_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 17
     }
   },
   {
@@ -8175,7 +8218,8 @@
     "name": "minecraft:stray_spawn_egg",
     "id": 1063,
     "bedrock": {
-      "name": "minecraft:stray_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 46
     }
   },
   {
@@ -8507,7 +8551,7 @@
     "name": "minecraft:trader_llama_spawn_egg",
     "id": 1066,
     "bedrock": {
-      "name": "minecraft:trader_llama_spawn_egg"
+      "ignore": true
     }
   },
   {
@@ -8564,7 +8608,8 @@
     "name": "minecraft:tropical_fish_spawn_egg",
     "id": 1067,
     "bedrock": {
-      "name": "minecraft:tropical_fish_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 111
     }
   },
   {
@@ -8665,7 +8710,8 @@
     "name": "minecraft:turtle_spawn_egg",
     "id": 1068,
     "bedrock": {
-      "name": "minecraft:turtle_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 74
     }
   },
   {
@@ -8693,21 +8739,24 @@
     "name": "minecraft:vex_spawn_egg",
     "id": 1069,
     "bedrock": {
-      "name": "minecraft:vex_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 105
     }
   },
   {
     "name": "minecraft:villager_spawn_egg",
     "id": 1070,
     "bedrock": {
-      "name": "minecraft:villager_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 15
     }
   },
   {
     "name": "minecraft:vindicator_spawn_egg",
     "id": 1071,
     "bedrock": {
-      "name": "minecraft:vindicator_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 57
     }
   },
   {
@@ -8721,7 +8770,8 @@
     "name": "minecraft:wandering_trader_spawn_egg",
     "id": 1072,
     "bedrock": {
-      "name": "minecraft:wandering_trader_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 118
     }
   },
   {
@@ -9344,7 +9394,8 @@
     "name": "minecraft:witch_spawn_egg",
     "id": 1074,
     "bedrock": {
-      "name": "minecraft:witch_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 45
     }
   },
   {
@@ -9365,21 +9416,23 @@
     "name": "minecraft:wither_skeleton_spawn_egg",
     "id": 1076,
     "bedrock": {
-      "name": "minecraft:wither_skeleton_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 48
     }
   },
   {
     "name": "minecraft:wither_spawn_egg",
     "id": 1075,
     "bedrock": {
-      "name": "minecraft:wither_spawn_egg"
+      "ignore": true
     }
   },
   {
     "name": "minecraft:wolf_spawn_egg",
     "id": 1077,
     "bedrock": {
-      "name": "minecraft:wolf_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 14
     }
   },
   {
@@ -9556,21 +9609,24 @@
     "name": "minecraft:zombie_horse_spawn_egg",
     "id": 1080,
     "bedrock": {
-      "name": "minecraft:zombie_horse_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 27
     }
   },
   {
     "name": "minecraft:zombie_spawn_egg",
     "id": 1079,
     "bedrock": {
-      "name": "minecraft:zombie_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 32
     }
   },
   {
     "name": "minecraft:zombie_villager_spawn_egg",
     "id": 1081,
     "bedrock": {
-      "name": "minecraft:zombie_villager_spawn_egg"
+      "name": "minecraft:spawn_egg",
+      "aux": 44
     }
   },
   {

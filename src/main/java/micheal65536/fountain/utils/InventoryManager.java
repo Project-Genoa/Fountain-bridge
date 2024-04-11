@@ -21,6 +21,7 @@ import java.util.Arrays;
 public class InventoryManager
 {
 	private final PlayerSession playerSession;
+	private final FabricRegistryManager fabricRegistryManager;
 	private final MinecraftCodecHelper minecraftCodecHelper;
 
 	private final GenoaInventory genoaInventory;
@@ -36,12 +37,13 @@ public class InventoryManager
 	private String pendingUpdateJSON;
 	private boolean setHotbarRequestSent = false;
 
-	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull MinecraftCodecHelper minecraftCodecHelper, @NotNull Inventory initialInventory, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
+	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull FabricRegistryManager fabricRegistryManager, @NotNull MinecraftCodecHelper minecraftCodecHelper, @NotNull Inventory initialInventory, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
 	{
 		this.playerSession = playerSession;
+		this.fabricRegistryManager = fabricRegistryManager;
 		this.minecraftCodecHelper = minecraftCodecHelper;
 
-		this.genoaInventory = new GenoaInventory(playerConnectorPluginWrapper);
+		this.genoaInventory = new GenoaInventory(this.fabricRegistryManager, playerConnectorPluginWrapper);
 		this.genoaInventory.loadInitialInventory(initialInventory);
 	}
 
@@ -163,7 +165,7 @@ public class InventoryManager
 			}
 			else
 			{
-				return ItemTranslator.translateJavaToBedrock(itemStack);
+				return ItemTranslator.translateJavaToBedrock(itemStack, this.fabricRegistryManager);
 			}
 		}).toList());
 		this.playerSession.sendBedrockPacket(inventoryContentPacket);

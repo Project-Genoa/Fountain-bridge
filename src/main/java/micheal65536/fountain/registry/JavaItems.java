@@ -7,6 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.DataFile;
+import micheal65536.fountain.utils.FabricRegistryManager;
 
 import java.util.HashMap;
 
@@ -14,8 +15,10 @@ public class JavaItems
 {
 	private static final HashMap<Integer, String> map = new HashMap<>();
 
-	private static final HashMap<Integer, BedrockMapping> bedrockMappingMap = new HashMap<>();
+	private static final HashMap<Integer, BedrockMapping> bedrockMap = new HashMap<>();
+	private static final HashMap<String, BedrockMapping> bedrockNonVanillaMap = new HashMap<>();
 	private static final HashMap<ItemNameAndAux, Integer> javaIdMap = new HashMap<>();
+	private static final HashMap<ItemNameAndAux, String> javaIdNonVanillaMap = new HashMap<>();
 
 	static
 	{
@@ -46,8 +49,39 @@ public class JavaItems
 				}
 				else
 				{
-					bedrockMappingMap.put(id, new BedrockMapping(bedrockId, bedrockAux, bedrockToolWear));
+					bedrockMap.put(id, new BedrockMapping(bedrockId, bedrockAux, bedrockToolWear));
 					if (javaIdMap.put(new ItemNameAndAux(bedrockName, bedrockAux), id) != null)
+					{
+						LogManager.getLogger().warn("Duplicate Bedrock item mapping {} {}", bedrockName, bedrockAux);
+					}
+				}
+			}
+		});
+
+		DataFile.load("registry/items_java_nonvanilla.json", root ->
+		{
+			for (JsonElement element : root.getAsJsonArray())
+			{
+				String name = element.getAsJsonObject().get("name").getAsString();
+
+				JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
+				if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
+				{
+					LogManager.getLogger().debug("Ignoring Java item {}", name);
+					continue;
+				}
+				String bedrockName = bedrockMapping.get("name").getAsString();
+				int bedrockAux = bedrockMapping.has("aux") ? bedrockMapping.get("aux").getAsInt() : 0;
+				boolean bedrockToolWear = bedrockMapping.has("wear") ? bedrockMapping.get("wear").getAsBoolean() : false;
+				int bedrockId = BedrockItems.getId(bedrockName);
+				if (bedrockId == 0)
+				{
+					LogManager.getLogger().warn("Cannot find Bedrock item for Java item {}", name);
+				}
+				else
+				{
+					bedrockNonVanillaMap.put(name, new BedrockMapping(bedrockId, bedrockAux, bedrockToolWear));
+					if (javaIdNonVanillaMap.put(new ItemNameAndAux(bedrockName, bedrockAux), name) != null)
 					{
 						LogManager.getLogger().warn("Duplicate Bedrock item mapping {} {}", bedrockName, bedrockAux);
 					}
@@ -56,21 +90,65 @@ public class JavaItems
 		});
 	}
 
+	@Deprecated
 	@Nullable
 	public static String getName(int id)
 	{
-		return map.getOrDefault(id, null);
+		return getName(id, null);
 	}
 
+	@Deprecated
 	@Nullable
 	public static BedrockMapping getBedrockMapping(int javaId)
 	{
-		return bedrockMappingMap.getOrDefault(javaId, null);
+		return getBedrockMapping(javaId, null);
 	}
 
+	@Deprecated
 	public static int getJavaId(@NotNull String bedrockName, int bedrockAux)
 	{
-		return javaIdMap.getOrDefault(new ItemNameAndAux(bedrockName, bedrockAux), -1);
+		return getJavaId(bedrockName, bedrockAux, null);
+	}
+
+	@Nullable
+	public static String getName(int id, @Nullable FabricRegistryManager fabricRegistryManager)
+	{
+		String name = map.getOrDefault(id, null);
+		if (name == null && fabricRegistryManager != null)
+		{
+			name = fabricRegistryManager.getItemName(id);
+		}
+		return name;
+	}
+
+	@Nullable
+	public static BedrockMapping getBedrockMapping(int javaId, @Nullable FabricRegistryManager fabricRegistryManager)
+	{
+		BedrockMapping bedrockMapping = bedrockMap.getOrDefault(javaId, null);
+		if (bedrockMapping == null && fabricRegistryManager != null)
+		{
+			String fabricName = fabricRegistryManager.getItemName(javaId);
+			if (fabricName != null)
+			{
+				bedrockMapping = bedrockNonVanillaMap.getOrDefault(fabricName, null);
+			}
+		}
+		return bedrockMapping;
+	}
+
+	public static int getJavaId(@NotNull String bedrockName, int bedrockAux, @Nullable FabricRegistryManager fabricRegistryManager)
+	{
+		ItemNameAndAux itemNameAndAux = new ItemNameAndAux(bedrockName, bedrockAux);
+		int javaId = javaIdMap.getOrDefault(itemNameAndAux, -1);
+		if (javaId == -1 && fabricRegistryManager != null)
+		{
+			String fabricName = javaIdNonVanillaMap.getOrDefault(itemNameAndAux, null);
+			if (fabricName != null)
+			{
+				javaId = fabricRegistryManager.getItemId(fabricName);
+			}
+		}
+		return javaId;
 	}
 
 	private static final class ItemNameAndAux

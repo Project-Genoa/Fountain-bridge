@@ -23,6 +23,7 @@ public class FabricRegistryManager
 
 	private final HashMap<Integer, String> fabricBlocks = new HashMap<>();
 	private final HashMap<Integer, String> fabricItems = new HashMap<>();
+	private final HashMap<String, Integer> fabricItemsId = new HashMap<>();
 	private final HashMap<Integer, String> fabricEntities = new HashMap<>();
 
 	private ByteBuf registryDataBuf = null;
@@ -88,6 +89,7 @@ public class FabricRegistryManager
 							else
 							{
 								this.fabricItems.put(id, name);
+								this.fabricItemsId.put(name, id);
 							}
 						});
 					}
@@ -168,6 +170,11 @@ public class FabricRegistryManager
 	public String getItemName(int id)
 	{
 		return this.fabricItems.getOrDefault(id, null);
+	}
+
+	public int getItemId(@NotNull String name)
+	{
+		return this.fabricItemsId.getOrDefault(name, -1);
 	}
 
 	@Nullable

@@ -33,11 +33,16 @@ public final class GenoaInventory
 	private final HashMap<String, HashMap<String, Integer>> nonStackableItems = new HashMap<>();
 	private final Item[] hotbar;
 
+	private final FabricRegistryManager fabricRegistryManager;
+
 	private final PlayerConnectorPluginWrapper playerConnectorPluginWrapper;
 
-	public GenoaInventory(@NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
+	public GenoaInventory(@NotNull FabricRegistryManager fabricRegistryManager, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
 	{
 		this.hotbar = new Item[7];
+
+		this.fabricRegistryManager = fabricRegistryManager;
+
 		this.playerConnectorPluginWrapper = playerConnectorPluginWrapper;
 	}
 
@@ -336,7 +341,7 @@ public final class GenoaInventory
 
 			if (itemInfo.stackable)
 			{
-				return toItemStack(nameAndAux.name, nameAndAux.aux, item.count);
+				return this.toItemStack(nameAndAux.name, nameAndAux.aux, item.count);
 			}
 			else
 			{
@@ -346,7 +351,7 @@ public final class GenoaInventory
 					return null;
 				}
 				int wear = this.nonStackableItems.get(item.uuid).get(item.instanceId);
-				return toItemStack(nameAndAux.name, nameAndAux.aux, item.instanceId, wear);
+				return this.toItemStack(nameAndAux.name, nameAndAux.aux, item.instanceId, wear);
 			}
 		}).toArray(ItemStack[]::new);
 	}
@@ -669,10 +674,10 @@ public final class GenoaInventory
 		}
 
 		int javaId = itemStack.getId();
-		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
+		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId, this.fabricRegistryManager);
 		if (bedrockMapping == null)
 		{
-			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId));
+			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId, this.fabricRegistryManager));
 			return null;
 		}
 		String bedrockName = BedrockItems.getName(bedrockMapping.id);
@@ -698,19 +703,19 @@ public final class GenoaInventory
 	}
 
 	@Nullable
-	private static ItemStack toItemStack(@NotNull String name, int aux, int count)
+	private ItemStack toItemStack(@NotNull String name, int aux, int count)
 	{
-		return toItemStack(name, aux, null, 0, count);
+		return this.toItemStack(name, aux, null, 0, count);
 	}
 
 	@Nullable
-	private static ItemStack toItemStack(@NotNull String name, int aux, @NotNull String instanceId, int wear)
+	private ItemStack toItemStack(@NotNull String name, int aux, @NotNull String instanceId, int wear)
 	{
-		return toItemStack(name, aux, instanceId, wear, 1);
+		return this.toItemStack(name, aux, instanceId, wear, 1);
 	}
 
 	@Nullable
-	private static ItemStack toItemStack(@NotNull String name, int aux, @Nullable String instanceId, int wear, int count)
+	private ItemStack toItemStack(@NotNull String name, int aux, @Nullable String instanceId, int wear, int count)
 	{
 		int bedrockId = BedrockItems.getId(name);
 		if (bedrockId == 0)
@@ -719,7 +724,7 @@ public final class GenoaInventory
 			return null;
 		}
 
-		int javaId = JavaItems.getJavaId(name, aux);
+		int javaId = JavaItems.getJavaId(name, aux, this.fabricRegistryManager);
 		if (javaId == -1)
 		{
 			LogManager.getLogger().warn("Cannot find Java item for {} {}", name, aux);

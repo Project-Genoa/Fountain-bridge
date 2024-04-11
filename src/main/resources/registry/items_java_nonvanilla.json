@@ -1,0 +1,443 @@
+[
+  {
+    "name": "fountain:persona_mob_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 250
+    }
+  },
+  {
+    "name": "genoa:albino_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5014
+    }
+  },
+  {
+    "name": "genoa:albino_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5037
+    }
+  },
+  {
+    "name": "genoa:amber_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5028
+    }
+  },
+  {
+    "name": "genoa:ashen_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5015
+    }
+  },
+  {
+    "name": "genoa:blotched_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5038
+    }
+  },
+  {
+    "name": "genoa:bold_striped_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5051
+    }
+  },
+  {
+    "name": "genoa:bone_spider_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5006
+    }
+  },
+  {
+    "name": "genoa:bouldering_zombie_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5059
+    }
+  },
+  {
+    "name": "genoa:bronzed_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5029
+    }
+  },
+  {
+    "name": "genoa:cluck_shroom_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5001
+    }
+  },
+  {
+    "name": "genoa:cookie_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5017
+    }
+  },
+  {
+    "name": "genoa:cream_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5016
+    }
+  },
+  {
+    "name": "genoa:dairy_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5018
+    }
+  },
+  {
+    "name": "genoa:desert_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 256
+    }
+  },
+  {
+    "name": "genoa:dusky_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5035
+    }
+  },
+  {
+    "name": "genoa:fancy_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5055
+    }
+  },
+  {
+    "name": "genoa:flecked_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5041
+    }
+  },
+  {
+    "name": "genoa:freckled_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5046
+    }
+  },
+  {
+    "name": "genoa:furnace_golem_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5011
+    }
+  },
+  {
+    "name": "genoa:fuzzy_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5044
+    }
+  },
+  {
+    "name": "genoa:genoa_slime_half_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5064
+    }
+  },
+  {
+    "name": "genoa:genoa_slime_quarter_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5063
+    }
+  },
+  {
+    "name": "genoa:genoa_slime_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5065
+    }
+  },
+  {
+    "name": "genoa:gold_crested_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5030
+    }
+  },
+  {
+    "name": "genoa:harelequin_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5050
+    }
+  },
+  {
+    "name": "genoa:horned_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5003
+    }
+  },
+  {
+    "name": "genoa:hostile_dummy_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5061
+    }
+  },
+  {
+    "name": "genoa:inky_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5042
+    }
+  },
+  {
+    "name": "genoa:jolly_llama_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5007
+    }
+  },
+  {
+    "name": "genoa:jumbo_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5004
+    }
+  },
+  {
+    "name": "genoa:lobber_zombie_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5058
+    }
+  },
+  {
+    "name": "genoa:long_nosed_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5045
+    }
+  },
+  {
+    "name": "genoa:melon_golem_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5012
+    }
+  },
+  {
+    "name": "genoa:midnight_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5031
+    }
+  },
+  {
+    "name": "genoa:moo_bloom_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5002
+    }
+  },
+  {
+    "name": "genoa:moolip_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5010
+    }
+  },
+  {
+    "name": "genoa:mottled_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5021
+    }
+  },
+  {
+    "name": "genoa:mud_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5000
+    }
+  },
+  {
+    "name": "genoa:muddy_foot_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5047
+    }
+  },
+  {
+    "name": "genoa:neutral_dummy_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5060
+    }
+  },
+  {
+    "name": "genoa:oobe_skeleton_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5062
+    }
+  },
+  {
+    "name": "genoa:pale_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5022
+    }
+  },
+  {
+    "name": "genoa:patched_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5043
+    }
+  },
+  {
+    "name": "genoa:piebald_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5023
+    }
+  },
+  {
+    "name": "genoa:pink_footed_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5024
+    }
+  },
+  {
+    "name": "genoa:pinto_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5019
+    }
+  },
+  {
+    "name": "genoa:rainbow_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5027
+    }
+  },
+  {
+    "name": "genoa:rocky_sheep_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5040
+    }
+  },
+  {
+    "name": "genoa:sable_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5036
+    }
+  },
+  {
+    "name": "genoa:salt_and_pepper_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5039
+    }
+  },
+  {
+    "name": "genoa:skeleton_wolf_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5009
+    }
+  },
+  {
+    "name": "genoa:skewbald_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5032
+    }
+  },
+  {
+    "name": "genoa:sooty_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5025
+    }
+  },
+  {
+    "name": "genoa:spotted_pig_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5026
+    }
+  },
+  {
+    "name": "genoa:stormy_chicken_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5033
+    }
+  },
+  {
+    "name": "genoa:sunset_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5020
+    }
+  },
+  {
+    "name": "genoa:tropical_slime_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5013
+    }
+  },
+  {
+    "name": "genoa:umbra_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5034
+    }
+  },
+  {
+    "name": "genoa:vested_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5049
+    }
+  },
+  {
+    "name": "genoa:viler_witch_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5057
+    }
+  },
+  {
+    "name": "genoa:violet_rabbit_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5048
+    }
+  },
+  {
+    "name": "genoa:wooly_cow_spawn_egg",
+    "bedrock": {
+      "name": "minecraft:spawn_egg",
+      "aux": 5005
+    }
+  }
+]

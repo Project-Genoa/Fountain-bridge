@@ -147,7 +147,7 @@ public final class PlayerSession
 		this.disconnectCallback = disconnectCallback;
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
-		this.inventoryManager = new InventoryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory, this.playerConnectorPluginWrapper);
+		this.inventoryManager = new InventoryManager(this, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory, this.playerConnectorPluginWrapper);
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);
@@ -563,7 +563,7 @@ public final class PlayerSession
 			ItemData armorFeet = entityInstance.getArmorFeet();
 			for (Equipment equipment : equipments)
 			{
-				ItemData itemData = ItemTranslator.translateJavaToBedrock(equipment.getItem());
+				ItemData itemData = ItemTranslator.translateJavaToBedrock(equipment.getItem(), this.fabricRegistryManager);
 				switch (equipment.getSlot())
 				{
 					case MAIN_HAND -> handMain = itemData;
@@ -876,10 +876,10 @@ public final class PlayerSession
 			Vector3d pos = Vector3d.from(buf.readDouble(), buf.readDouble(), buf.readDouble());
 
 			int javaId = itemStack.getId();
-			JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
+			JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId, this.fabricRegistryManager);
 			if (bedrockMapping == null)
 			{
-				LogManager.getLogger().warn("Item pickup particle for item with no mapping {}", JavaItems.getName(javaId));
+				LogManager.getLogger().warn("Item pickup particle for item with no mapping {}", JavaItems.getName(javaId, this.fabricRegistryManager));
 				return;
 			}
 

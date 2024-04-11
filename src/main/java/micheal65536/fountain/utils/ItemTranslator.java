@@ -12,8 +12,21 @@ import micheal65536.fountain.registry.JavaItems;
 
 public final class ItemTranslator
 {
+	@Deprecated
 	@NotNull
 	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack)
+	{
+		return translateJavaToBedrockImpl(itemStack, null);
+	}
+
+	@NotNull
+	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack, @NotNull FabricRegistryManager fabricRegistryManager)
+	{
+		return translateJavaToBedrockImpl(itemStack, fabricRegistryManager);
+	}
+
+	@NotNull
+	private static ItemData translateJavaToBedrockImpl(@Nullable ItemStack itemStack, @Nullable FabricRegistryManager fabricRegistryManager)
 	{
 		ItemData.Builder builder = ItemData.builder();
 
@@ -23,10 +36,10 @@ public final class ItemTranslator
 		}
 
 		int javaId = itemStack.getId();
-		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId);
+		JavaItems.BedrockMapping bedrockMapping = JavaItems.getBedrockMapping(javaId, fabricRegistryManager);
 		if (bedrockMapping == null)
 		{
-			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId));
+			LogManager.getLogger().warn("Attempt to translate item with no mapping {}", JavaItems.getName(javaId, fabricRegistryManager));
 			return builder.build();
 		}
 		builder.definition(Main.ITEM_DEFINITION_REGISTRY.getDefinition(bedrockMapping.id));

@@ -432,7 +432,7 @@ public final class PlayerSession
 		EntityManager.JavaEntityInstance entityInstance;
 		if (clientboundAddEntityPacket.getType() != null)
 		{
-			entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData());
+			entityInstance = EntityTranslator.createEntityInstance(clientboundAddEntityPacket.getType(), clientboundAddEntityPacket.getData(), this.fabricRegistryManager);
 			if (entityInstance == null)
 			{
 				LogManager.getLogger().warn("Ignoring Java entity with type {}", clientboundAddEntityPacket.getType().name());
@@ -447,7 +447,7 @@ public final class PlayerSession
 				LogManager.getLogger().warn("Add entity packet with unknown type ID");
 				return;
 			}
-			entityInstance = EntityTranslator.createEntityInstance(name, clientboundAddEntityPacket.getData());
+			entityInstance = EntityTranslator.createEntityInstance(name, clientboundAddEntityPacket.getData(), this.fabricRegistryManager);
 			if (entityInstance == null)
 			{
 				LogManager.getLogger().warn("Ignoring Java entity with type {}", name);

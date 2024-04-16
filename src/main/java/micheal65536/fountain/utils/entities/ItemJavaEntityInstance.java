@@ -8,6 +8,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.utils.EntityManager;
+import micheal65536.fountain.utils.FabricRegistryManager;
 import micheal65536.fountain.utils.ItemTranslator;
 
 public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstance
@@ -17,7 +18,13 @@ public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstan
 
 	private ItemData item = null;
 
+	private final FabricRegistryManager fabricRegistryManager;
 	private ItemBedrockEntityInstance bedrockEntityInstance = null;
+
+	public ItemJavaEntityInstance(@NotNull FabricRegistryManager fabricRegistryManager)
+	{
+		this.fabricRegistryManager = fabricRegistryManager;
+	}
 
 	@Nullable
 	public ItemData getItem()
@@ -90,7 +97,7 @@ public final class ItemJavaEntityInstance extends EntityManager.JavaEntityInstan
 		getMetadataField(metadata, 8, MetadataType.ITEM, value ->
 		{
 			ItemData oldItem = this.item;
-			this.item = ItemTranslator.translateJavaToBedrock(value);
+			this.item = ItemTranslator.translateJavaToBedrock(value, this.fabricRegistryManager);
 			if (oldItem == null || !oldItem.equals(this.item, false, true, true))
 			{
 				if (this.bedrockEntityInstance != null)

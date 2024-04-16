@@ -40,7 +40,7 @@ import java.util.Set;
 public class EntityTranslator
 {
 	@Nullable
-	public static EntityManager.JavaEntityInstance createEntityInstance(@NotNull EntityType entityType, ObjectData data)
+	public static EntityManager.JavaEntityInstance createEntityInstance(@NotNull EntityType entityType, ObjectData data, @NotNull FabricRegistryManager fabricRegistryManager)
 	{
 		return switch (entityType)
 		{
@@ -67,7 +67,7 @@ public class EntityTranslator
 
 			// TODO: minecart
 
-			case ITEM -> new ItemJavaEntityInstance();
+			case ITEM -> new ItemJavaEntityInstance(fabricRegistryManager);
 			case FALLING_BLOCK ->
 			{
 				int javaBlockId = ((FallingBlockData) data).getId();
@@ -104,7 +104,7 @@ public class EntityTranslator
 	}
 
 	@Nullable
-	public static EntityManager.JavaEntityInstance createEntityInstance(@NotNull String customEntityName, ObjectData data)
+	public static EntityManager.JavaEntityInstance createEntityInstance(@NotNull String customEntityName, ObjectData data, @NotNull FabricRegistryManager fabricRegistryManager)
 	{
 		// TODO: this list is incomplete, these are just the ones that have been implemented in the Fabric mod so far
 		// TODO: it would be nice if this list could be combined with the list of "vanilla" mobs above
@@ -142,6 +142,7 @@ public class EntityTranslator
 			case "genoa:inky_sheep" -> new SheepJavaEntityInstance<>("genoa:inky_sheep", new SheepBedrockEntityInstance());
 			case "genoa:long_nosed_sheep" -> new SheepJavaEntityInstance<>("genoa:long_nosed_sheep", new SheepBedrockEntityInstance());
 			case "genoa:patched_sheep" -> new SheepJavaEntityInstance<>("genoa:patched_sheep", new SheepBedrockEntityInstance());
+			case "genoa:rainbow_sheep" -> new SheepJavaEntityInstance<>("genoa:rainbow_sheep", new SheepBedrockEntityInstance());
 			case "genoa:rocky_sheep" -> new SheepJavaEntityInstance<>("genoa:rocky_sheep", new SheepBedrockEntityInstance());
 
 			default -> null;

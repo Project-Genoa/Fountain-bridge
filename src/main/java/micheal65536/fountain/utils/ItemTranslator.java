@@ -12,21 +12,8 @@ import micheal65536.fountain.registry.JavaItems;
 
 public final class ItemTranslator
 {
-	@Deprecated
-	@NotNull
-	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack)
-	{
-		return translateJavaToBedrockImpl(itemStack, null);
-	}
-
 	@NotNull
 	public static ItemData translateJavaToBedrock(@Nullable ItemStack itemStack, @NotNull FabricRegistryManager fabricRegistryManager)
-	{
-		return translateJavaToBedrockImpl(itemStack, fabricRegistryManager);
-	}
-
-	@NotNull
-	private static ItemData translateJavaToBedrockImpl(@Nullable ItemStack itemStack, @Nullable FabricRegistryManager fabricRegistryManager)
 	{
 		ItemData.Builder builder = ItemData.builder();
 

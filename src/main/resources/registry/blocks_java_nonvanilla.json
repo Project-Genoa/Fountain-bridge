@@ -53,5 +53,105 @@
         }
       }
     ]
+  },
+  {
+    "name": "fountain:rainbow_carpet",
+    "states": [
+      {
+        "name": "[facing=north]",
+        "bedrock": {
+          "name": "minecraft:rainbow_carpet",
+          "state": {
+            "direction": 0
+          }
+        }
+      },
+      {
+        "name": "[facing=south]",
+        "bedrock": {
+          "name": "minecraft:rainbow_carpet",
+          "state": {
+            "direction": 1
+          }
+        }
+      },
+      {
+        "name": "[facing=west]",
+        "bedrock": {
+          "name": "minecraft:rainbow_carpet",
+          "state": {
+            "direction": 3
+          }
+        }
+      },
+      {
+        "name": "[facing=east]",
+        "bedrock": {
+          "name": "minecraft:rainbow_carpet",
+          "state": {
+            "direction": 2
+          }
+        }
+      }
+    ]
+  },
+  {
+    "name": "fountain:rainbow_wool",
+    "states": [
+      {
+        "name": "[facing=north]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 2
+          }
+        }
+      },
+      {
+        "name": "[facing=east]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 5
+          }
+        }
+      },
+      {
+        "name": "[facing=south]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 3
+          }
+        }
+      },
+      {
+        "name": "[facing=west]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 4
+          }
+        }
+      },
+      {
+        "name": "[facing=up]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 1
+          }
+        }
+      },
+      {
+        "name": "[facing=down]",
+        "bedrock": {
+          "name": "minecraft:rainbow_wool",
+          "state": {
+            "facing_direction": 0
+          }
+        }
+      }
+    ]
   }
 ]

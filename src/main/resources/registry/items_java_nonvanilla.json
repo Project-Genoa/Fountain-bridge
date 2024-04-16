@@ -7,6 +7,18 @@
     }
   },
   {
+    "name": "fountain:rainbow_carpet",
+    "bedrock": {
+      "name": "minecraft:rainbow_carpet"
+    }
+  },
+  {
+    "name": "fountain:rainbow_wool",
+    "bedrock": {
+      "name": "minecraft:rainbow_wool"
+    }
+  },
+  {
     "name": "genoa:albino_cow_spawn_egg",
     "bedrock": {
       "name": "minecraft:spawn_egg",

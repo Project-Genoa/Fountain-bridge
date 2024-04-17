@@ -27,8 +27,6 @@ import micheal65536.fountain.utils.entities.RabbitBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.RabbitJavaEntityInstance;
 import micheal65536.fountain.utils.entities.SheepBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.SheepJavaEntityInstance;
-import micheal65536.fountain.utils.entities.SlimeBedrockEntityInstance;
-import micheal65536.fountain.utils.entities.SlimeJavaEntityInstance;
 import micheal65536.fountain.utils.entities.SpiderBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.SpiderJavaEntityInstance;
 import micheal65536.fountain.utils.entities.ZombieBedrockEntityInstance;
@@ -61,7 +59,6 @@ public class EntityTranslator
 
 			case CREEPER -> new CreeperJavaEntityInstance<>("minecraft:creeper", new CreeperBedrockEntityInstance());
 			case SKELETON -> new MobJavaEntityInstance<>("minecraft:skeleton", new MobBedrockEntityInstance());
-			case SLIME -> new SlimeJavaEntityInstance<>("minecraft:slime", new SlimeBedrockEntityInstance());    // TODO: not visible
 			case SPIDER -> new SpiderJavaEntityInstance<>("minecraft:spider", new SpiderBedrockEntityInstance());
 			case ZOMBIE -> new ZombieJavaEntityInstance<>("minecraft:zombie", new ZombieBedrockEntityInstance());
 
@@ -144,6 +141,11 @@ public class EntityTranslator
 			case "genoa:patched_sheep" -> new SheepJavaEntityInstance<>("genoa:patched_sheep", new SheepBedrockEntityInstance());
 			case "genoa:rainbow_sheep" -> new SheepJavaEntityInstance<>("genoa:rainbow_sheep", new SheepBedrockEntityInstance());
 			case "genoa:rocky_sheep" -> new SheepJavaEntityInstance<>("genoa:rocky_sheep", new SheepBedrockEntityInstance());
+
+			case "genoa:genoa_slime" -> new MobJavaEntityInstance<>("genoa:genoa_slime", new MobBedrockEntityInstance());
+			case "genoa:genoa_slime_half" -> new MobJavaEntityInstance<>("genoa:genoa_slime_half", new MobBedrockEntityInstance());
+			case "genoa:genoa_slime_quarter" -> new MobJavaEntityInstance<>("genoa:genoa_slime_quarter", new MobBedrockEntityInstance());
+			case "genoa:tropical_slime" -> new MobJavaEntityInstance<>("genoa:tropical_slime", new MobBedrockEntityInstance());
 
 			default -> null;
 		};

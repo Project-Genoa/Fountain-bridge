@@ -140,8 +140,27 @@
       "hurt": "say",
       "primed": "random.fuse"
     },
+    "glow_squid": {
+      "_bedrock_name": "squid",
+      "squirt": "ink_squirt"
+    },
+    "ocelot": {
+      "ambient": "idle",
+      "hurt": "mob.cat.hit"
+    },
+    "parrot": {
+      "ambient": "idle",
+      "eat": "eat",
+      "fly": "fly"
+    },
     "pig": {
       "hurt": "death"
+    },
+    "polar_bear": {
+      "_bedrock_name": "polarbear",
+      "ambient": "idle",
+      "ambient_baby": "mob.polarbear_baby.idle",
+      "warning": "warning"
     },
     "rabbit": {
       "ambient": "idle",

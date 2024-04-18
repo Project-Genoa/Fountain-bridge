@@ -21,8 +21,12 @@ import micheal65536.fountain.utils.entities.FallingBlockBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
 import micheal65536.fountain.utils.entities.MobBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.MobJavaEntityInstance;
+import micheal65536.fountain.utils.entities.ParrotBedrockEntityInstance;
+import micheal65536.fountain.utils.entities.ParrotJavaEntityInstance;
 import micheal65536.fountain.utils.entities.PigBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.PigJavaEntityInstance;
+import micheal65536.fountain.utils.entities.PolarBearBedrockEntityInstance;
+import micheal65536.fountain.utils.entities.PolarBearJavaEntityInstance;
 import micheal65536.fountain.utils.entities.RabbitBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.RabbitJavaEntityInstance;
 import micheal65536.fountain.utils.entities.SheepBedrockEntityInstance;
@@ -49,11 +53,12 @@ public class EntityTranslator
 			case PIG -> new PigJavaEntityInstance<>("minecraft:pig", new PigBedrockEntityInstance());
 			case SHEEP -> new SheepJavaEntityInstance<>("minecraft:sheep", new SheepBedrockEntityInstance());
 			case RABBIT -> new RabbitJavaEntityInstance<>("minecraft:rabbit", new RabbitBedrockEntityInstance());
-			// TODO: ocelot
-			// TODO: parrot
-			// TODO: polar bear
+			case OCELOT -> new AgeableJavaEntityInstance<>("minecraft:ocelot", new AgeableBedrockEntityInstance());
+			case PARROT -> new ParrotJavaEntityInstance<>("minecraft:parrot", new ParrotBedrockEntityInstance());
+			case POLAR_BEAR -> new PolarBearJavaEntityInstance<>("minecraft:polar_bear", new PolarBearBedrockEntityInstance());
 
 			case SQUID -> new MobJavaEntityInstance<>("minecraft:squid", new MobBedrockEntityInstance());    // TODO: squid rotation
+			case GLOW_SQUID -> new MobJavaEntityInstance<>("genoa:glow_squid", new MobBedrockEntityInstance());    // TODO: change drops in Fabric mod to produce regular ink sac
 			case SALMON -> new MobJavaEntityInstance<>("minecraft:salmon", new MobBedrockEntityInstance());
 			case TROPICAL_FISH -> new MobJavaEntityInstance<>("minecraft:tropicalfish", new MobBedrockEntityInstance());    // TODO: variants
 

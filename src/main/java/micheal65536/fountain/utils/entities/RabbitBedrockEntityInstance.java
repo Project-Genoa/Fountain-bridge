@@ -8,8 +8,6 @@ import java.util.Map;
 
 public class RabbitBedrockEntityInstance extends AgeableBedrockEntityInstance
 {
-	public int variant = 0;
-
 	private boolean jumping = false;
 
 	public RabbitBedrockEntityInstance()
@@ -28,7 +26,6 @@ public class RabbitBedrockEntityInstance extends AgeableBedrockEntityInstance
 	protected void getEntityData(@NotNull Map<EntityDataType<?>, ?> entityData)
 	{
 		super.getEntityData(entityData);
-		putEntityData(entityData, EntityDataTypes.VARIANT, this.variant);    // TODO: doesn't work
 		putEntityData(entityData, EntityDataTypes.JUMP_DURATION, this.jumping ? (byte) 3 : (byte) 0);
 	}
 }

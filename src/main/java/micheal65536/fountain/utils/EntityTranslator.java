@@ -33,6 +33,8 @@ import micheal65536.fountain.utils.entities.SheepBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.SheepJavaEntityInstance;
 import micheal65536.fountain.utils.entities.SpiderBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.SpiderJavaEntityInstance;
+import micheal65536.fountain.utils.entities.WoolyCowBedrockEntityInstance;
+import micheal65536.fountain.utils.entities.WoolyCowJavaEntityInstance;
 import micheal65536.fountain.utils.entities.ZombieBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.ZombieJavaEntityInstance;
 
@@ -126,6 +128,8 @@ public class EntityTranslator
 			case "genoa:dairy_cow" -> new AgeableJavaEntityInstance<>("genoa:dairy_cow", new AgeableBedrockEntityInstance());
 			case "genoa:pinto_cow" -> new AgeableJavaEntityInstance<>("genoa:pinto_cow", new AgeableBedrockEntityInstance());
 			case "genoa:sunset_cow" -> new AgeableJavaEntityInstance<>("genoa:sunset_cow", new AgeableBedrockEntityInstance());
+			case "genoa:umbra_cow" -> new WoolyCowJavaEntityInstance<>("genoa:umbra_cow", new WoolyCowBedrockEntityInstance());
+			case "genoa:wooly_cow" -> new WoolyCowJavaEntityInstance<>("genoa:wooly_cow", new WoolyCowBedrockEntityInstance());
 
 			case "genoa:mottled_pig" -> new PigJavaEntityInstance<>("genoa:mottled_pig", new PigBedrockEntityInstance());
 			case "genoa:pale_pig" -> new PigJavaEntityInstance<>("genoa:pale_pig", new PigBedrockEntityInstance());

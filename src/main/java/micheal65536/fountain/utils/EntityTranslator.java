@@ -19,6 +19,8 @@ import micheal65536.fountain.utils.entities.CreeperBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.CreeperJavaEntityInstance;
 import micheal65536.fountain.utils.entities.FallingBlockBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
+import micheal65536.fountain.utils.entities.MinecartBedrockEntityInstance;
+import micheal65536.fountain.utils.entities.MinecartJavaEntityInstance;
 import micheal65536.fountain.utils.entities.MobBedrockEntityInstance;
 import micheal65536.fountain.utils.entities.MobJavaEntityInstance;
 import micheal65536.fountain.utils.entities.ParrotBedrockEntityInstance;
@@ -69,7 +71,8 @@ public class EntityTranslator
 			case SPIDER -> new SpiderJavaEntityInstance<>("minecraft:spider", new SpiderBedrockEntityInstance());
 			case ZOMBIE -> new ZombieJavaEntityInstance<>("minecraft:zombie", new ZombieBedrockEntityInstance());
 
-			// TODO: minecart
+			case MINECART -> new MinecartJavaEntityInstance<>("minecraft:minecart", new MinecartBedrockEntityInstance());
+			// TODO: what other minecart types does Earth have?
 
 			case ITEM -> new ItemJavaEntityInstance(fabricRegistryManager);
 			case FALLING_BLOCK ->

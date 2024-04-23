@@ -22,6 +22,7 @@ import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.Client
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityDataPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEntityMotionPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetEquipmentPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundSetPassengersPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTakeItemEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundTeleportEntityPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateAttributesPacket;
@@ -294,6 +295,10 @@ public final class ServerPacketHandler extends SessionAdapter
 			else if (packet instanceof ClientboundDamageEventPacket)
 			{
 				this.playerSession.onJavaEntityHurt(((ClientboundDamageEventPacket) packet).getEntityId());
+			}
+			else if (packet instanceof ClientboundSetPassengersPacket)
+			{
+				this.playerSession.onJavaEntitySetPassengers(((ClientboundSetPassengersPacket) packet).getEntityId(), ((ClientboundSetPassengersPacket) packet).getPassengerIds());
 			}
 			else if (packet instanceof ClientboundTakeItemEntityPacket)
 			{

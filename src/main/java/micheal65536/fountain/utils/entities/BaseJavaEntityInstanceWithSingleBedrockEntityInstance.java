@@ -5,6 +5,8 @@ import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Pose;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import org.cloudburstmc.protocol.bedrock.data.entity.EntityLinkData;
+import org.cloudburstmc.protocol.bedrock.packet.SetEntityLinkPacket;
 import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.utils.EntityManager;
@@ -139,5 +141,27 @@ public class BaseJavaEntityInstanceWithSingleBedrockEntityInstance<T extends Bas
 	protected void afterAttributeBatchChange()
 	{
 		this.bedrockEntityInstance.sendData();
+	}
+
+	@Override
+	protected void onMounted(@NotNull EntityManager.JavaEntityInstance mount)
+	{
+		if (mount instanceof BaseJavaEntityInstanceWithSingleBedrockEntityInstance<?>)
+		{
+			SetEntityLinkPacket setEntityLinkPacket = new SetEntityLinkPacket();
+			setEntityLinkPacket.setEntityLink(new EntityLinkData(((BaseJavaEntityInstanceWithSingleBedrockEntityInstance<?>) mount).bedrockEntityInstance.getInstanceId(), this.bedrockEntityInstance.getInstanceId(), EntityLinkData.Type.RIDER, false, false));
+			this.sendBedrockPacket(setEntityLinkPacket);
+		}
+	}
+
+	@Override
+	protected void onUnmounted(@NotNull EntityManager.JavaEntityInstance mount)
+	{
+		if (mount instanceof BaseJavaEntityInstanceWithSingleBedrockEntityInstance<?>)
+		{
+			SetEntityLinkPacket setEntityLinkPacket = new SetEntityLinkPacket();
+			setEntityLinkPacket.setEntityLink(new EntityLinkData(((BaseJavaEntityInstanceWithSingleBedrockEntityInstance<?>) mount).bedrockEntityInstance.getInstanceId(), this.bedrockEntityInstance.getInstanceId(), EntityLinkData.Type.REMOVE, false, false));
+			this.sendBedrockPacket(setEntityLinkPacket);
+		}
 	}
 }

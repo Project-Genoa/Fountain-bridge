@@ -40,6 +40,7 @@ import micheal65536.fountain.PlayerSession;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -214,6 +215,9 @@ public class EntityManager
 		private ItemData armorLegs = ItemData.AIR;
 		private ItemData armorFeet = ItemData.AIR;
 
+		private JavaEntityInstance mount = null;
+		private final HashMap<Integer, JavaEntityInstance> passengers = new HashMap<>();
+
 		public JavaEntityInstance()
 		{
 			// empty
@@ -227,6 +231,18 @@ public class EntityManager
 
 		public final void remove()
 		{
+			if (this.mount != null)
+			{
+				this.mount.removePassenger(this);
+			}
+			if (!this.passengers.isEmpty())
+			{
+				for (JavaEntityInstance passenger : this.passengers.values().toArray(JavaEntityInstance[]::new))
+				{
+					this.removePassenger(passenger);
+				}
+			}
+
 			this.requireEntityManager().removeJavaEntity(this);
 		}
 
@@ -285,6 +301,67 @@ public class EntityManager
 			this.onHurt();
 		}
 
+		public void setPassengers(JavaEntityInstance[] passengers)
+		{
+			HashSet<Integer> passengerIds = new HashSet<>();
+			for (JavaEntityInstance passenger : passengers)
+			{
+				passengerIds.add(passenger.getInstanceId());
+				if (!this.passengers.containsKey(passenger.getInstanceId()))
+				{
+					this.addPassenger(passenger);
+				}
+			}
+			for (JavaEntityInstance passenger : this.passengers.values().toArray(JavaEntityInstance[]::new))
+			{
+				if (!passengerIds.contains(passenger.getInstanceId()))
+				{
+					this.removePassenger(passenger);
+				}
+			}
+		}
+
+		private void addPassenger(@NotNull JavaEntityInstance passenger)
+		{
+			int instanceId = passenger.getInstanceId();
+			if (this.passengers.containsKey(instanceId))
+			{
+				throw new IllegalArgumentException();
+			}
+
+			if (passenger.mount != null)
+			{
+				passenger.mount.removePassenger(passenger);
+			}
+
+			this.passengers.put(instanceId, passenger);
+			passenger.mount = this;
+			this.onPassengerAdded(passenger);
+			passenger.onMounted(this);
+		}
+
+		protected void removePassenger(@NotNull JavaEntityInstance passenger)
+		{
+			int instanceId = passenger.getInstanceId();
+			if (!this.passengers.containsKey(instanceId))
+			{
+				throw new IllegalArgumentException();
+			}
+
+			if (passenger.mount != this)
+			{
+				throw new AssertionError();
+			}
+
+			if (this.passengers.remove(instanceId) != passenger)
+			{
+				throw new AssertionError();
+			}
+			passenger.mount = null;
+			passenger.onUnmounted(this);
+			this.onPassengerRemoved(passenger);
+		}
+
 		protected void onAdded()
 		{
 			// empty
@@ -336,6 +413,26 @@ public class EntityManager
 		}
 
 		protected void onHurt()
+		{
+			// empty
+		}
+
+		protected void onPassengerAdded(@NotNull JavaEntityInstance passenger)
+		{
+			// empty
+		}
+
+		protected void onPassengerRemoved(@NotNull JavaEntityInstance passenger)
+		{
+			// empty
+		}
+
+		protected void onMounted(@NotNull JavaEntityInstance mount)
+		{
+			// empty
+		}
+
+		protected void onUnmounted(@NotNull JavaEntityInstance mount)
 		{
 			// empty
 		}

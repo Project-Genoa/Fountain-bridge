@@ -674,6 +674,34 @@ public final class PlayerSession
 		}
 	}
 
+	public void onJavaEntitySetPassengers(int parentJavaEntityInstanceId, int[] passengerJavaEntityInstanceIds)
+	{
+		if (parentJavaEntityInstanceId == this.javaPlayerEntityId)
+		{
+			LogManager.getLogger().debug("Ignoring entity set passengers for local player entity");
+			return;
+		}
+
+		EntityManager.JavaEntityInstance[] passengerEntityInstances = Arrays.stream(passengerJavaEntityInstanceIds).mapToObj(entityId ->
+		{
+			if (entityId == this.javaPlayerEntityId)
+			{
+				LogManager.getLogger().debug("Ignoring entity set passengers for local player entity");
+				return null;
+			}
+			else
+			{
+				return this.entityManager.getJavaEntity(entityId);
+			}
+		}).filter(entityInstance -> entityInstance != null).toArray(EntityManager.JavaEntityInstance[]::new);
+
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(parentJavaEntityInstanceId);
+		if (entityInstance != null)
+		{
+			entityInstance.setPassengers(passengerEntityInstances);
+		}
+	}
+
 	public void onJavaEntityTaken(@NotNull ClientboundTakeItemEntityPacket clientboundTakeItemEntityPacket)
 	{
 		int collectorJavaEntityId = clientboundTakeItemEntityPacket.getCollectorEntityId();

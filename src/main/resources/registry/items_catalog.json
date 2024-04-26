@@ -3361,14 +3361,6 @@
     "rarity": "rare"
   },
   {
-    "uuid": "5ea17312-6f70-84d6-0d57-97038d622017",
-    "name": "minecraft:reeds",
-    "aux": 0,
-    "stackable": true,
-    "category": "nature",
-    "rarity": "common"
-  },
-  {
     "uuid": "c290939b-a19f-c3c6-d310-b34fee81bd56",
     "name": "minecraft:reeds",
     "aux": 0,

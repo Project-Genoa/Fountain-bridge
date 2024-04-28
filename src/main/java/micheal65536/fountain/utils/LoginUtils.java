@@ -20,46 +20,35 @@ public class LoginUtils
 		String uuid = null;
 		String username = null;
 
-		for (String token : loginPacket.getChain())
+		String extra = loginPacket.getExtra();
+
+		String[] parts = extra.split("\\.");
+		if (parts.length < 2)
 		{
-			String[] parts = token.split("\\.");
-			if (parts.length < 2)
-			{
-				continue;
-			}
-			String dataBase64 = parts[1];
+			return null;
+		}
+		String dataBase64 = parts[1];
 
-			String data;
-			try
-			{
-				data = new String(Base64.getUrlDecoder().decode(dataBase64), StandardCharsets.UTF_8);
-			}
-			catch (IllegalArgumentException exception)
-			{
-				continue;
-			}
+		String data;
+		try
+		{
+			data = new String(Base64.getUrlDecoder().decode(dataBase64), StandardCharsets.UTF_8);
+		}
+		catch (IllegalArgumentException exception)
+		{
+			return null;
+		}
 
-			try
-			{
-				JsonElement root = JsonParser.parseReader(new StringReader(data));
+		try
+		{
+			JsonElement root = JsonParser.parseReader(new StringReader(data));
 
-				if (root.getAsJsonObject().has("extraData"))
-				{
-					if (uuid == null && root.getAsJsonObject().get("extraData").getAsJsonObject().has("XUID"))
-					{
-						uuid = root.getAsJsonObject().get("extraData").getAsJsonObject().get("XUID").getAsString().toLowerCase(Locale.ROOT);
-					}
-
-					if (username == null && root.getAsJsonObject().get("extraData").getAsJsonObject().has("displayName"))
-					{
-						username = root.getAsJsonObject().get("extraData").getAsJsonObject().get("displayName").getAsString();
-					}
-				}
-			}
-			catch (JsonParseException | UnsupportedOperationException | IllegalStateException | NullPointerException exception)
-			{
-				continue;
-			}
+			uuid = root.getAsJsonObject().get("PlatformOnlineId").getAsString().toLowerCase(Locale.ROOT);
+			username = root.getAsJsonObject().get("ThirdPartyName").getAsString();
+		}
+		catch (JsonParseException | UnsupportedOperationException | IllegalStateException | NullPointerException exception)
+		{
+			return null;
 		}
 
 		if (uuid == null || username == null)

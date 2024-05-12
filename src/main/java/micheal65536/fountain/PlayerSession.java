@@ -66,8 +66,11 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTra
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
+import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaDisconnectIdPacket;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaDisconnectStartPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaGameplaySettingsPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaItemParticlePacket;
@@ -81,6 +84,7 @@ import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
 import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket;
+import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -213,21 +217,49 @@ public final class PlayerSession
 
 		if (this.bedrock.isConnected())
 		{
+			// TODO: what is actually the correct flow here for client-requested vs server-initiated disconnect?
+
+			GenoaDisconnectStartPacket genoaDisconnectStartPacket = new GenoaDisconnectStartPacket();
+			this.sendBedrockPacket(genoaDisconnectStartPacket);
+
+			GenoaDisconnectIdPacket genoaDisconnectIdPacket = new GenoaDisconnectIdPacket();
+			this.sendBedrockPacket(genoaDisconnectIdPacket);
+
 			if (fromServer)
 			{
-				// TODO: send Genoa disconnect packets
+				this.bedrock.disconnect();
 			}
 			else
 			{
-				LogManager.getLogger().debug("Session disconnect with Bedrock session still connected and fromServer = false???");
-			}
+				// this is used because after a Genoa disconnect request we leave the bedrock side of the connection open and wait for the client to actually disconnect but we don't want the client trying to actually do stuff after this
+				this.bedrock.setPacketHandler(new BedrockPacketHandler()
+				{
+					@Override
+					public PacketSignal handlePacket(BedrockPacket packet)
+					{
+						LogManager.getLogger().warn("Received packet after disconnect request: {}", packet.getClass().getSimpleName());
+						return PacketSignal.HANDLED;
+					}
 
-			this.bedrock.disconnect();
+					@Override
+					public void onDisconnect(String reason)
+					{
+						LogManager.getLogger().info("Client has finished disconnecting: {}", reason);
+					}
+				});
+			}
 		}
 
 		this.java.disconnect("");
 
 		this.disconnectCallback.accept(this);
+	}
+
+	public void onDisconnectRequest()
+	{
+		LogManager.getLogger().info("Client disconnect request");
+
+		this.disconnect(false);
 	}
 
 	private void tick()

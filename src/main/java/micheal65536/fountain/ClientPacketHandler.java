@@ -8,6 +8,7 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTra
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
+import org.cloudburstmc.protocol.bedrock.packet.GenoaDisconnectRequestPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaItemPickupPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaNetworkTransformPacket;
@@ -137,6 +138,13 @@ public final class ClientPacketHandler implements BedrockPacketHandler
 	public PacketSignal handle(AnimatePacket packet)
 	{
 		this.playerSession.clientPlayerAnimation(packet);
+		return PacketSignal.HANDLED;
+	}
+
+	@Override
+	public PacketSignal handle(GenoaDisconnectRequestPacket packet)
+	{
+		this.playerSession.onDisconnectRequest();
 		return PacketSignal.HANDLED;
 	}
 

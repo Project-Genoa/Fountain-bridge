@@ -6,25 +6,28 @@ import com.github.steveice10.mc.protocol.packet.common.serverbound.ServerboundCu
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import org.apache.logging.log4j.LogManager;
-import org.cloudburstmc.protocol.bedrock.data.inventory.ItemData;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaInventoryDataPacket;
 import org.cloudburstmc.protocol.bedrock.packet.InventoryContentPacket;
 import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.PlayerSession;
 import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
-import micheal65536.fountain.connector.plugin.Inventory;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.stream.IntStream;
 
 public class InventoryManager
 {
 	private final PlayerSession playerSession;
-	private final FabricRegistryManager fabricRegistryManager;
+
 	private final MinecraftCodecHelper minecraftCodecHelper;
 
-	private final GenoaInventory genoaInventory;
+	private final FabricRegistryManager fabricRegistryManager;
+	private final PlayerConnectorPluginWrapper playerConnectorPluginWrapper;
+	private final GenoaInventoryHelper genoaInventoryHelper;
 
 	private boolean initialiseSent = false;
 
@@ -32,58 +35,62 @@ public class InventoryManager
 	private boolean inventorySyncRequestQueued;
 	private boolean sentInventorySyncRequestClearHotbar;
 	private boolean queuedInventorySyncRequestClearHotbar;
-
-	private boolean updatePending = false;
-	private String pendingUpdateJSON;
 	private boolean setHotbarRequestSent = false;
 
-	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull FabricRegistryManager fabricRegistryManager, @NotNull MinecraftCodecHelper minecraftCodecHelper, @NotNull Inventory initialInventory, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
+	private GenoaInventoryHelper.Item[] sentServerHotbar;
+	private GenoaInventoryHelper.Item[] currentServerHotbar;
+
+	public InventoryManager(@NotNull PlayerSession playerSession, @NotNull FabricRegistryManager fabricRegistryManager, @NotNull MinecraftCodecHelper minecraftCodecHelper, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper)
 	{
 		this.playerSession = playerSession;
-		this.fabricRegistryManager = fabricRegistryManager;
+
 		this.minecraftCodecHelper = minecraftCodecHelper;
 
-		this.genoaInventory = new GenoaInventory(this.fabricRegistryManager, playerConnectorPluginWrapper);
-		this.genoaInventory.loadInitialInventory(initialInventory);
-	}
+		this.fabricRegistryManager = fabricRegistryManager;
+		this.playerConnectorPluginWrapper = playerConnectorPluginWrapper;
+		this.genoaInventoryHelper = new GenoaInventoryHelper(this.fabricRegistryManager, this.playerConnectorPluginWrapper);
 
-	@NotNull
-	public Inventory getInventoryForConnectorPlugin()
-	{
-		return this.genoaInventory.toConnectorPluginInventory();
+		this.currentServerHotbar = new GenoaInventoryHelper.Item[7];
 	}
 
 	public void initialiseServerInventory()
 	{
 		if (!this.initialiseSent)
 		{
-			this.sendInitialSetHotbarRequest(this.genoaInventory.getHotbarForJavaServer());
+			GenoaInventoryHelper.Inventory inventory = this.genoaInventoryHelper.getInventoryFromConnectorPlugin();
+			this.sendInitialSetHotbarRequest(inventory.hotbar);
 		}
 	}
 
-	public void syncInventory()
+	public void syncInventoryFromServer()
 	{
-		this.syncInventory(false);
-	}
-
-	private void syncInventory(boolean clearHotbar)
-	{
-		if (this.inventorySyncRequestSent || !this.initialiseSent || this.inventorySyncRequestQueued)
-		{
-			this.inventorySyncRequestQueued = true;
-			this.queuedInventorySyncRequestClearHotbar |= clearHotbar;
-		}
-		else
-		{
-			this.sendInventorySyncRequest(clearHotbar);
-		}
+		this.queueInventorySyncRequest(false);
 	}
 
 	public void onGenoaHotbarChange(@NotNull String json)
 	{
-		this.updatePending = true;
-		this.pendingUpdateJSON = json;
-		this.syncInventory(true);
+		GenoaInventoryHelper.Item[] hotbar = this.genoaInventoryHelper.readHotbarFromClient(json);
+		if (hotbar == null)
+		{
+			return;
+		}
+		this.genoaInventoryHelper.setHotbar(hotbar);
+		this.queueInventorySyncRequest(true);
+	}
+
+	public void sendClientHotbar()
+	{
+		InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
+		inventoryContentPacket.setContainerId(0);
+		inventoryContentPacket.setContents(Arrays.stream(this.genoaInventoryHelper.getInventoryFromConnectorPlugin().hotbar).map(this.genoaInventoryHelper::toItemData).toList());
+		this.playerSession.sendBedrockPacket(inventoryContentPacket);
+	}
+
+	public void sendClientGenoaInventory()
+	{
+		GenoaInventoryDataPacket genoaInventoryDataPacket = new GenoaInventoryDataPacket();
+		genoaInventoryDataPacket.setJson(this.genoaInventoryHelper.makeGenoaInventoryDataJSON(this.genoaInventoryHelper.getInventoryFromConnectorPlugin()));
+		this.playerSession.sendBedrockPacket(genoaInventoryDataPacket);
 	}
 
 	public void onInventorySyncResponse(ItemStack[] itemStacks, ItemStack[] hotbar)
@@ -96,25 +103,26 @@ public class InventoryManager
 
 		for (ItemStack itemStack : itemStacks)
 		{
-			this.genoaInventory.addItemFromJavaServer(itemStack);
+			GenoaInventoryHelper.Item item = this.genoaInventoryHelper.toGenoaItem(itemStack);
+			if (item != null)
+			{
+				this.genoaInventoryHelper.addItem(item);
+			}
 		}
 
+		GenoaInventoryHelper.Item[] genoaInventoryHelperHotbar = Arrays.stream(hotbar).map(itemStack -> itemStack != null ? this.genoaInventoryHelper.toGenoaItem(itemStack) : null).toArray(GenoaInventoryHelper.Item[]::new);
 		if (this.sentInventorySyncRequestClearHotbar)
 		{
-			this.genoaInventory.setHotbarFromJavaServer(hotbar);
+			this.handleServerHotbarChange(genoaInventoryHelperHotbar);
+			this.currentServerHotbar = new GenoaInventoryHelper.Item[7];
 
-			if (!this.updatePending)
-			{
-				throw new AssertionError();
-			}
-			this.genoaInventory.updateHotbarFromClient(this.pendingUpdateJSON);
-
-			this.sendSetHotbarRequest(this.genoaInventory.getHotbarForJavaServer());
+			this.sendSetHotbarRequest(this.genoaInventoryHelper.getInventoryFromConnectorPlugin().hotbar);
 		}
 		else
 		{
-			this.genoaInventory.setHotbarFromJavaServer(hotbar);
+			this.handleServerHotbarChange(genoaInventoryHelperHotbar);
 
+			this.genoaInventoryHelper.setHotbar(genoaInventoryHelperHotbar);
 			this.sendClientHotbar();
 
 			this.inventorySyncRequestSent = false;
@@ -134,48 +142,174 @@ public class InventoryManager
 		{
 			throw new AssertionError();
 		}
-		if (!this.updatePending)
-		{
-			throw new AssertionError();
-		}
 
 		if (success)
 		{
-			this.updatePending = false;
-			this.syncInventory(false);
+			this.currentServerHotbar = this.sentServerHotbar;
+			this.queueInventorySyncRequest(false);
 			this.sendQueuedInventorySyncRequest();
 		}
 		else
 		{
-			this.genoaInventory.clearHotbar();
-			this.syncInventory(true);
+			this.queueInventorySyncRequest(true);
 			this.sendQueuedInventorySyncRequest();
 		}
 	}
 
-	public void sendClientHotbar()
+	private void handleServerHotbarChange(GenoaInventoryHelper.Item[] newHotbar)
 	{
-		InventoryContentPacket inventoryContentPacket = new InventoryContentPacket();
-		inventoryContentPacket.setContainerId(0);
-		inventoryContentPacket.setContents(Arrays.stream(this.genoaInventory.getHotbarForJavaServer()).map(itemStack ->
+		int[] changedIndexes = IntStream.range(0, 7).filter(index ->
 		{
-			if (itemStack == null || itemStack.getAmount() == 0)
+			GenoaInventoryHelper.Item currentItem = this.currentServerHotbar[index];
+			GenoaInventoryHelper.Item newItem = newHotbar[index];
+			if (currentItem == null && newItem == null)
 			{
-				return ItemData.builder().build();
+				return false;
 			}
-			else
+			else if (currentItem != null && newItem != null)
 			{
-				return ItemTranslator.translateJavaToBedrock(itemStack, this.fabricRegistryManager);
+				if (newItem.uuid.equals(currentItem.uuid))
+				{
+					if (currentItem.instanceId != null && newItem.instanceId != null && newItem.instanceId.equals(currentItem.instanceId) && newItem.wear == currentItem.wear)
+					{
+						return false;
+					}
+					else if (currentItem.instanceId == null && newItem.instanceId == null && newItem.count == currentItem.count)
+					{
+						return false;
+					}
+				}
 			}
-		}).toList());
-		this.playerSession.sendBedrockPacket(inventoryContentPacket);
+			return true;
+		}).toArray();
+		if (changedIndexes.length == 0)
+		{
+			return;
+		}
+
+		HashMap<String, Integer> stackableItemCountChanges = new HashMap<>();
+		HashMap<String, HashMap<String, Integer>> addedNonStackableItems = new HashMap<>();
+		HashMap<String, HashSet<String>> removedNonStackableItems = new HashMap<>();
+		HashMap<String, HashMap<String, Integer>> updatedNonStackableItems = new HashMap<>();
+		for (int index : changedIndexes)
+		{
+			GenoaInventoryHelper.Item item = this.currentServerHotbar[index];
+			if (item != null)
+			{
+				if (item.instanceId == null)
+				{
+					stackableItemCountChanges.put(item.uuid, stackableItemCountChanges.getOrDefault(item.uuid, 0) - item.count);
+				}
+				else
+				{
+					if (!removedNonStackableItems.computeIfAbsent(item.uuid, uuid -> new HashSet<>()).add(item.instanceId))
+					{
+						throw new AssertionError();
+					}
+				}
+			}
+		}
+		for (int index : changedIndexes)
+		{
+			GenoaInventoryHelper.Item item = newHotbar[index];
+			if (item != null)
+			{
+				if (item.instanceId == null)
+				{
+					stackableItemCountChanges.put(item.uuid, stackableItemCountChanges.getOrDefault(item.uuid, 0) + item.count);
+				}
+				else
+				{
+					if (addedNonStackableItems.computeIfAbsent(item.uuid, uuid -> new HashMap<>()).put(item.instanceId, item.wear) != null)
+					{
+						throw new AssertionError();
+					}
+				}
+			}
+		}
+
+		for (String uuid : removedNonStackableItems.keySet())
+		{
+			HashSet<String> removedInstances = removedNonStackableItems.get(uuid);
+			HashMap<String, Integer> addedInstances = addedNonStackableItems.getOrDefault(uuid, null);
+			if (addedInstances == null)
+			{
+				continue;
+			}
+			for (String instanceId : removedInstances.toArray(String[]::new))
+			{
+				if (addedInstances.containsKey(instanceId))
+				{
+					int wear = addedInstances.get(instanceId);
+					updatedNonStackableItems.computeIfAbsent(uuid, uuid1 -> new HashMap<>()).put(instanceId, wear);
+					removedInstances.remove(instanceId);
+					addedInstances.remove(instanceId);
+				}
+			}
+		}
+
+		stackableItemCountChanges.forEach((uuid, count) ->
+		{
+			if (count > 0)
+			{
+				this.genoaInventoryHelper.addItem(new GenoaInventoryHelper.Item(uuid, count));
+			}
+			else if (count < 0)
+			{
+				int removedCount = this.genoaInventoryHelper.takeItem(new GenoaInventoryHelper.Item(uuid, -count));
+				if (removedCount < -count)
+				{
+					LogManager.getLogger().warn("Attempted to remove item {} {} that is not in inventory", uuid, (-count) - removedCount);
+				}
+			}
+		});
+		addedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach((instanceId, wear) ->
+			{
+				this.genoaInventoryHelper.addItem(new GenoaInventoryHelper.Item(uuid, instanceId, wear));
+			});
+		});
+		removedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach(instanceId ->
+			{
+				int removedCount = this.genoaInventoryHelper.takeItem(new GenoaInventoryHelper.Item(uuid, instanceId, 0));
+				if (removedCount == 0)
+				{
+					LogManager.getLogger().warn("Attempted to remove item {} {} that is not in inventory", uuid, instanceId);
+				}
+				else if (removedCount > 1)
+				{
+					throw new AssertionError();
+				}
+			});
+		});
+		updatedNonStackableItems.forEach((uuid, instances) ->
+		{
+			instances.forEach((instanceId, wear) ->
+			{
+				this.genoaInventoryHelper.updateItemWear(new GenoaInventoryHelper.Item(uuid, instanceId, wear));
+			});
+		});
+
+		for (int index : changedIndexes)
+		{
+			this.currentServerHotbar[index] = newHotbar[index];
+		}
 	}
 
-	public void sendClientGenoaInventory()
+	private void queueInventorySyncRequest(boolean clearHotbar)
 	{
-		GenoaInventoryDataPacket genoaInventoryDataPacket = new GenoaInventoryDataPacket();
-		genoaInventoryDataPacket.setJson(this.genoaInventory.getGenoaInventoryResponseJSON());
-		this.playerSession.sendBedrockPacket(genoaInventoryDataPacket);
+		if (this.inventorySyncRequestSent || !this.initialiseSent || this.inventorySyncRequestQueued)
+		{
+			this.inventorySyncRequestQueued = true;
+			this.queuedInventorySyncRequestClearHotbar |= clearHotbar;
+		}
+		else
+		{
+			this.sendInventorySyncRequest(clearHotbar);
+		}
 	}
 
 	private void sendQueuedInventorySyncRequest()
@@ -201,15 +335,15 @@ public class InventoryManager
 		this.sentInventorySyncRequestClearHotbar = clearHotbar;
 	}
 
-	private void sendSetHotbarRequest(ItemStack[] hotbar)
+	private void sendSetHotbarRequest(GenoaInventoryHelper.Item[] hotbar)
 	{
 		ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
 		byteBuf.writeBoolean(false);
-		for (ItemStack itemStack : hotbar)
+		for (GenoaInventoryHelper.Item item : hotbar)
 		{
 			try
 			{
-				this.minecraftCodecHelper.writeItemStack(byteBuf, itemStack);
+				this.minecraftCodecHelper.writeItemStack(byteBuf, this.genoaInventoryHelper.toItemStack(item));
 			}
 			catch (IOException exception)
 			{
@@ -221,18 +355,19 @@ public class InventoryManager
 		ServerboundCustomPayloadPacket serverboundCustomPayloadPacket = new ServerboundCustomPayloadPacket("fountain:set_hotbar_request", data);
 		this.playerSession.sendJavaPacket(serverboundCustomPayloadPacket);
 
+		this.sentServerHotbar = hotbar;
 		this.setHotbarRequestSent = true;
 	}
 
-	private void sendInitialSetHotbarRequest(ItemStack[] hotbar)
+	private void sendInitialSetHotbarRequest(GenoaInventoryHelper.Item[] hotbar)
 	{
 		ByteBuf byteBuf = ByteBufAllocator.DEFAULT.buffer();
 		byteBuf.writeBoolean(true);
-		for (ItemStack itemStack : hotbar)
+		for (GenoaInventoryHelper.Item item : hotbar)
 		{
 			try
 			{
-				this.minecraftCodecHelper.writeItemStack(byteBuf, itemStack);
+				this.minecraftCodecHelper.writeItemStack(byteBuf, this.genoaInventoryHelper.toItemStack(item));
 			}
 			catch (IOException exception)
 			{
@@ -244,8 +379,10 @@ public class InventoryManager
 		ServerboundCustomPayloadPacket serverboundCustomPayloadPacket = new ServerboundCustomPayloadPacket("fountain:set_hotbar_request", data);
 		this.playerSession.sendJavaPacket(serverboundCustomPayloadPacket);
 
+		this.currentServerHotbar = hotbar;
 		this.initialiseSent = true;
-		this.syncInventory(false);
+
+		this.queueInventorySyncRequest(false);
 		this.sendQueuedInventorySyncRequest();
 	}
 }

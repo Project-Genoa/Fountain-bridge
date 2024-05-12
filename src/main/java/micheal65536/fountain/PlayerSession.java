@@ -91,7 +91,6 @@ import org.jetbrains.annotations.Nullable;
 import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
 import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.connector.plugin.DisconnectResponse;
-import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.registry.EarthEntitiesRegistry;
 import micheal65536.fountain.registry.JavaItems;
 import micheal65536.fountain.utils.ChunkManager;
@@ -143,7 +142,7 @@ public final class PlayerSession
 
 	final ReentrantLock mutex = new ReentrantLock(true);
 
-	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull TcpClientSession javaSession, @NotNull Inventory initialInventory, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper, @NotNull Consumer<PlayerSession> disconnectCallback)
+	public PlayerSession(@NotNull BedrockSession bedrockSession, @NotNull TcpClientSession javaSession, @NotNull PlayerConnectorPluginWrapper playerConnectorPluginWrapper, @NotNull Consumer<PlayerSession> disconnectCallback)
 	{
 		this.bedrock = bedrockSession;
 		this.java = javaSession;
@@ -151,7 +150,7 @@ public final class PlayerSession
 		this.disconnectCallback = disconnectCallback;
 
 		this.fabricRegistryManager = new FabricRegistryManager(this, (MinecraftCodecHelper) this.java.getCodecHelper());
-		this.inventoryManager = new InventoryManager(this, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper(), initialInventory, this.playerConnectorPluginWrapper);
+		this.inventoryManager = new InventoryManager(this, this.fabricRegistryManager, (MinecraftCodecHelper) this.java.getCodecHelper(), this.playerConnectorPluginWrapper);
 		this.chunkManager = new ChunkManager(MAX_NONEMPTY_CHUNK_RADIUS, this, this.fabricRegistryManager);
 		this.entityManager = new EntityManager(this);
 		this.effectManager = new EffectManager(this);
@@ -207,7 +206,7 @@ public final class PlayerSession
 		DisconnectResponse disconnectResponse;
 		try
 		{
-			disconnectResponse = this.playerConnectorPluginWrapper.onPlayerDisconnected(this.inventoryManager.getInventoryForConnectorPlugin());
+			disconnectResponse = this.playerConnectorPluginWrapper.onPlayerDisconnected();
 		}
 		catch (ConnectorPlugin.ConnectorPluginException exception)
 		{
@@ -966,7 +965,7 @@ public final class PlayerSession
 	{
 		if (clientboundContainerSetContentPacket.getContainerId() == 0)
 		{
-			this.inventoryManager.syncInventory();
+			this.inventoryManager.syncInventoryFromServer();
 		}
 	}
 
@@ -974,7 +973,7 @@ public final class PlayerSession
 	{
 		if (clientboundContainerSetSlotPacket.getContainerId() == 0)
 		{
-			this.inventoryManager.syncInventory();
+			this.inventoryManager.syncInventoryFromServer();
 		}
 	}
 

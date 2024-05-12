@@ -1,7 +1,6 @@
 package micheal65536.fountain.connector;
 
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.connector.plugin.ConnectorPlugin;
 import micheal65536.fountain.connector.plugin.DisconnectResponse;
@@ -9,8 +8,12 @@ import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.connector.plugin.Logger;
 import micheal65536.fountain.connector.plugin.PlayerLoginInfo;
 
+import java.util.HashMap;
+
 public final class DefaultConnectorPlugin implements ConnectorPlugin
 {
+	private final HashMap<String, GenoaInventory> playerInventories = new HashMap<>();
+
 	@Override
 	public void init(@NotNull String arg, @NotNull Logger logger) throws ConnectorPluginException
 	{
@@ -42,52 +45,71 @@ public final class DefaultConnectorPlugin implements ConnectorPlugin
 	}
 
 	@Override
-	@Nullable
-	public Inventory onPlayerConnected(@NotNull PlayerLoginInfo playerLoginInfo) throws ConnectorPluginException
+	public boolean onPlayerConnected(@NotNull PlayerLoginInfo playerLoginInfo) throws ConnectorPluginException
 	{
-		return new Inventory(new Inventory.StackableItem[0], new Inventory.NonStackableItem[0], new Inventory.HotbarItem[7]);
+		this.playerInventories.put(playerLoginInfo.uuid, new GenoaInventory(new Inventory(new Inventory.StackableItem[0], new Inventory.NonStackableItem[0], new Inventory.HotbarItem[7])));
+		return true;
 	}
 
 	@Override
 	@NotNull
-	public DisconnectResponse onPlayerDisconnected(@NotNull String playerId, @NotNull Inventory inventory) throws ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected(@NotNull String playerId) throws ConnectorPluginException
 	{
+		this.playerInventories.remove(playerId);
 		return new DisconnectResponse();
+	}
+
+	@Override
+	@NotNull
+	public Inventory onPlayerGetInventory(@NotNull String playerId) throws ConnectorPluginException
+	{
+		return this.getInventoryForPlayer(playerId).toConnectorPluginInventory();
 	}
 
 	@Override
 	public void onPlayerInventoryAddItem(@NotNull String playerId, @NotNull String itemId, int count) throws ConnectorPluginException
 	{
-		// empty
+		this.getInventoryForPlayer(playerId).addItem(itemId, count);
 	}
 
 	@Override
 	public void onPlayerInventoryAddItem(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId, int wear) throws ConnectorPluginException
 	{
-		// empty
+		this.getInventoryForPlayer(playerId).addItem(itemId, instanceId, wear);
 	}
 
 	@Override
-	public void onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, int count) throws ConnectorPluginException
+	public int onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, int count) throws ConnectorPluginException
 	{
-		// empty
+		return this.getInventoryForPlayer(playerId).takeItem(itemId, count);
 	}
 
 	@Override
-	public void onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId) throws ConnectorPluginException
+	public boolean onPlayerInventoryRemoveItem(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId) throws ConnectorPluginException
 	{
-		// empty
+		return this.getInventoryForPlayer(playerId).takeItem(itemId, instanceId);
 	}
 
 	@Override
 	public void onPlayerInventoryUpdateItemWear(@NotNull String playerId, @NotNull String itemId, @NotNull String instanceId, int wear) throws ConnectorPluginException
 	{
-		// empty
+		this.getInventoryForPlayer(playerId).updateItemWear(itemId, instanceId, wear);
 	}
 
 	@Override
 	public void onPlayerInventorySetHotbar(@NotNull String playerId, Inventory.HotbarItem[] hotbar) throws ConnectorPluginException
 	{
-		// empty
+		this.getInventoryForPlayer(playerId).setHotbar(hotbar);
+	}
+
+	@NotNull
+	private GenoaInventory getInventoryForPlayer(@NotNull String playerId) throws ConnectorPluginException
+	{
+		GenoaInventory inventory = this.playerInventories.getOrDefault(playerId, null);
+		if (inventory == null)
+		{
+			throw new ConnectorPluginException("No inventory found for player %s".formatted(playerId));
+		}
+		return inventory;
 	}
 }

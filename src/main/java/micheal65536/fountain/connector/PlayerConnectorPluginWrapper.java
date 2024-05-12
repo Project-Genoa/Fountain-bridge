@@ -18,9 +18,15 @@ public final class PlayerConnectorPluginWrapper
 	}
 
 	@NotNull
-	public DisconnectResponse onPlayerDisconnected(@NotNull Inventory inventory) throws ConnectorPlugin.ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected() throws ConnectorPlugin.ConnectorPluginException
 	{
-		return this.connectorPlugin.onPlayerDisconnected(this.playerId, inventory);
+		return this.connectorPlugin.onPlayerDisconnected(this.playerId);
+	}
+
+	@NotNull
+	public Inventory onPlayerGetInventory() throws ConnectorPlugin.ConnectorPluginException
+	{
+		return this.connectorPlugin.onPlayerGetInventory(this.playerId);
 	}
 
 	public void onPlayerInventoryAddItem(@NotNull String itemId, int count) throws ConnectorPlugin.ConnectorPluginException
@@ -33,14 +39,14 @@ public final class PlayerConnectorPluginWrapper
 		this.connectorPlugin.onPlayerInventoryAddItem(this.playerId, itemId, instanceId, wear);
 	}
 
-	public void onPlayerInventoryRemoveItem(@NotNull String itemId, int count) throws ConnectorPlugin.ConnectorPluginException
+	public int onPlayerInventoryRemoveItem(@NotNull String itemId, int count) throws ConnectorPlugin.ConnectorPluginException
 	{
-		this.connectorPlugin.onPlayerInventoryRemoveItem(this.playerId, itemId, count);
+		return this.connectorPlugin.onPlayerInventoryRemoveItem(this.playerId, itemId, count);
 	}
 
-	public void onPlayerInventoryRemoveItem(@NotNull String itemId, @NotNull String instanceId) throws ConnectorPlugin.ConnectorPluginException
+	public boolean onPlayerInventoryRemoveItem(@NotNull String itemId, @NotNull String instanceId) throws ConnectorPlugin.ConnectorPluginException
 	{
-		this.connectorPlugin.onPlayerInventoryRemoveItem(this.playerId, itemId, instanceId);
+		return this.connectorPlugin.onPlayerInventoryRemoveItem(this.playerId, itemId, instanceId);
 	}
 
 	public void onPlayerInventoryUpdateItemWear(@NotNull String itemId, @NotNull String instanceId, int wear) throws ConnectorPlugin.ConnectorPluginException

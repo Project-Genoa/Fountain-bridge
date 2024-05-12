@@ -23,7 +23,6 @@ import org.jetbrains.annotations.NotNull;
 
 import micheal65536.fountain.connector.PlayerConnectorPluginWrapper;
 import micheal65536.fountain.connector.plugin.ConnectorPlugin;
-import micheal65536.fountain.connector.plugin.Inventory;
 import micheal65536.fountain.connector.plugin.PlayerLoginInfo;
 import micheal65536.fountain.utils.LoginUtils;
 
@@ -91,11 +90,10 @@ public class SessionsManager
 			this.lock.unlock();
 			return;
 		}
-		Inventory initialInventory;
 		try
 		{
-			initialInventory = this.connectorPlugin.onPlayerConnected(new PlayerLoginInfo(loginInfo.uuid));
-			if (initialInventory == null)
+			boolean accepted = this.connectorPlugin.onPlayerConnected(new PlayerLoginInfo(loginInfo.uuid));
+			if (!accepted)
 			{
 				LogManager.getLogger().warn("Connector plugin rejected player login for {} {}", loginInfo.username, loginInfo.uuid);
 				this.disconnectPending(loginBedrockPacketHandler);
@@ -116,7 +114,7 @@ public class SessionsManager
 		MinecraftProtocol javaProtocol = new MinecraftProtocol(MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT, loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession(this.serverAddress, this.serverPort, javaProtocol);
 
-		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, initialInventory, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
+		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
 		this.activeSessions.put(loginInfo.uuid, playerSession);
 
 		playerSession.mutex.lock();

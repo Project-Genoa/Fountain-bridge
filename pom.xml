@@ -77,7 +77,7 @@
         <dependency>
             <groupId>org.cloudburstmc.protocol</groupId>
             <artifactId>bedrock-connection</artifactId>
-            <version>3.0.0.Beta1-SNAPSHOT</version>
+            <version>3.0.0.Genoa-SNAPSHOT</version>
             <scope>compile</scope>
         </dependency>
         <dependency>

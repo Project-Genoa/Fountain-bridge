@@ -7827,7 +7827,7 @@
     "name": "minecraft:snow",
     "id": 304,
     "bedrock": {
-      "name": "minecraft:snow"
+      "name": "minecraft:snow_layer"
     }
   },
   {

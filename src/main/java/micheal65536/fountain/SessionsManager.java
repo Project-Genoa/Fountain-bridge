@@ -41,17 +41,19 @@ public class SessionsManager
 	private final String serverAddress;
 	private final int serverPort;
 	private final ConnectorPlugin connectorPlugin;
+	private final boolean useUUIDAsUsername;
 
 	private final ReentrantLock lock = new ReentrantLock(true);
 
 	private final HashSet<LoginBedrockPacketHandler> pendingSessions = new HashSet<>();
 	private final HashMap<String, PlayerSession> activeSessions = new HashMap<>();
 
-	public SessionsManager(@NotNull String serverAddress, int serverPort, @NotNull ConnectorPlugin connectorPlugin)
+	public SessionsManager(@NotNull String serverAddress, int serverPort, @NotNull ConnectorPlugin connectorPlugin, boolean useUUIDAsUsername)
 	{
 		this.serverAddress = serverAddress;
 		this.serverPort = serverPort;
 		this.connectorPlugin = connectorPlugin;
+		this.useUUIDAsUsername = useUUIDAsUsername;
 	}
 
 	public void newClientConnection(@NotNull BedrockServerSession bedrockServerSession)
@@ -111,7 +113,7 @@ public class SessionsManager
 		this.pendingSessions.remove(loginBedrockPacketHandler);
 		LogManager.getLogger().info("Player logged in {} {}", loginInfo.username, loginInfo.uuid);
 
-		MinecraftProtocol javaProtocol = new MinecraftProtocol(MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT, loginInfo.username);
+		MinecraftProtocol javaProtocol = new MinecraftProtocol(MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT, this.useUUIDAsUsername ? loginInfo.uuid : loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession(this.serverAddress, this.serverPort, javaProtocol);
 
 		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);

@@ -145,6 +145,11 @@ public class Main
 				.argName("arg")
 				.desc("Argument for the connector plugin")
 				.build());
+		options.addOption(Option.builder()
+				.option("useUUIDAsUsername")
+				.hasArg(false)
+				.desc("Use the player UUID as the username for the Java server")
+				.build());
 		CommandLine commandLine;
 		int port;
 		String serverAddress;
@@ -152,6 +157,7 @@ public class Main
 		String connectorPluginJarFilename;
 		String connectorPluginClassName;
 		String connectorPluginArg;
+		boolean useUUIDAsUsername;
 		try
 		{
 			commandLine = new DefaultParser().parse(options, args);
@@ -161,6 +167,7 @@ public class Main
 			connectorPluginJarFilename = commandLine.getOptionValue("connectorPluginJar", null);
 			connectorPluginClassName = commandLine.getOptionValue("connectorPluginClass", DefaultConnectorPlugin.class.getCanonicalName());
 			connectorPluginArg = commandLine.getOptionValue("connectorPluginArg", "");
+			useUUIDAsUsername = commandLine.hasOption("useUUIDAsUsername");
 		}
 		catch (ParseException exception)
 		{
@@ -170,7 +177,7 @@ public class Main
 		}
 
 		ConnectorPlugin connectorPlugin = loadConnectorPlugin(connectorPluginJarFilename, connectorPluginClassName, connectorPluginArg);
-		SessionsManager sessionsManager = new SessionsManager(serverAddress, serverPort, connectorPlugin);
+		SessionsManager sessionsManager = new SessionsManager(serverAddress, serverPort, connectorPlugin, useUUIDAsUsername);
 		Runtime.getRuntime().addShutdownHook(new Thread(() ->
 		{
 			sessionsManager.shutdown();

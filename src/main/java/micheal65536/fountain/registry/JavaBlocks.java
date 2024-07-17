@@ -43,7 +43,6 @@ public class JavaBlocks
 					BedrockMapping bedrockMapping = readBedrockMapping(element.getAsJsonObject().get("bedrock").getAsJsonObject(), root.getAsJsonArray());
 					if (bedrockMapping == null)
 					{
-						LogManager.getLogger().debug("Ignoring Java block {}", name);
 						continue;
 					}
 					bedrockMap.put(id, bedrockMapping);
@@ -76,7 +75,6 @@ public class JavaBlocks
 						BedrockMapping bedrockMapping = readBedrockMapping(stateElement.getAsJsonObject().get("bedrock").getAsJsonObject(), null);
 						if (bedrockMapping == null)
 						{
-							LogManager.getLogger().debug("Ignoring Java block {}", name);
 							continue;
 						}
 						bedrockNonVanillaMap.put(name, bedrockMapping);

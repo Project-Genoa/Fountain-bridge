@@ -2,7 +2,6 @@ package micheal65536.fountain.mappings;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import org.apache.logging.log4j.LogManager;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -69,10 +68,6 @@ public class DirectSounds
 				{
 					String bedrockName = element.getAsString();
 					map.putIfAbsent(javaPath + javaName, bedrockName.contains(".") || bedrockName.equals("_ignore") ? bedrockName : (bedrockPath + bedrockName));
-					if (bedrockName.equals("_ignore"))
-					{
-						LogManager.getLogger().debug("Ignoring sound {}", javaPath + javaName);
-					}
 				}
 			}
 		});

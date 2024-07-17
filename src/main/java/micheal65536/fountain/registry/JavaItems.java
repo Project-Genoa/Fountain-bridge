@@ -36,7 +36,6 @@ public class JavaItems
 				JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
 				if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
 				{
-					LogManager.getLogger().debug("Ignoring Java item {}", name);
 					continue;
 				}
 				String bedrockName = bedrockMapping.get("name").getAsString();
@@ -67,7 +66,6 @@ public class JavaItems
 				JsonObject bedrockMapping = element.getAsJsonObject().get("bedrock").getAsJsonObject();
 				if (bedrockMapping.has("ignore") && bedrockMapping.get("ignore").getAsBoolean())
 				{
-					LogManager.getLogger().debug("Ignoring Java item {}", name);
 					continue;
 				}
 				String bedrockName = bedrockMapping.get("name").getAsString();

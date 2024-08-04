@@ -27,24 +27,6 @@ public final class DefaultConnectorPlugin implements ConnectorPlugin
 	}
 
 	@Override
-	public void onServerReady() throws ConnectorPluginException
-	{
-		// empty
-	}
-
-	@Override
-	public void onServerStopping() throws ConnectorPluginException
-	{
-		// empty
-	}
-
-	@Override
-	public void onWorldSaved(byte[] data) throws ConnectorPluginException
-	{
-		// empty
-	}
-
-	@Override
 	public boolean onPlayerConnected(@NotNull PlayerLoginInfo playerLoginInfo) throws ConnectorPluginException
 	{
 		this.playerInventories.put(playerLoginInfo.uuid, new GenoaInventory(new Inventory(new Inventory.StackableItem[0], new Inventory.NonStackableItem[0], new Inventory.HotbarItem[7])));

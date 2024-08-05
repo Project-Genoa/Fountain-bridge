@@ -8522,8 +8522,7 @@
     "name": "minecraft:torch",
     "id": 290,
     "bedrock": {
-      "name": "minecraft:torch",
-      "aux": 5
+      "name": "minecraft:torch"
     }
   },
   {

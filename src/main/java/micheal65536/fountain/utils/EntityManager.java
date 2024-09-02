@@ -602,7 +602,7 @@ public class EntityManager
 			}
 			for (AttributeModifier modifier : attribute.getModifiers())
 			{
-				if (modifier.getOperation() == ModifierOperation.ADD)
+				if (modifier.getOperation() == ModifierOperation.MULTIPLY)
 				{
 					value += value * modifier.getAmount();
 				}

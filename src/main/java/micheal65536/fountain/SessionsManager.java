@@ -6,6 +6,8 @@ import com.github.steveice10.mc.protocol.codec.MinecraftPacketSerializer;
 import com.github.steveice10.mc.protocol.codec.PacketCodec;
 import com.github.steveice10.mc.protocol.codec.PacketStateCodec;
 import com.github.steveice10.mc.protocol.data.ProtocolState;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundRemoveMobEffectPacket;
+import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.ClientboundUpdateMobEffectPacket;
 import com.github.steveice10.mc.protocol.packet.ingame.clientbound.entity.spawn.ClientboundAddEntityPacket;
 import com.github.steveice10.packetlib.codec.PacketDefinition;
 import com.github.steveice10.packetlib.packet.Packet;
@@ -230,11 +232,11 @@ public class SessionsManager
 
 	private static PacketCodec createCustomCodec()
 	{
-		// this ugly mess is to replace the ClientboundAddEntityPacket with our custom subclass that allows for non-vanilla entity IDs
 		try
 		{
 			PacketCodec.Builder packetCodecBuilder = MinecraftCodec.CODEC.toBuilder();
 
+			// this ugly mess is to allow replacing existing packets with our custom subclasses that allow for non-vanilla IDs/content
 			Field stateProtocolsField = PacketCodec.Builder.class.getDeclaredField("stateProtocols");
 			stateProtocolsField.setAccessible(true);
 			EnumMap<ProtocolState, PacketStateCodec> stateProtocols = (EnumMap<ProtocolState, PacketStateCodec>) stateProtocolsField.get(packetCodecBuilder);
@@ -249,6 +251,14 @@ public class SessionsManager
 			int id = clientboundIds.get(ClientboundAddEntityPacket.class);
 			clientbound.put(id, new PacketDefinition<>(id, ClientboundAddEntityCustomPacket.class, new MinecraftPacketSerializer<>(ClientboundAddEntityCustomPacket::read)));
 			clientboundIds.put(ClientboundAddEntityCustomPacket.class, id);
+
+			id = clientboundIds.get(ClientboundUpdateMobEffectPacket.class);
+			clientbound.put(id, new PacketDefinition<>(id, ClientboundUpdateMobEffectCustomPacket.class, new MinecraftPacketSerializer<>(ClientboundUpdateMobEffectCustomPacket::read)));
+			clientboundIds.put(ClientboundUpdateMobEffectCustomPacket.class, id);
+
+			id = clientboundIds.get(ClientboundRemoveMobEffectPacket.class);
+			clientbound.put(id, new PacketDefinition<>(id, ClientboundRemoveMobEffectCustomPacket.class, new MinecraftPacketSerializer<>(ClientboundRemoveMobEffectCustomPacket::read)));
+			clientboundIds.put(ClientboundRemoveMobEffectCustomPacket.class, id);
 
 			return packetCodecBuilder.build();
 		}

@@ -25,6 +25,7 @@ public class FabricRegistryManager
 	private final HashMap<Integer, String> fabricItems = new HashMap<>();
 	private final HashMap<String, Integer> fabricItemsId = new HashMap<>();
 	private final HashMap<Integer, String> fabricEntities = new HashMap<>();
+	private final HashMap<Integer, String> fabricStatusEffects = new HashMap<>();
 
 	private ByteBuf registryDataBuf = null;
 
@@ -53,6 +54,7 @@ public class FabricRegistryManager
 				{
 					String registryName = this.minecraftCodecHelper.readString(this.registryDataBuf);
 					String registryType = (registryNamePrefix.length() > 0 ? registryNamePrefix : "minecraft") + ":" + registryName;
+					LogManager.getLogger().debug("Reading Fabric registry type {}", registryType);
 					if (registryType.equals("minecraft:block"))
 					{
 						// TODO: validate ID/order of vanilla blocks
@@ -104,6 +106,20 @@ public class FabricRegistryManager
 							else
 							{
 								this.fabricEntities.put(id, name);
+							}
+						});
+					}
+					else if (registryType.equals("minecraft:mob_effect"))
+					{
+						this.readRegistry((id, name) ->
+						{
+							if (name.startsWith("minecraft:"))
+							{
+								return;
+							}
+							else
+							{
+								this.fabricStatusEffects.put(id, name);
 							}
 						});
 					}
@@ -181,5 +197,11 @@ public class FabricRegistryManager
 	public String getEntityName(int id)
 	{
 		return this.fabricEntities.getOrDefault(id, null);
+	}
+
+	@Nullable
+	public String getStatusEffectName(int id)
+	{
+		return this.fabricStatusEffects.getOrDefault(id, null);
 	}
 }

@@ -37,6 +37,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import micheal65536.fountain.PlayerSession;
+import micheal65536.fountain.utils.entities.LocalPlayerJavaEntityInstance;
 
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -76,17 +77,25 @@ public class EntityManager
 		entityInstance.onAdded();
 	}
 
-	public long registerLocalPlayerEntity(int javaEntityInstanceId)
+	@NotNull
+	public LocalPlayerJavaEntityInstance registerLocalPlayerEntity(int javaEntityInstanceId, @NotNull LocalPlayerJavaEntityInstance.PlayerDeadCallback playerDeadCallback)
 	{
 		if (this.javaEntities.containsKey(javaEntityInstanceId))
 		{
 			LogManager.getLogger().warn("Duplicate Java entity instance ID {}", javaEntityInstanceId);
 		}
 
+		LocalPlayerJavaEntityInstance localPlayerJavaEntityInstance = new LocalPlayerJavaEntityInstance(playerDeadCallback);
+		((JavaEntityInstance) localPlayerJavaEntityInstance).entityManager = this;
+		((JavaEntityInstance) localPlayerJavaEntityInstance).instanceId = javaEntityInstanceId;
+		this.javaEntities.put(javaEntityInstanceId, localPlayerJavaEntityInstance);
+
 		long bedrockEntityInstanceId = this.getNewBedrockEntityId();
-		this.javaEntities.put(javaEntityInstanceId, null);
-		this.bedrockEntities.put(bedrockEntityInstanceId, null);
-		return bedrockEntityInstanceId;
+		localPlayerJavaEntityInstance.bedrockEntityInstance.entityManager = this;
+		localPlayerJavaEntityInstance.bedrockEntityInstance.instanceId = bedrockEntityInstanceId;
+		this.bedrockEntities.put(bedrockEntityInstanceId, localPlayerJavaEntityInstance.bedrockEntityInstance);
+
+		return localPlayerJavaEntityInstance;
 	}
 
 	public void addBedrockEntity(@NotNull String identifier, @NotNull BedrockEntityInstance entityInstance)

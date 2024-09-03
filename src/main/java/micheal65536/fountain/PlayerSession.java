@@ -8,7 +8,6 @@ import com.github.steveice10.mc.protocol.data.game.entity.attribute.Attribute;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.EntityMetadata;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.Equipment;
 import com.github.steveice10.mc.protocol.data.game.entity.metadata.ItemStack;
-import com.github.steveice10.mc.protocol.data.game.entity.metadata.MetadataType;
 import com.github.steveice10.mc.protocol.data.game.entity.object.Direction;
 import com.github.steveice10.mc.protocol.data.game.entity.player.Animation;
 import com.github.steveice10.mc.protocol.data.game.entity.player.GameMode;
@@ -56,7 +55,6 @@ import org.cloudburstmc.math.vector.Vector4f;
 import org.cloudburstmc.nbt.NbtMap;
 import org.cloudburstmc.nbt.NbtType;
 import org.cloudburstmc.protocol.bedrock.BedrockSession;
-import org.cloudburstmc.protocol.bedrock.data.AttributeData;
 import org.cloudburstmc.protocol.bedrock.data.GamePublishSetting;
 import org.cloudburstmc.protocol.bedrock.data.GameRuleData;
 import org.cloudburstmc.protocol.bedrock.data.GameType;
@@ -83,7 +81,6 @@ import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
-import org.cloudburstmc.protocol.bedrock.packet.UpdateAttributesPacket;
 import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -101,6 +98,7 @@ import micheal65536.fountain.utils.FabricRegistryManager;
 import micheal65536.fountain.utils.InventoryManager;
 import micheal65536.fountain.utils.ItemTranslator;
 import micheal65536.fountain.utils.entities.ItemJavaEntityInstance;
+import micheal65536.fountain.utils.entities.LocalPlayerJavaEntityInstance;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -127,14 +125,12 @@ public final class PlayerSession
 	private final Thread tickThread;
 
 	private final BedrockSession bedrock;
-	private long bedrockPlayerEntityId;
 	private boolean bedrockDoDaylightCycle = true;
 	private int bedrockSelectedHotbarSlot = 0;
 
 	private final TcpClientSession java;
-	private int javaPlayerEntityId;
 	private final HashMap<Integer, String> javaBiomes = new HashMap<>();
-	private float javaPlayerHealth = 20.0f;
+	private LocalPlayerJavaEntityInstance javaPlayerEntityInstance;
 
 	private final PlayerConnectorPluginWrapper playerConnectorPluginWrapper;
 	private final Consumer<PlayerSession> disconnectCallback;
@@ -268,8 +264,8 @@ public final class PlayerSession
 
 	public void onJavaLogin(@NotNull ClientboundLoginPacket clientboundLoginPacket)
 	{
-		this.javaPlayerEntityId = clientboundLoginPacket.getEntityId();
-		this.bedrockPlayerEntityId = this.entityManager.registerLocalPlayerEntity(this.javaPlayerEntityId);
+		int javaPlayerEntityId = clientboundLoginPacket.getEntityId();
+		this.javaPlayerEntityInstance = this.entityManager.registerLocalPlayerEntity(javaPlayerEntityId, this::handlePlayerDead);
 
 		PlayStatusPacket playStatusPacket = new PlayStatusPacket();
 		playStatusPacket.setStatus(PlayStatusPacket.Status.LOGIN_SUCCESS);
@@ -277,8 +273,8 @@ public final class PlayerSession
 
 		StartGamePacket startGamePacket = new StartGamePacket();
 		//startGamePacket.getGamerules().add(new GameRuleData<>("dodaylightcycle", false));
-		startGamePacket.setUniqueEntityId(this.bedrockPlayerEntityId);
-		startGamePacket.setRuntimeEntityId(this.bedrockPlayerEntityId);
+		startGamePacket.setUniqueEntityId(this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId());
+		startGamePacket.setRuntimeEntityId(this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId());
 		startGamePacket.setPlayerGameType(GameType.valueOf(clientboundLoginPacket.getCommonPlayerSpawnInfo().getGameMode().name()));
 		startGamePacket.setPlayerPosition(Vector3f.from(0.0f, 69.0f, 0.0f));
 		startGamePacket.setRotation(Vector2f.from(1.0f, 1.0f));
@@ -324,7 +320,7 @@ public final class PlayerSession
 
 		GenoaGameplaySettingsPacket genoaGameplaySettingsPacket = new GenoaGameplaySettingsPacket();
 		genoaGameplaySettingsPacket.setMultiplePlayersOnline(false);
-		genoaGameplaySettingsPacket.setOwnerRuntimeId(this.bedrockPlayerEntityId);
+		genoaGameplaySettingsPacket.setOwnerRuntimeId(this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId());
 		this.sendBedrockPacket(genoaGameplaySettingsPacket);
 
 		AvailableEntityIdentifiersPacket availableEntityIdentifiersPacket = new AvailableEntityIdentifiersPacket();
@@ -499,7 +495,7 @@ public final class PlayerSession
 
 	public void onJavaEntityRemove(int javaEntityInstanceId)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity remove for local player entity");
 			return;
@@ -513,7 +509,7 @@ public final class PlayerSession
 
 	public void onJavaEntityMove(int javaEntityInstanceId, @Nullable Vector3f pos, @Nullable Vector2f rot, boolean onGround, boolean relative)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity move for local player entity");
 			return;
@@ -550,7 +546,7 @@ public final class PlayerSession
 
 	public void onJavaEntitySetVelocity(int javaEntityInstanceId, @NotNull Vector3f velocity)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity set velocity for local player entity");
 			return;
@@ -564,7 +560,7 @@ public final class PlayerSession
 
 	public void onJavaEntityRotateHead(int javaEntityInstanceId, float headYaw)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity rotate head for local player entity");
 			return;
@@ -578,7 +574,7 @@ public final class PlayerSession
 
 	public void onJavaEntitySetEquipment(int javaEntityInstanceId, Equipment[] equipments)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity set equipment for local player entity");
 			return;
@@ -611,45 +607,15 @@ public final class PlayerSession
 
 	public void onJavaEntityUpdateData(int javaEntityInstanceId, @NotNull EntityMetadata<?, ?>[] entityMetadata)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
+		if (entityInstance != null)
 		{
-			Arrays.stream(entityMetadata).filter(metadata -> metadata.getId() == 9).findAny().ifPresent(metadata ->
-			{
-				if (metadata.getType() != MetadataType.FLOAT)
-				{
-					LogManager.getLogger().warn("Server sent bad player entity metadata");
-					return;
-				}
-				this.javaPlayerHealth = (float) metadata.getValue();
-
-				UpdateAttributesPacket updateAttributesPacket = new UpdateAttributesPacket();
-				updateAttributesPacket.setRuntimeEntityId(this.bedrockPlayerEntityId);
-				updateAttributesPacket.getAttributes().add(new AttributeData("minecraft:health", 0.0f, 20.0f, this.javaPlayerHealth > 0.0f && this.javaPlayerHealth < 1.0f ? 1.0f : this.javaPlayerHealth));
-				this.sendBedrockPacket(updateAttributesPacket);
-
-				if (this.javaPlayerHealth == 0.0f)
-				{
-					this.handlePlayerDead();
-				}
-			});
-		}
-		else
-		{
-			EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
-			if (entityInstance != null)
-			{
-				entityInstance.metadataChanged(Arrays.copyOf(entityMetadata, entityMetadata.length));
-			}
+			entityInstance.metadataChanged(Arrays.copyOf(entityMetadata, entityMetadata.length));
 		}
 	}
 
 	public void onJavaEntityUpdateAttributes(int javaEntityInstanceId, @NotNull List<Attribute> attributes)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
-		{
-			LogManager.getLogger().debug("Ignoring entity update attributes for local player entity");
-			return;
-		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
 		if (entityInstance != null)
 		{
@@ -659,11 +625,6 @@ public final class PlayerSession
 
 	public void onJavaEntityHurt(int javaEntityInstanceId)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
-		{
-			LogManager.getLogger().debug("Ignoring entity hurt for local player entity");
-			return;
-		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
 		if (entityInstance != null)
 		{
@@ -673,11 +634,6 @@ public final class PlayerSession
 
 	public void onJavaEntityEvent(int javaEntityInstanceId, @NotNull EntityEvent entityEvent)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
-		{
-			LogManager.getLogger().debug("Ignoring entity event for local player entity");
-			return;
-		}
 		EntityManager.JavaEntityInstance entityInstance = this.entityManager.getJavaEntity(javaEntityInstanceId);
 		if (entityInstance != null)
 		{
@@ -690,7 +646,7 @@ public final class PlayerSession
 
 	public void onJavaEntityAnimation(int javaEntityInstanceId, @NotNull Animation animation)
 	{
-		if (javaEntityInstanceId == this.javaPlayerEntityId)
+		if (javaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity animation for local player entity");
 			return;
@@ -707,7 +663,7 @@ public final class PlayerSession
 
 	public void onJavaEntitySetPassengers(int parentJavaEntityInstanceId, int[] passengerJavaEntityInstanceIds)
 	{
-		if (parentJavaEntityInstanceId == this.javaPlayerEntityId)
+		if (parentJavaEntityInstanceId == this.javaPlayerEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().debug("Ignoring entity set passengers for local player entity");
 			return;
@@ -715,7 +671,7 @@ public final class PlayerSession
 
 		EntityManager.JavaEntityInstance[] passengerEntityInstances = Arrays.stream(passengerJavaEntityInstanceIds).mapToObj(entityId ->
 		{
-			if (entityId == this.javaPlayerEntityId)
+			if (entityId == this.javaPlayerEntityInstance.getInstanceId())
 			{
 				LogManager.getLogger().debug("Ignoring entity set passengers for local player entity");
 				return null;
@@ -748,12 +704,12 @@ public final class PlayerSession
 			LogManager.getLogger().debug("Ignoring entity taken for non-item entity");
 			return;
 		}
-		if (collectorJavaEntityId == this.javaPlayerEntityId)    // TODO: handle items taken by other players
+		if (collectorJavaEntityId == this.javaPlayerEntityInstance.getInstanceId())    // TODO: handle items taken by other players
 		{
 			ItemData item = ((ItemJavaEntityInstance) collectedJavaEntityInstance).getItem();
 			if (item != null)
 			{
-				this.sendItemParticle(item.getDefinition().getRuntimeId(), item.getDamage(), collectedJavaEntityInstance.getPos(), this.bedrockPlayerEntityId);
+				this.sendItemParticle(item.getDefinition().getRuntimeId(), item.getDamage(), collectedJavaEntityInstance.getPos(), this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId());
 			}
 		}
 		else
@@ -788,7 +744,7 @@ public final class PlayerSession
 
 	public void clientPlayerAnimation(@NotNull AnimatePacket animatePacket)
 	{
-		if (animatePacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
+		if (animatePacket.getRuntimeEntityId() != this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().warn("Unrecognised client AnimatePacket (entity ID does not match player)");
 			return;
@@ -875,7 +831,7 @@ public final class PlayerSession
 
 	public void updateSelectedHotbarItem(@NotNull MobEquipmentPacket mobEquipmentPacket)
 	{
-		if (mobEquipmentPacket.getRuntimeEntityId() != this.bedrockPlayerEntityId)
+		if (mobEquipmentPacket.getRuntimeEntityId() != this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId())
 		{
 			LogManager.getLogger().warn("Unrecognised client MobEquipmentPacket (entity ID does not match player)");
 			return;
@@ -942,7 +898,7 @@ public final class PlayerSession
 				return;
 			}
 
-			this.sendItemParticle(bedrockMapping.id, bedrockMapping.aux, pos.toFloat(), this.bedrockPlayerEntityId);
+			this.sendItemParticle(bedrockMapping.id, bedrockMapping.aux, pos.toFloat(), this.javaPlayerEntityInstance.bedrockEntityInstance.getInstanceId());
 		}
 		catch (IOException | NullPointerException exception)
 		{

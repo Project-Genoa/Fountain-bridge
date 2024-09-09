@@ -27,6 +27,12 @@ public final class DefaultConnectorPlugin implements ConnectorPlugin
 	}
 
 	@Override
+	public boolean onPlayerDead(@NotNull String playerId) throws ConnectorPluginException
+	{
+		return true;
+	}
+
+	@Override
 	public boolean onPlayerConnected(@NotNull PlayerLoginInfo playerLoginInfo) throws ConnectorPluginException
 	{
 		this.playerInventories.put(playerLoginInfo.uuid, new GenoaInventory(new Inventory(new Inventory.StackableItem[0], new Inventory.NonStackableItem[0], new Inventory.HotbarItem[7])));

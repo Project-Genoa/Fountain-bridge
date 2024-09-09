@@ -764,12 +764,28 @@ public final class PlayerSession
 
 	private void handlePlayerDead()
 	{
-		// TODO: end session or respawn player as appropriate according to the Earth game settings (e.g. if in adventure or buildplate)
+		boolean respawn;
+		try
+		{
+			respawn = this.playerConnectorPluginWrapper.onPlayerDead();
+		}
+		catch (ConnectorPlugin.ConnectorPluginException exception)
+		{
+			LogManager.getLogger().error("Connector plugin threw exception when handling player dead", exception);
+			respawn = false;
+		}
 
-		ServerboundClientCommandPacket serverboundClientCommandPacket = new ServerboundClientCommandPacket(ClientCommand.RESPAWN);
-		this.sendJavaPacket(serverboundClientCommandPacket);
+		if (respawn)
+		{
+			ServerboundClientCommandPacket serverboundClientCommandPacket = new ServerboundClientCommandPacket(ClientCommand.RESPAWN);
+			this.sendJavaPacket(serverboundClientCommandPacket);
 
-		// TODO: immediately move the player back to the last client-sent position rather than waiting for the client to send the next position update
+			// TODO: immediately move the player back to the last client-sent position rather than waiting for the client to send the next position update
+		}
+		else
+		{
+			// TODO: end session
+		}
 	}
 
 	public void playerInteraction(@NotNull InventoryTransactionPacket packet)

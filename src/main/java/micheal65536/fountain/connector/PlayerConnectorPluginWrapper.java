@@ -23,6 +23,11 @@ public final class PlayerConnectorPluginWrapper
 		return this.connectorPlugin.onPlayerDisconnected(this.playerId);
 	}
 
+	public boolean onPlayerDead() throws ConnectorPlugin.ConnectorPluginException
+	{
+		return this.connectorPlugin.onPlayerDead(this.playerId);
+	}
+
 	@NotNull
 	public Inventory onPlayerGetInventory() throws ConnectorPlugin.ConnectorPluginException
 	{

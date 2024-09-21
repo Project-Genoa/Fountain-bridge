@@ -64,7 +64,6 @@ import org.cloudburstmc.protocol.bedrock.data.inventory.transaction.InventoryTra
 import org.cloudburstmc.protocol.bedrock.packet.AnimatePacket;
 import org.cloudburstmc.protocol.bedrock.packet.AvailableEntityIdentifiersPacket;
 import org.cloudburstmc.protocol.bedrock.packet.BedrockPacket;
-import org.cloudburstmc.protocol.bedrock.packet.BedrockPacketHandler;
 import org.cloudburstmc.protocol.bedrock.packet.ChunkRadiusUpdatedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GameRulesChangedPacket;
 import org.cloudburstmc.protocol.bedrock.packet.GenoaDisconnectIdPacket;
@@ -81,7 +80,6 @@ import org.cloudburstmc.protocol.bedrock.packet.SetDifficultyPacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetPlayerGameTypePacket;
 import org.cloudburstmc.protocol.bedrock.packet.SetTimePacket;
 import org.cloudburstmc.protocol.bedrock.packet.StartGamePacket;
-import org.cloudburstmc.protocol.common.PacketSignal;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -212,37 +210,14 @@ public final class PlayerSession
 
 		if (this.bedrock.isConnected())
 		{
-			// TODO: what is actually the correct flow here for client-requested vs server-initiated disconnect?
+			// TODO: determine correct flow for disconnect start/disconnect ID packets?
+			// TODO: include data
 
 			GenoaDisconnectStartPacket genoaDisconnectStartPacket = new GenoaDisconnectStartPacket();
 			this.sendBedrockPacket(genoaDisconnectStartPacket);
 
 			GenoaDisconnectIdPacket genoaDisconnectIdPacket = new GenoaDisconnectIdPacket();
 			this.sendBedrockPacket(genoaDisconnectIdPacket);
-
-			if (fromServer)
-			{
-				this.bedrock.disconnect();
-			}
-			else
-			{
-				// this is used because after a Genoa disconnect request we leave the bedrock side of the connection open and wait for the client to actually disconnect but we don't want the client trying to actually do stuff after this
-				this.bedrock.setPacketHandler(new BedrockPacketHandler()
-				{
-					@Override
-					public PacketSignal handlePacket(BedrockPacket packet)
-					{
-						LogManager.getLogger().warn("Received packet after disconnect request: {}", packet.getClass().getSimpleName());
-						return PacketSignal.HANDLED;
-					}
-
-					@Override
-					public void onDisconnect(String reason)
-					{
-						LogManager.getLogger().info("Client has finished disconnecting: {}", reason);
-					}
-				});
-			}
 		}
 
 		this.java.disconnect("");

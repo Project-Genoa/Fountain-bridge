@@ -30,10 +30,8 @@ import micheal65536.fountain.utils.LoginUtils;
 
 import java.lang.reflect.Field;
 import java.util.EnumMap;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.concurrent.locks.ReentrantLock;
 
 public class SessionsManager
@@ -47,8 +45,10 @@ public class SessionsManager
 
 	private final ReentrantLock lock = new ReentrantLock(true);
 
+	private boolean acceptNewConnection = true;
 	private final HashSet<LoginBedrockPacketHandler> pendingSessions = new HashSet<>();
-	private final HashMap<String, PlayerSession> activeSessions = new HashMap<>();
+	private final HashSet<ActiveSession> activeSessions = new HashSet<>();
+	private final HashSet<ClosedSessionBedrockPacketHandler> closedSessions = new HashSet<>();
 
 	public SessionsManager(@NotNull String serverAddress, int serverPort, @NotNull ConnectorPlugin connectorPlugin, boolean useUUIDAsUsername)
 	{
@@ -63,6 +63,13 @@ public class SessionsManager
 		this.lock.lock();
 
 		LogManager.getLogger().info("New connection from {}", bedrockServerSession.getPeer().getSocketAddress());
+
+		if (!this.acceptNewConnection)
+		{
+			LogManager.getLogger().info("Rejecting connection as we are shutting down");
+			this.lock.unlock();
+			return;
+		}
 
 		bedrockServerSession.setCodec(Bedrock_v425_Genoa.CODEC);
 		bedrockServerSession.getPeer().getCodecHelper().setBlockDefinitions(Main.BLOCK_DEFINITION_REGISTRY);
@@ -87,7 +94,7 @@ public class SessionsManager
 			this.lock.unlock();
 			return;
 		}
-		if (this.activeSessions.containsKey(loginInfo.uuid))
+		if (this.activeSessions.stream().anyMatch(activeSession -> activeSession.uuid.equals(loginInfo.uuid)))
 		{
 			LogManager.getLogger().warn("Multiple player logins with the same UUID {} {}", loginInfo.username, loginInfo.uuid);
 			this.disconnectPending(loginBedrockPacketHandler);
@@ -118,8 +125,8 @@ public class SessionsManager
 		MinecraftProtocol javaProtocol = new MinecraftProtocol(MINECRAFT_CODEC_WITH_CUSTOM_ENTITY_SUPPORT, this.useUUIDAsUsername ? loginInfo.uuid : loginInfo.username);
 		TcpClientSession tcpClientSession = new TcpClientSession(this.serverAddress, this.serverPort, javaProtocol);
 
-		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionDisconnected);
-		this.activeSessions.put(loginInfo.uuid, playerSession);
+		PlayerSession playerSession = new PlayerSession(loginBedrockPacketHandler.bedrockServerSession, tcpClientSession, new PlayerConnectorPluginWrapper(this.connectorPlugin, loginInfo.uuid), this::onSessionClosed);
+		this.activeSessions.add(new ActiveSession(loginInfo.uuid, playerSession, loginBedrockPacketHandler.bedrockServerSession));
 
 		playerSession.mutex.lock();
 		loginBedrockPacketHandler.bedrockServerSession.setPacketHandler(new ClientPacketHandler(playerSession));
@@ -130,24 +137,19 @@ public class SessionsManager
 		this.lock.unlock();
 	}
 
-	private void onSessionDisconnected(PlayerSession playerSession)
+	private void onSessionClosed(PlayerSession playerSession)
 	{
 		this.lock.lock();
-		if (this.activeSessions.containsValue(playerSession))
+		ActiveSession activeSession = this.activeSessions.stream().filter(activeSession1 -> activeSession1.playerSession == playerSession).findAny().orElse(null);
+		if (activeSession != null)
 		{
-			try
-			{
-				String uuid = this.activeSessions.entrySet().stream().filter(entry -> entry.getValue() == playerSession).map(Map.Entry::getKey).findAny().orElseThrow();
-				if (this.activeSessions.remove(uuid) != playerSession)
-				{
-					throw new AssertionError();
-				}
-				LogManager.getLogger().info("Session has disconnected {}", uuid);
-			}
-			catch (NoSuchElementException noSuchElementException)
-			{
-				throw new AssertionError(noSuchElementException);
-			}
+			this.activeSessions.remove(activeSession);
+
+			ClosedSessionBedrockPacketHandler closedSessionBedrockPacketHandler = new ClosedSessionBedrockPacketHandler(activeSession.bedrockServerSession);
+			this.closedSessions.add(closedSessionBedrockPacketHandler);
+			activeSession.bedrockServerSession.setPacketHandler(closedSessionBedrockPacketHandler);
+
+			LogManager.getLogger().info("Session has been closed {}", activeSession.uuid);
 		}
 		this.lock.unlock();
 	}
@@ -170,16 +172,34 @@ public class SessionsManager
 		this.lock.unlock();
 	}
 
+	private void disconnectClosed(@NotNull ClosedSessionBedrockPacketHandler closedSessionBedrockPacketHandler)
+	{
+		this.lock.lock();
+		if (this.closedSessions.remove(closedSessionBedrockPacketHandler))
+		{
+			LogManager.getLogger().info("Closed session has finished disconnecting");
+			try
+			{
+				closedSessionBedrockPacketHandler.bedrockServerSession.disconnect();
+			}
+			catch (IllegalStateException exception)
+			{
+				// empty
+			}
+		}
+		this.lock.unlock();
+	}
+
 	public void shutdown()
 	{
 		this.lock.lock();
 
 		LogManager.getLogger().info("Shutting down");
 
+		this.acceptNewConnection = false;
+
 		LoginBedrockPacketHandler[] pendingSessions = this.pendingSessions.toArray(new LoginBedrockPacketHandler[0]);
-		this.pendingSessions.clear();
-		PlayerSession[] activeSessions = this.activeSessions.values().toArray(new PlayerSession[0]);
-		this.activeSessions.clear();
+		ActiveSession[] activeSessions = this.activeSessions.toArray(new ActiveSession[0]);
 
 		this.lock.unlock();
 
@@ -190,11 +210,70 @@ public class SessionsManager
 		}
 
 		LogManager.getLogger().info("Disconnecting {} remaining active sessions", activeSessions.length);
-		for (PlayerSession playerSession : activeSessions)
+		for (ActiveSession activeSession : activeSessions)
 		{
-			playerSession.mutex.lock();
-			playerSession.disconnect(true);
-			playerSession.mutex.unlock();
+			activeSession.playerSession.mutex.lock();
+			activeSession.playerSession.disconnect(true);
+			activeSession.playerSession.mutex.unlock();
+		}
+
+		this.lock.lock();
+		if (!this.closedSessions.isEmpty())
+		{
+			LogManager.getLogger().info("Waiting 20 seconds for {} remaining closed sessions to disconnect", this.closedSessions.size());
+			long waitStartTime = System.nanoTime();
+			while (!this.closedSessions.isEmpty() && System.nanoTime() < waitStartTime + 20 * 1000000000l)
+			{
+				this.lock.unlock();
+
+				try
+				{
+					Thread.sleep(1000);
+				}
+				catch (InterruptedException exception)
+				{
+					// empty
+				}
+
+				this.lock.lock();
+			}
+
+			ClosedSessionBedrockPacketHandler[] closedSessions = this.closedSessions.toArray(new ClosedSessionBedrockPacketHandler[0]);
+			this.closedSessions.clear();
+			this.lock.unlock();
+
+			if (closedSessions.length > 0)
+			{
+				LogManager.getLogger().info("Forcibly disconnecting {} remaining closed sessions", closedSessions.length);
+				for (ClosedSessionBedrockPacketHandler closedSessionBedrockPacketHandler : closedSessions)
+				{
+					closedSessionBedrockPacketHandler.bedrockServerSession.disconnect("", true);
+				}
+			}
+
+			this.lock.lock();
+		}
+		else
+		{
+			LogManager.getLogger().info("No remaining closed sessions to disconnect");
+		}
+
+		LogManager.getLogger().info("Shutdown complete");
+
+		this.lock.unlock();
+	}
+
+	private class ActiveSession
+	{
+		private final String uuid;
+		private final PlayerSession playerSession;
+		private final BedrockServerSession bedrockServerSession;
+
+		public ActiveSession(String uuid, PlayerSession playerSession, BedrockServerSession bedrockServerSession)
+		{
+			this.uuid = uuid;
+			this.playerSession = playerSession;
+			this.bedrockServerSession = bedrockServerSession;
 		}
 	}
 
@@ -227,6 +306,30 @@ public class SessionsManager
 		{
 			LogManager.getLogger().info("Client disconnected during login phase: {}", reason);
 			SessionsManager.this.disconnectPending(this);
+		}
+	}
+
+	private class ClosedSessionBedrockPacketHandler implements BedrockPacketHandler
+	{
+		private final BedrockServerSession bedrockServerSession;
+
+		public ClosedSessionBedrockPacketHandler(BedrockServerSession bedrockServerSession)
+		{
+			this.bedrockServerSession = bedrockServerSession;
+		}
+
+		@Override
+		public PacketSignal handlePacket(BedrockPacket packet)
+		{
+			LogManager.getLogger().warn("Received packet after close: {}", packet.getClass().getSimpleName());
+			return PacketSignal.HANDLED;
+		}
+
+		@Override
+		public void onDisconnect(String reason)
+		{
+			LogManager.getLogger().info("Client has finished disconnecting: {}", reason);
+			SessionsManager.this.disconnectClosed(this);
 		}
 	}
 

@@ -64,7 +64,7 @@ class ServerDataZip
 
 		int length = (int) byteBuf.readUnsignedInt();
 		byte compressionType = byteBuf.readByte();
-		byte[] compressed = new byte[length];
+		byte[] compressed = new byte[length - 1];
 		byteBuf.readBytes(compressed);
 		byte[] uncompressed = switch (compressionType)
 		{

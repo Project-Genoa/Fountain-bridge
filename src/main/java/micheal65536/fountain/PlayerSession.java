@@ -200,7 +200,7 @@ public final class PlayerSession
 		DisconnectResponse disconnectResponse;
 		try
 		{
-			disconnectResponse = this.playerConnectorPluginWrapper.onPlayerDisconnected();
+			disconnectResponse = this.playerConnectorPluginWrapper.onPlayerDisconnected(this.javaPlayerEntityInstance.getHealth());
 		}
 		catch (ConnectorPlugin.ConnectorPluginException exception)
 		{

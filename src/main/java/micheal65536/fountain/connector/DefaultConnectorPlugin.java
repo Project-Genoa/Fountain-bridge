@@ -41,7 +41,7 @@ public final class DefaultConnectorPlugin implements ConnectorPlugin
 
 	@Override
 	@NotNull
-	public DisconnectResponse onPlayerDisconnected(@NotNull String playerId) throws ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected(@NotNull String playerId, float health) throws ConnectorPluginException
 	{
 		this.playerInventories.remove(playerId);
 		return new DisconnectResponse();

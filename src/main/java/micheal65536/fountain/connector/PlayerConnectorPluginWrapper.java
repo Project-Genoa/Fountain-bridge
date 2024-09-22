@@ -18,9 +18,9 @@ public final class PlayerConnectorPluginWrapper
 	}
 
 	@NotNull
-	public DisconnectResponse onPlayerDisconnected() throws ConnectorPlugin.ConnectorPluginException
+	public DisconnectResponse onPlayerDisconnected(float health) throws ConnectorPlugin.ConnectorPluginException
 	{
-		return this.connectorPlugin.onPlayerDisconnected(this.playerId);
+		return this.connectorPlugin.onPlayerDisconnected(this.playerId, health);
 	}
 
 	public boolean onPlayerDead() throws ConnectorPlugin.ConnectorPluginException

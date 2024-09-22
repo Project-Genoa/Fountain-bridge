@@ -759,7 +759,7 @@ public final class PlayerSession
 		}
 		else
 		{
-			// TODO: end session
+			this.disconnect(true);
 		}
 	}
 
